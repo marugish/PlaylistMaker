@@ -1,18 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:background="@color/blue_background">
 
-    <TextView
-        android:layout_width="wrap_content"
+
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="@dimen/margin_bottom_playlist_layout">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="@dimen/heading_text_size"
+            android:textColor="@color/white"
+            android:layout_gravity="start"
+            android:layout_marginTop="@dimen/margin_top_text"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginBottom="@dimen/default_margin"/>
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/button_search"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        app:icon="@drawable/search"
+        app:iconGravity="textStart"
+        app:iconTint="@color/text_and_icon_color"
+        app:iconPadding="@dimen/icon_padding"
+        android:backgroundTint="@color/white"
+        android:text="@string/search"
+        android:textSize="@dimen/heading_text_size"
+        android:textColor="@color/text_and_icon_color"
+        app:cornerRadius="@dimen/corner_radius"/>
+
+    <Button
+        android:id="@+id/button_media_library"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        app:icon="@drawable/media_library"
+        app:iconGravity="textStart"
+        app:iconTint="@color/text_and_icon_color"
+        app:iconPadding="@dimen/icon_padding"
+        android:backgroundTint="@color/white"
+        android:text="@string/media_library"
+        android:textSize="@dimen/heading_text_size"
+        android:textColor="@color/text_and_icon_color"
+        app:cornerRadius="@dimen/corner_radius"/>
+
+    <Button
+        android:id="@+id/button_settings"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        app:icon="@drawable/settings"
+        app:iconGravity="textStart"
+        app:iconTint="@color/text_and_icon_color"
+        app:iconPadding="@dimen/icon_padding"
+        android:backgroundTint="@color/white"
+        android:text="@string/settings"
+        android:textSize="@dimen/heading_text_size"
+        android:textColor="@color/text_and_icon_color"
+        app:cornerRadius="@dimen/corner_radius"/>
+
+</LinearLayout>
