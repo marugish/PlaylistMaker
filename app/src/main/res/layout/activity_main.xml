@@ -7,24 +7,16 @@
     android:orientation="vertical"
     android:background="@color/blue_background">
 
-
-    <FrameLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_bottom_playlist_layout">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="@dimen/heading_text_size"
-            android:textColor="@color/white"
-            android:layout_gravity="start"
-            android:layout_marginTop="@dimen/margin_top_text"
-            android:layout_marginStart="@dimen/default_margin"
-            android:layout_marginBottom="@dimen/default_margin"/>
-
-    </FrameLayout>
+        android:text="@string/app_name"
+        android:textSize="@dimen/heading_text_size"
+        android:textColor="@color/white"
+        android:layout_gravity="start"
+        android:layout_marginTop="@dimen/margin_start_top_text"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/margin_bottom_heading_layout"/>
 
     <Button
         android:id="@+id/button_search"
@@ -34,7 +26,7 @@
         android:layout_weight="1"
         android:insetBottom="0dp"
         android:insetTop="0dp"
-        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginVertical="@dimen/default_margin"
         android:layout_marginHorizontal="@dimen/default_margin"
         app:icon="@drawable/search"
         app:iconGravity="textStart"
