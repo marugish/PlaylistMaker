@@ -2,6 +2,16 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/dark_background</item>
+        <item name="colorSecondary">@color/dark_background</item>
+        <!-- The lightest and darkest colors. -->
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorSecondaryVariant">@color/text_and_icon_color</item>
+        <!--Text and icon colors. -->
+        <item name="textColor">@color/white</item>
+        <item name="iconColor">@color/white</item>
+        <item name="editIconColor">@color/text_and_icon_color</item>
+        <item name="editColor">@color/white</item>
     </style>
+    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 </resources>

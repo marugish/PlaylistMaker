@@ -5,26 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="?attr/colorSecondary">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_frame_layout_size"
+        android:layout_height="@dimen/toolbar_layout_size"
         android:layout_marginBottom="@dimen/margin_bottom_heading_layout">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_settings"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:background="@color/white"
-            android:gravity="center"
+            android:background="?attr/colorSecondary"
+            android:layout_gravity="start"
             app:title="@string/settings"
-            app:titleTextColor="@color/text_and_icon_color"
-            android:textSize="@dimen/heading_text_size"
+            style="@style/HeadingTextStyle"
+            app:titleTextColor="?attr/textColor"
             app:navigationIcon="@drawable/arrow_back"
             app:iconPadding="@dimen/icon_padding"
-            app:buttonGravity="center_vertical"/>
-
+            app:buttonGravity="center_vertical" />
     </LinearLayout>
 
     <LinearLayout
@@ -39,34 +38,25 @@
             android:layout_height="@dimen/settings_frame_layout_size">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/dark_theme"
-                android:textSize="@dimen/default_text_size"
-                android:textColor="@color/black"
-                android:layout_gravity="center_vertical|start"/>
+                style="@style/SettingsTextStyle"
+                android:text="@string/dark_theme" />
 
             <androidx.appcompat.widget.SwitchCompat
-                android:layout_width="@dimen/switch_width"
-                android:layout_height="@dimen/switch_height"
-                android:layout_gravity="center_vertical|end"/>
+                android:id="@+id/switch_theme"
+                style="@style/ImageOrSwitchSettingsStyle"/>
         </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_frame_layout_size">
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/share_app"
-                android:textSize="@dimen/default_text_size"
-                android:textColor="@color/black"
-                android:layout_gravity="center_vertical|start"/>
+                style="@style/SettingsTextStyle"
+                android:text="@string/share_app" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|end"
+                android:id="@+id/share"
+                style="@style/ImageOrSwitchSettingsStyle"
                 android:src="@drawable/share"
                 android:contentDescription="@string/share_app" />
         </FrameLayout>
@@ -74,41 +64,31 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_frame_layout_size">
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/write_to_support"
-                android:textSize="@dimen/default_text_size"
-                android:textColor="@color/black"
-                android:layout_gravity="center_vertical|start"/>
+                style="@style/SettingsTextStyle"
+                android:text="@string/write_to_support"/>
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|end"
+                android:id="@+id/support"
+                style="@style/ImageOrSwitchSettingsStyle"
                 android:src="@drawable/support"
-                android:contentDescription="@string/write_to_support"/>
+                android:contentDescription="@string/write_to_support" />
         </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_frame_layout_size">
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/user_agreement"
-                android:textSize="@dimen/default_text_size"
-                android:textColor="@color/black"
-                android:layout_gravity="center_vertical|start"/>
+                style="@style/SettingsTextStyle"
+                android:text="@string/user_agreement" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|end"
+                android:id="@+id/user_agreement"
+                style="@style/ImageOrSwitchSettingsStyle"
                 android:src="@drawable/arrow_forward"
-                android:contentDescription="@string/user_agreement"/>
+                android:contentDescription="@string/user_agreement"                />
         </FrameLayout>
-
     </LinearLayout>
-
 </LinearLayout>

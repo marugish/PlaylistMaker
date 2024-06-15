@@ -8,6 +8,6 @@
     <dimen name="margin_bottom_heading_layout">24dp</dimen>
     <dimen name="icon_padding">4dp</dimen>
     <dimen name="settings_frame_layout_size">64dp</dimen>
-    <dimen name="switch_width">56dp</dimen>
-    <dimen name="switch_height">48dp</dimen>
+    <dimen name="toolbar_layout_size">56dp</dimen>
+    <dimen name="edit_text_height">36dp</dimen>
 </resources>
