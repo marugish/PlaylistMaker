@@ -19,7 +19,7 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(EDIT_TEXT, searchQuery)
     }
 
-    companion object {
+    private companion object {
         const val EDIT_TEXT = "EDIT_TEXT"
         const val SEARCH_QUERY = ""
     }
