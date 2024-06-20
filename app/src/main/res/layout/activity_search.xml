@@ -1,15 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
+    android:orientation="vertical"
+    android:background="?attr/colorSecondary">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_layout_size">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_search"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_gravity="start"
+            android:background="?attr/colorSecondary"
+            app:title="@string/search"
+            style="@style/HeadingTextStyle"
+            app:titleTextColor="?attr/textColor"
+            app:navigationIcon="@drawable/arrow_back"
+            app:iconPadding="@dimen/icon_padding"
+            app:buttonGravity="center_vertical" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/search"
-        android:layout_gravity="center" />
-</FrameLayout>
+        android:layout_marginHorizontal="@dimen/default_margin">
+
+        <EditText
+            android:id="@+id/search_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_text_height"
+            android:background="@drawable/rounded_edit_text"
+            android:hint="@string/search"
+            android:textColorHint="?attr/editIconColor"
+            android:textColor="?attr/colorSecondaryVariant"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLength="30"
+            android:drawableStart="@drawable/search_icon"
+            android:drawablePadding="8dp"
+            android:paddingStart="10dp" />
+
+        <ImageView
+            android:id="@+id/search_clear_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|end"
+            android:paddingEnd="@dimen/default_margin"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/clear"
+            android:visibility="gone"/>
+    </FrameLayout>
+</LinearLayout>
