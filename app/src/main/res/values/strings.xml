@@ -12,4 +12,6 @@
     <string name="email">marugish@yandex.ru</string>
     <string name="address">https://yandex.ru/legal/practicum_offer/</string>
     <string name="share_link">https://practicum.yandex.ru/android-developer/</string>
+    <string name="track_artist_and_duration">Исполнитель и длительность</string>
+    <string name="track_name">Название трека</string>
 </resources>
