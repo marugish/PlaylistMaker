@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
@@ -12,6 +12,8 @@
         <item name="iconColor">@color/white</item>
         <item name="editIconColor">@color/text_and_icon_color</item>
         <item name="editColor">@color/white</item>
+        <item name="artistText">@color/white</item>
+        <item name="nameTrackText">@color/white</item>
     </style>
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 </resources>
