@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/settings_frame_layout_size"
+    android:orientation="horizontal"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/track_image"
+        android:layout_width="@dimen/track_image_size"
+        android:layout_height="@dimen/track_image_size"
+        android:layout_marginStart="@dimen/track_margin_borders"
+        android:layout_marginEnd="@dimen/track_margin_between"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/track_name_text"
+            style="@style/RegularTextStyle"
+            android:textSize="@dimen/default_text_size"
+            android:textColor="?attr/nameTrackText"
+            android:text="@string/track_name" />
+
+        <TextView
+            android:id="@+id/artist_name_text"
+            style="@style/RegularTextStyle"
+            android:textSize="@dimen/track_name_size"
+            android:textColor="?attr/artistText"
+            android:text="@string/track_artist_and_duration" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/arrow_forward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/track_margin_borders"
+        android:layout_marginStart="@dimen/track_margin_between"
+        android:src="@drawable/arrow_forward"/>
+</LinearLayout>

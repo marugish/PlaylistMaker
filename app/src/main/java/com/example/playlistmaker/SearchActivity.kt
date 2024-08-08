@@ -1,7 +1,6 @@
 package com.example.playlistmaker
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,7 +8,11 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
 
 class SearchActivity : AppCompatActivity() {
     private var searchQuery: String = SEARCH_QUERY
@@ -72,6 +75,13 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
+
+        val recycler = findViewById<RecyclerView>(R.id.track_recycle_view)
+        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.adapter = TrackAdapter(
+            createTracks()
+        )
+
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
