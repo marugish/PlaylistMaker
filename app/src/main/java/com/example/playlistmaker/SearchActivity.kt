@@ -76,11 +76,10 @@ class SearchActivity : AppCompatActivity() {
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
-        val tracks = createTracks()
         val recycler = findViewById<RecyclerView>(R.id.track_recycle_view)
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = TrackAdapter(
-            tracks
+            createTracks()
         )
 
     }
