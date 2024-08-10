@@ -8,8 +8,10 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -57,6 +59,9 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var inputEditText: EditText
     private lateinit var clearButton: ImageView
     private lateinit var recycler: RecyclerView
+    private lateinit var placeholderMessage: TextView
+    private lateinit var placeholderImage: ImageView
+    private lateinit var updateButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +69,9 @@ class SearchActivity : AppCompatActivity() {
 
         inputEditText = findViewById(R.id.search_edit_text)
         clearButton = findViewById(R.id.search_clear_button)
+        placeholderMessage = findViewById(R.id.placeholderMessage)
+        placeholderImage = findViewById(R.id.placeholder_image)
+        updateButton = findViewById(R.id.update_button)
 
         val toolbarBack = findViewById<Toolbar>(R.id.toolbar_search)
         toolbarBack.setNavigationOnClickListener {
@@ -76,6 +84,8 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken , 0)
             inputEditText.clearFocus()
             inputEditText.hint = getString(R.string.search)
+            results.clear()
+            adapter.notifyDataSetChanged()
         }
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -84,15 +94,14 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-
-
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                searchQuery = s.toString()
+                // empty
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
+                searchQuery = s.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -108,14 +117,18 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (inputEditText.text.isNotEmpty()) {
-                    Toast.makeText(applicationContext, "Выполняем запрос", Toast.LENGTH_LONG).show()
-                    search()
+                    search(inputEditText.text.toString())
+                    //Toast.makeText(applicationContext, "Выполняем запрос", Toast.LENGTH_LONG).show()
                     true
                 }
             }
             false
         }
 
+        updateButton.setOnClickListener {
+            search(searchQuery)
+            //Toast.makeText(applicationContext, "Обновить", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -126,40 +139,57 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun search() {
-        itunesService.searchTrack(inputEditText.text.toString())
+    private fun search(request: String) {
+        itunesService.searchTrack(request)
             .enqueue(object : Callback<TracksResponse> {
                 override fun onResponse(call: Call<TracksResponse>,
                                         response: Response<TracksResponse>
                 ) {
                     when (response.code()) {
-
                         200 -> {
                             if (response.body()?.results?.isNotEmpty() == true) {
                                 results.clear()
                                 results.addAll(response.body()?.results!!)
                                 adapter.notifyDataSetChanged()
-                                Toast.makeText(applicationContext, "200: ОК", Toast.LENGTH_LONG).show()
-                                //showMessage("", "")
+                                showMessage("", 0, false)
+                                //Toast.makeText(applicationContext, "200: ОК", Toast.LENGTH_LONG).show()
                             } else {
-                                print(response.body().toString())
-                                Toast.makeText(applicationContext, "200: BAD, ничего не найдено", Toast.LENGTH_LONG).show()
-                                Log.e("Retrofit", "Ошибка: " + response.body().toString());//showMessage(getString(R.string.nothing_found), "")
+                                showMessage(getString(R.string.nothing_found), R.drawable.not_found_placeholder, false)
+                                //Toast.makeText(applicationContext, "200: BAD", Toast.LENGTH_LONG).show()
                             }
 
                         }
-                        else -> Toast.makeText(applicationContext, "On Response: что-то пошло не так", Toast.LENGTH_LONG).show()
-                        //showMessage(getString(R.string.something_went_wrong), response.code().toString())
+                        else -> showMessage(getString(R.string.network_problems), R.drawable.no_network_placeholder, true)
+                        //Toast.makeText(applicationContext, "On Response: что-то пошло не так", Toast.LENGTH_LONG).show()
                     }
 
                 }
 
                 override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                    Toast.makeText(applicationContext, "On Failure: что-то пошло не так", Toast.LENGTH_LONG).show()
-                    //showMessage(getString(R.string.something_went_wrong), t.message.toString())
+                    showMessage(getString(R.string.network_problems), R.drawable.no_network_placeholder, true)
+                    //Toast.makeText(applicationContext, "On Failure: что-то пошло не так", Toast.LENGTH_LONG).show()
                 }
-
             })
+    }
+
+    private fun showMessage(text: String, resource: Int, buttonVisibility: Boolean) {
+        if (text.isNotEmpty()) {
+            placeholderMessage.visibility = View.VISIBLE
+            placeholderImage.visibility = View.VISIBLE
+            results.clear()
+            adapter.notifyDataSetChanged()
+            placeholderMessage.text = text
+            placeholderImage.setImageResource(resource)
+            if (buttonVisibility) {
+                updateButton.visibility = View.VISIBLE
+            } else {
+                updateButton.visibility = View.GONE
+            }
+        } else {
+            placeholderMessage.visibility = View.GONE
+            placeholderImage.visibility = View.GONE
+            updateButton.visibility = View.GONE
+        }
     }
 
 }

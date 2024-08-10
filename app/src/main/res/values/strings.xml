@@ -14,4 +14,7 @@
     <string name="share_link">https://practicum.yandex.ru/android-developer/</string>
     <string name="track_artist_and_duration">Исполнитель и длительность</string>
     <string name="track_name">Название трека</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="network_problems">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="update">Обновить</string>
 </resources>
