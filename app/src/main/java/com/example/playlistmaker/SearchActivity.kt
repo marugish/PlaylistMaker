@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -12,7 +11,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
+    // Retrofit
     private val searchBaseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder()
         .baseUrl(searchBaseUrl)
@@ -38,7 +37,6 @@ class SearchActivity : AppCompatActivity() {
     private val adapter = TrackAdapter(results, searchHistory)
     private val searchAdapter = TrackAdapter(searchHistory.historyResults, searchHistory)
     private var searchQuery: String = SEARCH_QUERY
-
 
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -106,14 +104,14 @@ class SearchActivity : AppCompatActivity() {
         }
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            historyText.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
-            historyButton.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
-            historyRecycler.visibility = if (hasFocus && inputEditText.text.isEmpty()) View.VISIBLE else View.GONE
             if (hasFocus && inputEditText.text.isEmpty()) {
-                //searchHistory.read()
                 searchHistory.historyResults.clear()
                 searchHistory.historyResults.addAll(searchHistory.read(sharedPref))
                 searchAdapter.notifyDataSetChanged()
+                if (searchHistory.historyResults.isNotEmpty())
+                    historyVisibility(View.VISIBLE)
+            } else {
+                historyVisibility(View.GONE)
             }
             if (hasFocus) {
                 inputEditText.hint = ""
@@ -123,6 +121,7 @@ class SearchActivity : AppCompatActivity() {
         historyButton.setOnClickListener {
             searchHistory.clearHistory()
             searchAdapter.notifyDataSetChanged()
+            historyVisibility(View.GONE)
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -133,9 +132,17 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
                 searchQuery = s.toString()
-                historyText.visibility = if (inputEditText.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
-                historyButton.visibility = if (inputEditText.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
-                historyRecycler.visibility = if (inputEditText.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
+                if (inputEditText.hasFocus() && s?.isEmpty() == true) {
+                    if (searchHistory.historyResults.isNotEmpty()) {
+                        recycler.visibility = View.GONE
+                        placeholderImage.visibility = View.GONE
+                        placeholderMessage.visibility = View.GONE
+                        updateButton.visibility = View.GONE
+                        historyVisibility(View.VISIBLE)
+                    }
+                } else {
+                    historyVisibility(View.GONE)
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -152,7 +159,7 @@ class SearchActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (inputEditText.text.isNotEmpty()) {
                     search(inputEditText.text.toString())
-                    //Toast.makeText(applicationContext, "Выполняем запрос", Toast.LENGTH_LONG).show()
+                    recycler.visibility = View.VISIBLE
                     true
                 }
             }
@@ -161,11 +168,14 @@ class SearchActivity : AppCompatActivity() {
 
         updateButton.setOnClickListener {
             search(searchQuery)
-            //Toast.makeText(applicationContext, "Обновить", Toast.LENGTH_LONG).show()
         }
 
+    }
 
-
+    private fun historyVisibility(visibilityStatus: Int) {
+        historyText.visibility = visibilityStatus
+        historyButton.visibility = visibilityStatus
+        historyRecycler.visibility = visibilityStatus
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {

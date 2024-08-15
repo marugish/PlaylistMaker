@@ -6,27 +6,22 @@ import com.google.gson.Gson
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
     var historyResults = ArrayList<Track>()
     //private val searchAdapter = TrackAdapter(historyResults, searchHistory)
-    // чтение
+
     fun read(sharedPreferences: SharedPreferences): Array<Track> {
         val json = sharedPreferences.getString(SEARCH_KEY, null) ?: return emptyArray()
         return Gson().fromJson(json, Array<Track>::class.java)
     }
 
-    // запись
+
     fun write(track: Track) {
-        // Будем получать 1 объект, а не список
-        // для этого буду изменять historyResults
-        val position = historyResults.indexOf(track)
+        // Получаем 1 трек, а не весь список. Изменяем historyResults
+        val position = historyResults.indexOf(track) // Проверяем, есть ли этот трек в списке
         if (position != -1)
-            historyResults.removeAt(position)
-        // Есть ли этот трек уже в списке
-        if (historyResults.size == 10) {
+            historyResults.removeAt(position) // удаляем найденный трек
+        if (historyResults.size == 10) { // должно быть не больше 10 треков
             historyResults.removeLast()
         }
-        historyResults.add(0, track)
-
-        // должно быть не больше 10 треков
-        // если такой трек уже есть в списке, то тогда его нужно удалить, а потом заново добавить
+        historyResults.add(0, track) // теперь только добавляем в начало
 
         val json = Gson().toJson(historyResults)
         sharedPreferences.edit()
@@ -40,6 +35,4 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
             .apply()
         historyResults.clear()
     }
-
-    // понять, где будут обновления списка
 }

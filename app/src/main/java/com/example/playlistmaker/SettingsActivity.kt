@@ -1,15 +1,10 @@
 package com.example.playlistmaker
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.widget.CompoundButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 
@@ -48,15 +43,12 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(openLink)
         }
 
-        // ПЕРЕПРОВЕРИТЬ
         val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_theme)
         val savedTheme = sharedPref.getBoolean(THEME_SWITCH_KEY, false)
         themeSwitcher.isChecked = savedTheme
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
             sharedPref.edit().putBoolean(THEME_SWITCH_KEY, checked).apply()
             (applicationContext as App).switchTheme(checked)
         }
-
     }
-
 }

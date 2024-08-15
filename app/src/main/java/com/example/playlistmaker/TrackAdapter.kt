@@ -17,7 +17,7 @@ class TrackAdapter(private val tracks: List<Track>, private val searchHistory: S
         val context = holder.itemView.context
         holder.itemView.setOnClickListener {
             Toast.makeText(context, "Нажатие на элемент номер $position", Toast.LENGTH_LONG).show()
-            // перепроверить логику
+            // перепроверить логику чтения и записи
             searchHistory.write(tracks[position])
         }
     }
