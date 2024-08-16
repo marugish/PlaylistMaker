@@ -5,7 +5,6 @@ import com.google.gson.Gson
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
     var historyResults = ArrayList<Track>()
-    //private val searchAdapter = TrackAdapter(historyResults, searchHistory)
 
     fun read(sharedPreferences: SharedPreferences): Array<Track> {
         val json = sharedPreferences.getString(SEARCH_KEY, null) ?: return emptyArray()

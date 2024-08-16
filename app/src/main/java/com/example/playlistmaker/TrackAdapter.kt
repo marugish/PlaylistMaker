@@ -2,7 +2,6 @@ package com.example.playlistmaker
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 class TrackAdapter(private val tracks: List<Track>, private val searchHistory: SearchHistory): RecyclerView.Adapter<TrackViewHolder> () {
@@ -14,10 +13,7 @@ class TrackAdapter(private val tracks: List<Track>, private val searchHistory: S
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])
-        val context = holder.itemView.context
         holder.itemView.setOnClickListener {
-            Toast.makeText(context, "Нажатие на элемент номер $position", Toast.LENGTH_LONG).show()
-            // перепроверить логику чтения и записи
             searchHistory.write(tracks[position])
         }
     }
