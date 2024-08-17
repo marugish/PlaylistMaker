@@ -33,7 +33,7 @@ class SearchActivity : AppCompatActivity() {
         .build()
     private val itunesService = retrofit.create(ItunesApi::class.java)
 
-    private val results = ArrayList<Track>()
+    private val results: MutableList<Track> = mutableListOf()
     private val searchHistory = SearchHistory(sharedPref)
     private val adapter = TrackAdapter(results, searchHistory)
     private val searchAdapter = TrackAdapter(searchHistory.historyResults, searchHistory)
@@ -115,7 +115,7 @@ class SearchActivity : AppCompatActivity() {
             } else {
                 historyVisibility(View.GONE)
             }
-            if (hasFocus) {
+            if (hasFocus && inputEditText.text.isNotEmpty()) {
                 inputEditText.hint = ""
             }
         }

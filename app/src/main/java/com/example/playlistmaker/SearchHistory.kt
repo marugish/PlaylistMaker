@@ -4,11 +4,12 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
-    var historyResults = ArrayList<Track>()
+    var historyResults: MutableList<Track> = mutableListOf()
+    private val gson: Gson = Gson()
 
     fun read(sharedPreferences: SharedPreferences): Array<Track> {
         val json = sharedPreferences.getString(SEARCH_KEY, null) ?: return emptyArray()
-        return Gson().fromJson(json, Array<Track>::class.java)
+        return gson.fromJson(json, Array<Track>::class.java)
     }
 
 
@@ -22,7 +23,7 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
         }
         historyResults.add(0, track) // теперь только добавляем в начало
 
-        val json = Gson().toJson(historyResults)
+        val json = gson.toJson(historyResults)
         sharedPreferences.edit()
             .putString(SEARCH_KEY, json)
             .apply()
