@@ -14,6 +14,7 @@
         <item name="editColor">@color/white</item>
         <item name="artistText">@color/white</item>
         <item name="nameTrackText">@color/white</item>
+        <item name="infoTrackText">@color/icon_color</item>
     </style>
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 </resources>

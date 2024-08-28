@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -35,8 +36,18 @@ class SearchActivity : AppCompatActivity() {
 
     private val results: MutableList<Track> = mutableListOf()
     private val searchHistory = SearchHistory(sharedPref)
-    private val adapter = TrackAdapter(results, searchHistory)
-    private val searchAdapter = TrackAdapter(searchHistory.historyResults, searchHistory)
+
+    private val adapter = TrackAdapter(results, { track ->
+        val intent = Intent(this, PlayActivity::class.java)
+        intent.putExtra("track", track)
+        startActivity(intent)
+    }, searchHistory)
+    private val searchAdapter = TrackAdapter(searchHistory.historyResults, { track ->
+        val intent = Intent(this, PlayActivity::class.java)
+        intent.putExtra("track", track)
+        startActivity(intent)
+    }, searchHistory)
+
     private var searchQuery: String = SEARCH_QUERY
 
 
