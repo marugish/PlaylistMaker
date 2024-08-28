@@ -19,4 +19,5 @@
     <dimen name="not_found_or_network_image_placeholder_margin">104dp</dimen>
     <dimen name="corner_radius_update_button">56dp</dimen>
     <dimen name="update_button_height">36dp</dimen>
+    <dimen name="search_text_height">52dp</dimen>
 </resources>

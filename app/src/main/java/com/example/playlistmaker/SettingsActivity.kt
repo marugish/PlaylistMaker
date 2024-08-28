@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 
 class SettingsActivity : AppCompatActivity() {
@@ -42,5 +43,12 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(openLink)
         }
 
+        val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_theme)
+        val savedTheme = sharedPref.getBoolean(THEME_SWITCH_KEY, false)
+        themeSwitcher.isChecked = savedTheme
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            sharedPref.edit().putBoolean(THEME_SWITCH_KEY, checked).apply()
+            (applicationContext as App).switchTheme(checked)
+        }
     }
 }
