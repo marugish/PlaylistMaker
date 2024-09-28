@@ -16,6 +16,7 @@
         <item name="editColor">@color/edit_text_color</item>
         <item name="artistText">@color/icon_color</item>
         <item name="nameTrackText">@color/black</item>
+        <item name="infoTrackText">@color/icon_color</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/blue_background</item>
 
