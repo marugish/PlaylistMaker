@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.IntentCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.text.SimpleDateFormat
@@ -21,7 +22,7 @@ class PlayActivity : AppCompatActivity() {
             finish()
         }
 
-        val track = intent.getSerializableExtra("track") as Track?
+        val track = IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
 
         val artistName = findViewById<TextView>(R.id.singerTextView)
         val trackName = findViewById<TextView>(R.id.trackTextView)
