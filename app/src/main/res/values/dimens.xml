@@ -23,4 +23,6 @@
     <dimen name="corner_radius_update_button">56dp</dimen>
     <dimen name="update_button_height">36dp</dimen>
     <dimen name="search_text_height">52dp</dimen>
+    <dimen name="progress_bar_size">44dp</dimen>
+    <dimen name="progress_bar_margin">140dp</dimen>
 </resources>

@@ -4,14 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -38,27 +40,37 @@ class SearchActivity : AppCompatActivity() {
     private val searchHistory = SearchHistory(sharedPref)
 
     private val adapter = TrackAdapter(results, { track ->
-        val intent = Intent(this, PlayActivity::class.java)
-        intent.putExtra("track", track)
-        startActivity(intent)
+        if (clickDebounce()) {
+            val intent = Intent(this, PlayActivity::class.java)
+            intent.putExtra("track", track)
+            startActivity(intent)
+        }
     }, searchHistory)
     private val searchAdapter = TrackAdapter(searchHistory.historyResults, { track ->
-        val intent = Intent(this, PlayActivity::class.java)
-        intent.putExtra("track", track)
-        startActivity(intent)
+        if (clickDebounce()) {
+            val intent = Intent(this, PlayActivity::class.java)
+            intent.putExtra("track", track)
+            startActivity(intent)
+        }
     }, searchHistory)
 
     private var searchQuery: String = SEARCH_QUERY
 
+    private var isClickAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { search(inputEditText.text.toString()) }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_TEXT, searchQuery)
     }
 
-    private companion object {
-        const val EDIT_TEXT = "EDIT_TEXT"
-        const val SEARCH_QUERY = ""
+    companion object {
+        private const val EDIT_TEXT = "EDIT_TEXT"
+        private const val SEARCH_QUERY = ""
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -75,6 +87,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderMessage: TextView
     private lateinit var placeholderImage: ImageView
     private lateinit var updateButton: Button
+    private lateinit var progressBar: ProgressBar
 
     //всё для истории поиска
     private lateinit var historyText: TextView
@@ -92,6 +105,7 @@ class SearchActivity : AppCompatActivity() {
         placeholderMessage = findViewById(R.id.placeholderMessage)
         placeholderImage = findViewById(R.id.placeholder_image)
         updateButton = findViewById(R.id.update_button)
+        progressBar = findViewById(R.id.progress_bar)
 
         // всё для истории поиска
         historyText = findViewById(R.id.history_search)
@@ -99,7 +113,6 @@ class SearchActivity : AppCompatActivity() {
         historyRecycler = findViewById(R.id.search_recycle_view)
         historyRecycler.layoutManager = LinearLayoutManager(this)
         historyRecycler.adapter = searchAdapter
-
 
         val toolbarBack = findViewById<Toolbar>(R.id.toolbar_search)
         toolbarBack.setNavigationOnClickListener {
@@ -114,6 +127,7 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.hint = getString(R.string.search)
             results.clear()
             adapter.notifyDataSetChanged()
+            placeholderVisibility(View.GONE)
         }
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -125,9 +139,7 @@ class SearchActivity : AppCompatActivity() {
                     historyVisibility(View.VISIBLE)
             } else {
                 historyVisibility(View.GONE)
-            }
-            if (hasFocus && inputEditText.text.isNotEmpty()) {
-                inputEditText.hint = ""
+                recycler.visibility = View.VISIBLE
             }
         }
 
@@ -135,6 +147,7 @@ class SearchActivity : AppCompatActivity() {
             searchHistory.clearHistory()
             searchAdapter.notifyDataSetChanged()
             historyVisibility(View.GONE)
+            recycler.visibility = View.VISIBLE
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -148,13 +161,13 @@ class SearchActivity : AppCompatActivity() {
                 if (inputEditText.hasFocus() && s?.isEmpty() == true) {
                     if (searchHistory.historyResults.isNotEmpty()) {
                         recycler.visibility = View.GONE
-                        placeholderImage.visibility = View.GONE
-                        placeholderMessage.visibility = View.GONE
+                        placeholderVisibility(View.GONE)
                         updateButton.visibility = View.GONE
                         historyVisibility(View.VISIBLE)
                     }
                 } else {
                     historyVisibility(View.GONE)
+                    searchDebounce()
                 }
             }
 
@@ -168,7 +181,8 @@ class SearchActivity : AppCompatActivity() {
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+        // Осуществление запроса по кнопке DONE на клавиатуре
+        /*inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (inputEditText.text.isNotEmpty()) {
                     search(inputEditText.text.toString())
@@ -177,7 +191,7 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
             false
-        }
+        }*/
 
         updateButton.setOnClickListener {
             search(searchQuery)
@@ -191,6 +205,11 @@ class SearchActivity : AppCompatActivity() {
         historyRecycler.visibility = visibilityStatus
     }
 
+    private fun placeholderVisibility(visibilityStatus: Int) {
+        placeholderImage.visibility = visibilityStatus
+        placeholderMessage.visibility = visibilityStatus
+    }
+
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             View.GONE
@@ -199,43 +218,77 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun search(request: String) {
-        itunesService.searchTrack(request)
-            .enqueue(object : Callback<TracksResponse> {
-                override fun onResponse(call: Call<TracksResponse>,
-                                        response: Response<TracksResponse>
-                ) {
-                    when (response.code()) {
-                        200 -> {
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                results.clear()
-                                results.addAll(response.body()?.results!!)
-                                adapter.notifyDataSetChanged()
-                                showMessage("", 0, false)
-                                //Toast.makeText(applicationContext, "200: ОК", Toast.LENGTH_LONG).show()
-                            } else {
-                                showMessage(getString(R.string.nothing_found), R.drawable.not_found_placeholder, false)
-                                //Toast.makeText(applicationContext, "200: BAD", Toast.LENGTH_LONG).show()
-                            }
-
-                        }
-                        else -> showMessage(getString(R.string.network_problems), R.drawable.no_network_placeholder, true)
-                        //Toast.makeText(applicationContext, "On Response: что-то пошло не так", Toast.LENGTH_LONG).show()
-                    }
-
-                }
-
-                override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                    showMessage(getString(R.string.network_problems), R.drawable.no_network_placeholder, true)
-                    //Toast.makeText(applicationContext, "On Failure: что-то пошло не так", Toast.LENGTH_LONG).show()
-                }
-            })
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun search(request: String) {
+        if (request.isNotEmpty()) {
+            progressBar.visibility = View.VISIBLE
+            recycler.visibility = View.GONE
+
+            itunesService.searchTrack(request)
+                .enqueue(object : Callback<TracksResponse> {
+                    @SuppressLint("NotifyDataSetChanged")
+                    override fun onResponse(
+                        call: Call<TracksResponse>,
+                        response: Response<TracksResponse>
+                    ) {
+                        progressBar.visibility = View.GONE
+                        when (response.code()) {
+                            200 -> {
+                                if (response.body()?.results?.isNotEmpty() == true) {
+                                    results.clear()
+                                    results.addAll(response.body()?.results!!)
+                                    adapter.notifyDataSetChanged()
+                                    showMessage("", 0, false)
+                                    recycler.visibility = View.VISIBLE
+                                    //Toast.makeText(applicationContext, "200: ОК", Toast.LENGTH_LONG).show()
+                                } else {
+                                    showMessage(
+                                        getString(R.string.nothing_found),
+                                        R.drawable.not_found_placeholder,
+                                        false
+                                    )
+                                    //Toast.makeText(applicationContext, "200: BAD", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            else -> showMessage(
+                                getString(R.string.network_problems),
+                                R.drawable.no_network_placeholder,
+                                true
+                            )
+                            //Toast.makeText(applicationContext, "On Response: что-то пошло не так", Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                        progressBar.visibility = View.GONE
+                        showMessage(
+                            getString(R.string.network_problems),
+                            R.drawable.no_network_placeholder,
+                            true
+                        )
+                        //Toast.makeText(applicationContext, "On Failure: что-то пошло не так", Toast.LENGTH_LONG).show()
+                    }
+                })
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(text: String, resource: Int, buttonVisibility: Boolean) {
         if (text.isNotEmpty()) {
-            placeholderMessage.visibility = View.VISIBLE
-            placeholderImage.visibility = View.VISIBLE
+            placeholderVisibility(View.VISIBLE)
             results.clear()
             adapter.notifyDataSetChanged()
             placeholderMessage.text = text
@@ -246,8 +299,7 @@ class SearchActivity : AppCompatActivity() {
                 updateButton.visibility = View.GONE
             }
         } else {
-            placeholderMessage.visibility = View.GONE
-            placeholderImage.visibility = View.GONE
+            placeholderVisibility(View.GONE)
             updateButton.visibility = View.GONE
         }
     }
