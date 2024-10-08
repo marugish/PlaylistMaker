@@ -6,6 +6,7 @@
     <dimen name="placeholder_text_size">20sp</dimen>
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="default_margin">16dp</dimen>
+    <dimen name="default_margin_settings">20dp</dimen>
     <dimen name="default_margin_heading">24dp</dimen>
     <dimen name="margin_start_top_text">16dp</dimen>
     <dimen name="margin_bottom_heading_layout">24dp</dimen>
@@ -23,4 +24,6 @@
     <dimen name="corner_radius_update_button">56dp</dimen>
     <dimen name="update_button_height">36dp</dimen>
     <dimen name="search_text_height">52dp</dimen>
+    <dimen name="progress_bar_size">44dp</dimen>
+    <dimen name="progress_bar_margin">140dp</dimen>
 </resources>
