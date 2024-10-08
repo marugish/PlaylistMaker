@@ -7,16 +7,11 @@
     android:orientation="vertical"
     android:background="?attr/colorSecondary">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_layout_size"
-        android:layout_marginBottom="@dimen/margin_bottom_heading_layout">
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_settings"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:background="?attr/colorSecondary"
+            android:layout_height="@dimen/toolbar_layout_size"
+            android:layout_marginBottom="@dimen/margin_bottom_heading_layout"
             android:layout_gravity="start"
             app:title="@string/settings"
             style="@style/HeadingTextStyle"
@@ -24,71 +19,29 @@
             app:navigationIcon="@drawable/arrow_back"
             app:iconPadding="@dimen/icon_padding"
             app:buttonGravity="center_vertical" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginHorizontal="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_margin">
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_theme"
+            style="@style/SettingsTextStyle"
+            android:text="@string/dark_theme"
+            android:thumbTintMode="screen" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_frame_layout_size">
+        <TextView
+            android:id="@+id/share"
+            style="@style/SettingsTextStyle"
+            app:drawableEndCompat="@drawable/share"
+            android:text="@string/share_app" />
 
-            <TextView
-                style="@style/SettingsTextStyle"
-                android:text="@string/dark_theme" />
+        <TextView
+            android:id="@+id/support"
+            style="@style/SettingsTextStyle"
+            app:drawableEndCompat="@drawable/support"
+            android:text="@string/write_to_support"/>
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_theme"
-                style="@style/ImageOrSwitchSettingsStyle"/>
-        </FrameLayout>
+        <TextView
+            android:id="@+id/user_agreement"
+            style="@style/SettingsTextStyle"
+            app:drawableEndCompat="@drawable/arrow_forward"
+            android:text="@string/user_agreement" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_frame_layout_size">
-
-            <TextView
-                style="@style/SettingsTextStyle"
-                android:text="@string/share_app" />
-
-            <ImageView
-                android:id="@+id/share"
-                style="@style/ImageOrSwitchSettingsStyle"
-                android:src="@drawable/share"
-                android:contentDescription="@string/share_app" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_frame_layout_size">
-
-            <TextView
-                style="@style/SettingsTextStyle"
-                android:text="@string/write_to_support"/>
-
-            <ImageView
-                android:id="@+id/support"
-                style="@style/ImageOrSwitchSettingsStyle"
-                android:src="@drawable/support"
-                android:contentDescription="@string/write_to_support" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/settings_frame_layout_size">
-
-            <TextView
-                style="@style/SettingsTextStyle"
-                android:text="@string/user_agreement" />
-
-            <ImageView
-                android:id="@+id/user_agreement"
-                style="@style/ImageOrSwitchSettingsStyle"
-                android:src="@drawable/arrow_forward"
-                android:contentDescription="@string/user_agreement"                />
-        </FrameLayout>
-    </LinearLayout>
 </LinearLayout>

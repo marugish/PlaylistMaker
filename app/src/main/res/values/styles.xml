@@ -45,19 +45,14 @@
     </style>
 
     <style name="SettingsTextStyle">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center_vertical|start</item>
+        <item name="android:paddingVertical">@dimen/default_margin_settings</item>
+        <item name="android:paddingHorizontal">@dimen/default_margin</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>
-    </style>
-
-    <style name="ImageOrSwitchSettingsStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center_vertical|end</item>
     </style>
 
     <style name="InfoPlayStyle">

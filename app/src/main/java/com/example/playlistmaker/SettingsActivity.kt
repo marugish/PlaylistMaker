@@ -3,7 +3,7 @@ package com.example.playlistmaker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
@@ -18,7 +18,7 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        val share = findViewById<ImageView>(R.id.share)
+        val share = findViewById<TextView>(R.id.share)
         share.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND)
             shareIntent.setType("text/plain")
@@ -26,7 +26,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share_app)))
         }
 
-        val support = findViewById<ImageView>(R.id.support)
+        val support = findViewById<TextView>(R.id.support)
         support.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SENDTO)
             shareIntent.data = Uri.parse("mailto:")
@@ -36,7 +36,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        val userAgreement = findViewById<ImageView>(R.id.user_agreement)
+        val userAgreement = findViewById<TextView>(R.id.user_agreement)
         userAgreement.setOnClickListener {
             val openLink = Intent(Intent.ACTION_VIEW)
             openLink.data = Uri.parse(getString(R.string.address))

@@ -6,6 +6,7 @@
     <dimen name="placeholder_text_size">20sp</dimen>
     <dimen name="corner_radius">16dp</dimen>
     <dimen name="default_margin">16dp</dimen>
+    <dimen name="default_margin_settings">20dp</dimen>
     <dimen name="default_margin_heading">24dp</dimen>
     <dimen name="margin_start_top_text">16dp</dimen>
     <dimen name="margin_bottom_heading_layout">24dp</dimen>
