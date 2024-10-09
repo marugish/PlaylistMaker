@@ -19,7 +19,7 @@
             android:name=".PlayActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchActivity"
+            android:name=".ui.SearchActivity"
             android:exported="false" />
         <activity
             android:name=".MediaLibraryActivity"

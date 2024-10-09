@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -19,40 +19,33 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.PlayActivity
+import com.example.playlistmaker.R
+import com.example.playlistmaker.SearchHistory
+import com.example.playlistmaker.domain.api.TracksInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.sharedPref
 
 
 class SearchActivity : AppCompatActivity() {
 
-    // Retrofit
-    private val searchBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(searchBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val itunesService = retrofit.create(ItunesApi::class.java)
+    private val getTracksInteractor = Creator.provideTracksInteractor()
 
     private val results: MutableList<Track> = mutableListOf()
     private val searchHistory = SearchHistory(sharedPref)
 
-    private val adapter = TrackAdapter(results, { track ->
+    private val adapter = TrackAdapter(results, { track -> showTrackInfo(track) }, searchHistory)
+    private val searchAdapter = TrackAdapter(searchHistory.historyResults, { track -> showTrackInfo(track) }, searchHistory)
+
+    //подумать над названием
+    private fun showTrackInfo(track: Track) {
         if (clickDebounce()) {
             val intent = Intent(this, PlayActivity::class.java)
             intent.putExtra("track", track)
             startActivity(intent)
         }
-    }, searchHistory)
-    private val searchAdapter = TrackAdapter(searchHistory.historyResults, { track ->
-        if (clickDebounce()) {
-            val intent = Intent(this, PlayActivity::class.java)
-            intent.putExtra("track", track)
-            startActivity(intent)
-        }
-    }, searchHistory)
+    }
 
     private var searchQuery: String = SEARCH_QUERY
 
@@ -111,6 +104,7 @@ class SearchActivity : AppCompatActivity() {
         historyText = findViewById(R.id.history_search)
         historyButton = findViewById(R.id.clear_search_button)
         historyRecycler = findViewById(R.id.search_recycle_view)
+
         historyRecycler.layoutManager = LinearLayoutManager(this)
         historyRecycler.adapter = searchAdapter
 
@@ -181,18 +175,6 @@ class SearchActivity : AppCompatActivity() {
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 
-        // Осуществление запроса по кнопке DONE на клавиатуре
-        /*inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (inputEditText.text.isNotEmpty()) {
-                    search(inputEditText.text.toString())
-                    recycler.visibility = View.VISIBLE
-                    true
-                }
-            }
-            false
-        }*/
-
         updateButton.setOnClickListener {
             search(searchQuery)
         }
@@ -237,12 +219,46 @@ class SearchActivity : AppCompatActivity() {
             progressBar.visibility = View.VISIBLE
             recycler.visibility = View.GONE
 
-            itunesService.searchTrack(request)
-                .enqueue(object : Callback<TracksResponse> {
+            getTracksInteractor.searchTracks(
+                expression = request,
+                consumer = object : TracksInteractor.TracksConsumer {
+                    override fun consume(foundTracks: List<Track>) {
+                        handler.post {
+                            if (foundTracks.isNotEmpty()) {
+                                results.clear()
+                                results.addAll(foundTracks)
+                                adapter.notifyDataSetChanged()
+                                showMessage("", 0, false)
+                                progressBar.visibility = View.GONE
+                                recycler.visibility = View.VISIBLE
+                            }
+                        }
+                        /*val currentRunnable = detailsRunnable
+                        if (currentRunnable != null) {
+                            handler.removeCallbacks(currentRunnable)
+                        }
+
+                        val newDetailsRunnable = Runnable {
+                            when (data) {
+                                is ConsumerData.Error -> showError(data.message)
+                                is ConsumerData.Data -> {
+                                    val productDetails = data.value
+                                    val productDetailsInfo = ProductDetailsMapper.map(productDetails)
+                                    showProductDetails(productDetailsInfo)
+                                }
+                            }
+                        }
+                        detailsRunnable = newDetailsRunnable
+                        handler.post(newDetailsRunnable)*/
+                    }
+                }
+            )
+
+            /*RetrofitItunesClient.itunesService.searchTrack(request).enqueue(object : Callback<TracksSearchResponse> {
                     @SuppressLint("NotifyDataSetChanged")
                     override fun onResponse(
-                        call: Call<TracksResponse>,
-                        response: Response<TracksResponse>
+                        call: Call<TracksSearchResponse>,
+                        response: Response<TracksSearchResponse>
                     ) {
                         progressBar.visibility = View.GONE
                         when (response.code()) {
@@ -272,7 +288,7 @@ class SearchActivity : AppCompatActivity() {
                         }
                     }
 
-                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<TracksSearchResponse>, t: Throwable) {
                         progressBar.visibility = View.GONE
                         showMessage(
                             getString(R.string.network_problems),
@@ -281,7 +297,7 @@ class SearchActivity : AppCompatActivity() {
                         )
                         //Toast.makeText(applicationContext, "On Failure: что-то пошло не так", Toast.LENGTH_LONG).show()
                     }
-                })
+                }) */
         }
     }
 
