@@ -1,6 +1,7 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.content.SharedPreferences
+import com.example.playlistmaker.SEARCH_KEY
 import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 
@@ -8,11 +9,11 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
     var historyResults: MutableList<Track> = mutableListOf()
     private val gson: Gson = Gson()
 
-    fun read(sharedPreferences: SharedPreferences): Array<Track> {
-        val json = sharedPreferences.getString(SEARCH_KEY, null) ?: return emptyArray()
-        return gson.fromJson(json, Array<Track>::class.java)
+    fun read(sharedPreferences: SharedPreferences): MutableList<Track> {
+        val json = sharedPreferences.getString(SEARCH_KEY, null) ?: return mutableListOf()
+        historyResults = gson.fromJson(json, Array<Track>::class.java).toMutableList()
+        return historyResults
     }
-
 
     fun write(track: Track) {
         // Получаем 1 трек, а не весь список. Изменяем historyResults

@@ -6,6 +6,7 @@ import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.api.TracksRepository
 import com.example.playlistmaker.domain.impl.TracksInteractorImpl
 
+
 object Creator {
     private fun getTracksRepository(): TracksRepository {
         return TracksRepositoryImpl(RetrofitNetworkClient())
@@ -15,4 +16,11 @@ object Creator {
         return TracksInteractorImpl(getTracksRepository())
     }
 
+    /*private fun getStorageRepository(): StorageRepository {
+        return StorageRepositoryImpl(SharedPrefsStorage()) // как-то надо передать context
+    }*/
+
+    /*fun provideSwitchThemeInteractor(): SwitchThemeInteractor {
+        return SwitchThemeInteractorImpl(getStorageRepository())
+    }*/
 }

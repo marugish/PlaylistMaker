@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -7,6 +7,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
+import com.example.playlistmaker.App
+import com.example.playlistmaker.R
+import com.example.playlistmaker.THEME_SWITCH_KEY
+import com.example.playlistmaker.sharedPref
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +47,11 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(openLink)
         }
 
+
+
         val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_theme)
+        // чтение через usecase
+
         val savedTheme = sharedPref.getBoolean(THEME_SWITCH_KEY, false)
         themeSwitcher.isChecked = savedTheme
         themeSwitcher.setOnCheckedChangeListener { _, checked ->

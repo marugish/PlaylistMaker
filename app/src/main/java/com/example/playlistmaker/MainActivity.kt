@@ -2,10 +2,11 @@ package com.example.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.ui.SearchActivity
+import com.example.playlistmaker.ui.mediaLibrary.MediaLibraryActivity
+import com.example.playlistmaker.ui.search.SearchActivity
+import com.example.playlistmaker.ui.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,12 +17,9 @@ class MainActivity : AppCompatActivity() {
         val buttonMediaLibrary = findViewById<Button>(R.id.button_media_library)
         val buttonSettings = findViewById<Button>(R.id.button_settings)
 
-        val buttonSearchClickListener: View.OnClickListener = object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                v?.context?.startActivity(Intent(v.context, SearchActivity::class.java))
-            }
+        buttonSearch.setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
         }
-        buttonSearch.setOnClickListener(buttonSearchClickListener)
 
         buttonMediaLibrary.setOnClickListener {
             startActivity(Intent(this, MediaLibraryActivity::class.java))

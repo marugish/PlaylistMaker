@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -20,9 +20,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.PlayActivity
 import com.example.playlistmaker.R
-import com.example.playlistmaker.SearchHistory
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.sharedPref
@@ -37,6 +35,8 @@ class SearchActivity : AppCompatActivity() {
 
     private val adapter = TrackAdapter(results, { track -> showTrackInfo(track) }, searchHistory)
     private val searchAdapter = TrackAdapter(searchHistory.historyResults, { track -> showTrackInfo(track) }, searchHistory)
+    //private val adapter = TrackAdapter({ track -> showTrackInfo(track) }, searchHistory)
+    //private val searchAdapter = TrackAdapter({ track -> showTrackInfo(track) }, searchHistory)
 
     //подумать над названием
     private fun showTrackInfo(track: Track) {
@@ -100,6 +100,10 @@ class SearchActivity : AppCompatActivity() {
         updateButton = findViewById(R.id.update_button)
         progressBar = findViewById(R.id.progress_bar)
 
+        recycler = findViewById(R.id.track_recycle_view)
+        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.adapter = adapter
+
         // всё для истории поиска
         historyText = findViewById(R.id.history_search)
         historyButton = findViewById(R.id.clear_search_button)
@@ -107,6 +111,7 @@ class SearchActivity : AppCompatActivity() {
 
         historyRecycler.layoutManager = LinearLayoutManager(this)
         historyRecycler.adapter = searchAdapter
+
 
         val toolbarBack = findViewById<Toolbar>(R.id.toolbar_search)
         toolbarBack.setNavigationOnClickListener {
@@ -119,16 +124,23 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken , 0)
             inputEditText.clearFocus()
             inputEditText.hint = getString(R.string.search)
-            results.clear()
-            adapter.notifyDataSetChanged()
+            //results.clear()
+            //adapter.notifyDataSetChanged()
+            // Новое
+            adapter.setItems(emptyList())
             placeholderVisibility(View.GONE)
         }
 
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && inputEditText.text.isEmpty()) {
-                searchHistory.historyResults.clear()
-                searchHistory.historyResults.addAll(searchHistory.read(sharedPref))
-                searchAdapter.notifyDataSetChanged()
+
+                // лишняя работа похоже тут есть
+                searchAdapter.setItems(searchHistory.read(sharedPref).toList())
+
+                //searchHistory.historyResults.clear()
+                //searchHistory.historyResults.addAll(history)
+                //searchAdapter.notifyDataSetChanged()
+
                 if (searchHistory.historyResults.isNotEmpty())
                     historyVisibility(View.VISIBLE)
             } else {
@@ -140,6 +152,7 @@ class SearchActivity : AppCompatActivity() {
         historyButton.setOnClickListener {
             searchHistory.clearHistory()
             searchAdapter.notifyDataSetChanged()
+
             historyVisibility(View.GONE)
             recycler.visibility = View.VISIBLE
         }
@@ -171,9 +184,6 @@ class SearchActivity : AppCompatActivity() {
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
-        recycler = findViewById(R.id.track_recycle_view)
-        recycler.layoutManager = LinearLayoutManager(this)
-        recycler.adapter = adapter
 
         updateButton.setOnClickListener {
             search(searchQuery)
@@ -214,10 +224,21 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
-    private fun search(request: String) {
-        if (request.isNotEmpty()) {
+    // Подумать над названием
+    private fun showProgress(isShow: Boolean) {
+        if (isShow) {
             progressBar.visibility = View.VISIBLE
             recycler.visibility = View.GONE
+        } else {
+            progressBar.visibility = View.GONE
+            recycler.visibility = View.VISIBLE
+        }
+    }
+
+    private fun search(request: String) {
+        if (request.isNotEmpty()) {
+
+            showProgress(true)
 
             getTracksInteractor.searchTracks(
                 expression = request,
@@ -225,12 +246,13 @@ class SearchActivity : AppCompatActivity() {
                     override fun consume(foundTracks: List<Track>) {
                         handler.post {
                             if (foundTracks.isNotEmpty()) {
-                                results.clear()
-                                results.addAll(foundTracks)
-                                adapter.notifyDataSetChanged()
+                                adapter.setItems(foundTracks)
+                                //results.clear()
+                                //results.addAll(foundTracks)
+                                //adapter.notifyDataSetChanged()
                                 showMessage("", 0, false)
-                                progressBar.visibility = View.GONE
-                                recycler.visibility = View.VISIBLE
+
+                                showProgress(false)
                             }
                         }
                         /*val currentRunnable = detailsRunnable
@@ -305,8 +327,9 @@ class SearchActivity : AppCompatActivity() {
     private fun showMessage(text: String, resource: Int, buttonVisibility: Boolean) {
         if (text.isNotEmpty()) {
             placeholderVisibility(View.VISIBLE)
-            results.clear()
-            adapter.notifyDataSetChanged()
+            adapter.setItems(emptyList())
+            //results.clear()
+            //adapter.notifyDataSetChanged()
             placeholderMessage.text = text
             placeholderImage.setImageResource(resource)
             if (buttonVisibility) {

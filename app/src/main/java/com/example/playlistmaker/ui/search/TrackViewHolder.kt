@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.ui.search
 
 import android.annotation.SuppressLint
 import android.view.View
@@ -13,15 +13,9 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class TrackViewHolder(private val parentView: View) : RecyclerView.ViewHolder(parentView) {
-    private val trackName: TextView
-    private val artistName: TextView
-    private val trackImage: ImageView
-
-    init {
-        trackName = parentView.findViewById(R.id.track_name_text)
-        artistName = parentView.findViewById(R.id.artist_name_text)
-        trackImage = parentView.findViewById(R.id.track_image)
-    }
+    private val trackName: TextView = parentView.findViewById(R.id.track_name_text)
+    private val artistName: TextView = parentView.findViewById(R.id.artist_name_text)
+    private val trackImage: ImageView = parentView.findViewById(R.id.track_image)
 
     @SuppressLint("SetTextI18n")
     fun bind(model: Track) {
