@@ -1,9 +1,16 @@
 package com.example.playlistmaker
 
+import com.example.playlistmaker.data.StorageRepositoryImpl
 import com.example.playlistmaker.data.TracksRepositoryImpl
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
+import com.example.playlistmaker.data.storage.SharedPrefsStorage
+import com.example.playlistmaker.domain.api.SearchHistoryInteractor
+import com.example.playlistmaker.domain.api.StorageRepository
+import com.example.playlistmaker.domain.api.SwitchThemeInteractor
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.api.TracksRepository
+import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
+import com.example.playlistmaker.domain.impl.SwitchThemeInteractorImpl
 import com.example.playlistmaker.domain.impl.TracksInteractorImpl
 
 
@@ -16,11 +23,17 @@ object Creator {
         return TracksInteractorImpl(getTracksRepository())
     }
 
-    /*private fun getStorageRepository(): StorageRepository {
-        return StorageRepositoryImpl(SharedPrefsStorage()) // как-то надо передать context
-    }*/
+    private fun getStorageRepository(): StorageRepository {
+        return StorageRepositoryImpl(SharedPrefsStorage(App.getContext()))//App().applicationContext))
+    }
 
-    /*fun provideSwitchThemeInteractor(): SwitchThemeInteractor {
+    // Тёмная тема
+    fun provideSwitchThemeInteractor(): SwitchThemeInteractor {
         return SwitchThemeInteractorImpl(getStorageRepository())
-    }*/
+    }
+
+    // История поиска
+    fun provideSearchHistoryInteractor(): SearchHistoryInteractor {
+        return SearchHistoryInteractorImpl(getStorageRepository())
+    }
 }

@@ -8,11 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import com.example.playlistmaker.App
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
-import com.example.playlistmaker.THEME_SWITCH_KEY
-import com.example.playlistmaker.sharedPref
+import com.example.playlistmaker.domain.api.SwitchThemeInteractor
+import com.example.playlistmaker.domain.models.SwitchTheme
 
 class SettingsActivity : AppCompatActivity() {
+    private val getSwitchThemeInteractor = Creator.provideSwitchThemeInteractor()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -50,13 +53,26 @@ class SettingsActivity : AppCompatActivity() {
 
 
         val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_theme)
-        // чтение через usecase
 
-        val savedTheme = sharedPref.getBoolean(THEME_SWITCH_KEY, false)
-        themeSwitcher.isChecked = savedTheme
+        // чтение через Interactor
+        getSwitchThemeInteractor.getSwitchTheme(
+            consumer = object : SwitchThemeInteractor.SwitchThemeConsumer {
+                override fun consume(switchTheme: SwitchTheme) {
+                    themeSwitcher.isChecked = switchTheme.darkTheme
+                }
+            })
+
+
+
+        //val savedTheme = sharedPref.getBoolean(THEME_SWITCH_KEY, false)
+        //themeSwitcher.isChecked = savedTheme
+
         themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            sharedPref.edit().putBoolean(THEME_SWITCH_KEY, checked).apply()
+            //Log.d("sharedpref", "clicker")
+            //sharedPref.edit().putBoolean(THEME_SWITCH_KEY, checked).apply()
+            getSwitchThemeInteractor.saveSwitchTheme(theme = checked)
             (applicationContext as App).switchTheme(checked)
         }
+
     }
 }

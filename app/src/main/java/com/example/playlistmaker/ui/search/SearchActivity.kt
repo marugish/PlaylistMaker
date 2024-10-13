@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.api.SearchHistoryInteractor
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.sharedPref
@@ -29,6 +30,7 @@ import com.example.playlistmaker.sharedPref
 class SearchActivity : AppCompatActivity() {
 
     private val getTracksInteractor = Creator.provideTracksInteractor()
+    private val getSearchHistoryInteractor = Creator.provideSearchHistoryInteractor()
 
     private val results: MutableList<Track> = mutableListOf()
     private val searchHistory = SearchHistory(sharedPref)
@@ -134,15 +136,27 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && inputEditText.text.isEmpty()) {
 
+                getSearchHistoryInteractor.getSearchHistory(
+                    consumer = object : SearchHistoryInteractor.SearchHistoryConsumer {
+                        override fun consume(results: List<Track>) {
+                            searchAdapter.setItems(results)
+                            if (results.isNotEmpty()) {
+                                historyVisibility(View.VISIBLE)
+                            }
+                        }
+                    })
+
                 // лишняя работа похоже тут есть
-                searchAdapter.setItems(searchHistory.read(sharedPref).toList())
+                // Убрала
+                //searchAdapter.setItems(searchHistory.read(sharedPref).toList())
 
                 //searchHistory.historyResults.clear()
                 //searchHistory.historyResults.addAll(history)
                 //searchAdapter.notifyDataSetChanged()
 
-                if (searchHistory.historyResults.isNotEmpty())
-                    historyVisibility(View.VISIBLE)
+                // Убрала временно
+                //if (searchHistory.historyResults.isNotEmpty())
+                    //historyVisibility(View.VISIBLE)
             } else {
                 historyVisibility(View.GONE)
                 recycler.visibility = View.VISIBLE
