@@ -1,14 +1,19 @@
 package com.example.playlistmaker
 
+import com.example.playlistmaker.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.data.StorageRepositoryImpl
 import com.example.playlistmaker.data.TracksRepositoryImpl
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
+import com.example.playlistmaker.data.player.MediaPlayer
 import com.example.playlistmaker.data.storage.SharedPrefsStorage
+import com.example.playlistmaker.domain.api.MediaPlayerInteractor
+import com.example.playlistmaker.domain.api.MediaPlayerRepository
 import com.example.playlistmaker.domain.api.SearchHistoryInteractor
 import com.example.playlistmaker.domain.api.StorageRepository
 import com.example.playlistmaker.domain.api.SwitchThemeInteractor
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.api.TracksRepository
+import com.example.playlistmaker.domain.impl.MediaPlayerInteractorImpl
 import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
 import com.example.playlistmaker.domain.impl.SwitchThemeInteractorImpl
 import com.example.playlistmaker.domain.impl.TracksInteractorImpl
@@ -35,5 +40,14 @@ object Creator {
     // История поиска
     fun provideSearchHistoryInteractor(): SearchHistoryInteractor {
         return SearchHistoryInteractorImpl(getStorageRepository())
+    }
+
+    // Медиаплеер
+    private fun getMediaPlayerRepository(): MediaPlayerRepository {
+        return MediaPlayerRepositoryImpl(MediaPlayer())
+    }
+
+    fun provideMediaPlayerInteractor(): MediaPlayerInteractor {
+        return MediaPlayerInteractorImpl(getMediaPlayerRepository())
     }
 }
