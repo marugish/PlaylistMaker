@@ -2,22 +2,32 @@ package com.example.playlistmaker
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.domain.api.SwitchThemeInteractor
+import com.example.playlistmaker.domain.models.SwitchTheme
 
-const val PLAYLIST_PREFERENCES = "playlist_preferences"
-const val THEME_SWITCH_KEY = "key_for_theme_switch"
-const val SEARCH_KEY = "key_for_search"
-
-lateinit var sharedPref : SharedPreferences
 class App : Application() {
+
+    companion object {
+        private lateinit var instance: App
+
+        fun getContext(): Context {
+            return instance
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
 
-        sharedPref = this.getSharedPreferences(PLAYLIST_PREFERENCES, Context.MODE_PRIVATE)
-        val savedTheme = sharedPref.getBoolean(THEME_SWITCH_KEY, false)
-        switchTheme(savedTheme)
+        instance = this
+
+        val getSwitchThemeInteractor = Creator.provideSwitchThemeInteractor()
+        getSwitchThemeInteractor.getSwitchTheme(
+            consumer = object : SwitchThemeInteractor.SwitchThemeConsumer {
+                override fun consume(switchTheme: SwitchTheme) {
+                    switchTheme(switchTheme.darkTheme)
+                }
+            })
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {

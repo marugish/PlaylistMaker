@@ -156,7 +156,7 @@
 
     <!-- Заголовок трека -->
     <TextView
-        android:id="@+id/singerTextView"
+        android:id="@+id/artistTextView"
         android:text="@string/artist_name"
         style="@style/TrackHeadingPlayStyle"
         app:layout_constraintBottom_toTopOf="@+id/playButton"
@@ -167,7 +167,7 @@
         android:text="@string/track_name"
         style="@style/TrackHeadingPlayStyle"
         android:textSize="@dimen/heading_text_size"
-        app:layout_constraintBottom_toTopOf="@+id/singerTextView"
+        app:layout_constraintBottom_toTopOf="@+id/artistTextView"
         android:layout_marginBottom="@dimen/track_margin_borders"/>
 
     <!-- Картинка -->
