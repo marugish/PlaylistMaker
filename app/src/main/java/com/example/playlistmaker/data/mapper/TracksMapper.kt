@@ -1,12 +1,11 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.data.mapper
 
 import com.example.playlistmaker.data.dto.TrackDto
 import com.example.playlistmaker.domain.models.Track
 
 
 object TracksMapper {
-
-    fun map(trackDto: ArrayList<TrackDto>): List<Track> {
+    fun mapToDomain(trackDto: List<TrackDto>): List<Track> {
         return trackDto.map { Track(it.trackName,
             it.artistName,
             it.trackTimeMillis,
@@ -16,8 +15,7 @@ object TracksMapper {
             it.primaryGenreName,
             it.country,
             it.previewUrl)
-        } // тут не список получится скорее всего, необходимо проверить! Либо на вход что-то другое необходимо будет подать
+        }
 
     }
-
 }

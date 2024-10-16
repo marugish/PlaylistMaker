@@ -5,6 +5,7 @@ import com.example.playlistmaker.data.dto.TrackDto
 
 interface Storage {
     fun save(dto: Any): Boolean
-    fun getTheme(): SwitchThemeDto  //Boolean//User
+    fun getTheme(): SwitchThemeDto
     fun getHistoryTracks(): List<TrackDto>
+    fun clearHistory()
 }

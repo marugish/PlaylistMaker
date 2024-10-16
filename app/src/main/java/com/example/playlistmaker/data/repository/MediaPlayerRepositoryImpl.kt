@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.data.repository
 
 import com.example.playlistmaker.data.player.MediaPlayer
 import com.example.playlistmaker.domain.api.MediaPlayerRepository

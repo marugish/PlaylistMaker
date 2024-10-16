@@ -38,7 +38,6 @@ class MediaPlayer: MediaPlayerInterface {
 
     override fun release() {
         mediaPlayer.release()
-        // нужен ли тут какой-то статус?
     }
 
     override fun getCurrentPosition(): Int {
@@ -49,7 +48,6 @@ class MediaPlayer: MediaPlayerInterface {
         return playerState
     }
 
-    // Посмотреть
     override fun changeState(state: Int) {
         if (playerState == STATE_COMPLETED && state == STATE_PREPARED) {
             playerState = state

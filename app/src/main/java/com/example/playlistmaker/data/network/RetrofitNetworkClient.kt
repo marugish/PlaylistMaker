@@ -6,17 +6,16 @@ import com.example.playlistmaker.data.dto.TracksSearchRequest
 
 class RetrofitNetworkClient: NetworkClient {
 
-    // тут на вход получаем dto
-    // сделать try {} catch(ex: Exception) {}
-
     override fun doRequest(dto: Any): NetworkResponse {
-        return if (dto is TracksSearchRequest) {
-            val resp = RetrofitItunesClient.itunesService.searchTrack(dto.request).execute()
-
-            val body = resp.body() ?: NetworkResponse()
-
-            body.apply { resultCode = resp.code() }
-        } else {
+        return try {
+            if (dto is TracksSearchRequest) {
+                val resp = RetrofitItunesClient.itunesService.searchTrack(dto.request).execute()
+                val body = resp.body() ?: NetworkResponse()
+                body.apply { resultCode = resp.code() }
+            } else {
+                NetworkResponse().apply { resultCode = 400 }
+            }
+        } catch (ex: Exception) {
             NetworkResponse().apply { resultCode = 400 }
         }
     }

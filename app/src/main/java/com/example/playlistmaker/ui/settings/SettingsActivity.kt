@@ -46,7 +46,6 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(openLink)
         }
 
-        // чтение через Interactor
         getSwitchThemeInteractor.getSwitchTheme(
             consumer = object : SwitchThemeInteractor.SwitchThemeConsumer {
                 override fun consume(switchTheme: SwitchTheme) {
@@ -54,17 +53,9 @@ class SettingsActivity : AppCompatActivity() {
                 }
             })
 
-
-
-        //val savedTheme = sharedPref.getBoolean(THEME_SWITCH_KEY, false)
-        //binding.switchTheme.isChecked = savedTheme
-
         binding.switchTheme.setOnCheckedChangeListener { _, checked ->
-            //Log.d("sharedpref", "clicker")
-            //sharedPref.edit().putBoolean(THEME_SWITCH_KEY, checked).apply()
             getSwitchThemeInteractor.saveSwitchTheme(theme = checked)
             (applicationContext as App).switchTheme(checked)
         }
-
     }
 }

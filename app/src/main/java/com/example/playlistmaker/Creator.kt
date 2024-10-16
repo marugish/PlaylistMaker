@@ -1,10 +1,10 @@
 package com.example.playlistmaker
 
-import com.example.playlistmaker.data.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.data.StorageRepositoryImpl
-import com.example.playlistmaker.data.TracksRepositoryImpl
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.player.MediaPlayer
+import com.example.playlistmaker.data.repository.MediaPlayerRepositoryImpl
+import com.example.playlistmaker.data.repository.StorageRepositoryImpl
+import com.example.playlistmaker.data.repository.TracksRepositoryImpl
 import com.example.playlistmaker.data.storage.SharedPrefsStorage
 import com.example.playlistmaker.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.domain.api.MediaPlayerRepository

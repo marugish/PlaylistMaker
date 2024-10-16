@@ -20,16 +20,7 @@ class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository): 
         repository.release()
     }
 
-    //override fun getCurrentPosition(consumer: MediaPlayerInteractor.MediaPlayerConsumer) {
-        //consumer.consumeCurrentPosition(repository.getCurrentPosition())
-    //}
-
-    //override fun getCurrentStatePlayer(consumer: MediaPlayerInteractor.MediaPlayerConsumer) {
-        //consumer.consumeCurrentState(repository.getCurrentPlayerState())
-    //}
-
     override fun getCurrentStateAndPosition(consumer: MediaPlayerInteractor.MediaPlayerConsumer) {
-        //Log.d("player", "MediaPlayerInteractorImpl -> getCurrentStateAndPosition()")
         consumer.consumeCurrentStateAndPosition(repository.getCurrentPosition(),repository.getCurrentPlayerState())
     }
 

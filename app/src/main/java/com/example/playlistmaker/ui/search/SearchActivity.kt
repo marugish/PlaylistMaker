@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
@@ -17,30 +18,29 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.api.SearchHistoryInteractor
 import com.example.playlistmaker.domain.api.TracksInteractor
+import com.example.playlistmaker.domain.models.Resource
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.sharedPref
 
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
 
+    // Обычный поиск
     private val getTracksInteractor = Creator.provideTracksInteractor()
-    private val getSearchHistoryInteractor = Creator.provideSearchHistoryInteractor()
-
     private val results: MutableList<Track> = mutableListOf()
-    private val searchHistory = SearchHistory(sharedPref)
+    private val adapter = TrackAdapter(results) { track -> showTrackPlayer(track) }
 
-    private val adapter = TrackAdapter(results, { track -> showTrackInfo(track) }, searchHistory)
-    private val searchAdapter = TrackAdapter(searchHistory.historyResults, { track -> showTrackInfo(track) }, searchHistory)
-    //private val adapter = TrackAdapter({ track -> showTrackInfo(track) }, searchHistory)
-    //private val searchAdapter = TrackAdapter({ track -> showTrackInfo(track) }, searchHistory)
+    // История поиска
+    private val getSearchHistoryInteractor = Creator.provideSearchHistoryInteractor()
+    private var historyResults: MutableList<Track> = mutableListOf()
+    private val searchAdapter = TrackAdapter(historyResults) { track -> showTrackPlayer(track) }
 
-    //подумать над названием
-    private fun showTrackInfo(track: Track) {
+    private fun showTrackPlayer(track: Track) {
         if (clickDebounce()) {
             val intent = Intent(this, PlayActivity::class.java)
             intent.putExtra("track", track)
             startActivity(intent)
+            getSearchHistoryInteractor.saveSearchHistory(track)
         }
     }
 
@@ -65,7 +65,6 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-
         searchQuery = savedInstanceState.getString(EDIT_TEXT, SEARCH_QUERY)
         binding.searchEditText.setText(searchQuery)
     }
@@ -94,10 +93,6 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(it.windowToken , 0)
             binding.searchEditText.clearFocus()
-            binding.searchEditText.hint = getString(R.string.search)
-            //results.clear()
-            //adapter.notifyDataSetChanged()
-            // Новое
             adapter.setItems(emptyList())
             placeholderVisibility(View.GONE)
         }
@@ -109,23 +104,12 @@ class SearchActivity : AppCompatActivity() {
                     consumer = object : SearchHistoryInteractor.SearchHistoryConsumer {
                         override fun consume(results: List<Track>) {
                             searchAdapter.setItems(results)
+                            historyResults = results.toMutableList()
                             if (results.isNotEmpty()) {
                                 historyVisibility(View.VISIBLE)
                             }
                         }
                     })
-
-                // лишняя работа похоже тут есть
-                // Убрала
-                //searchAdapter.setItems(searchHistory.read(sharedPref).toList())
-
-                //searchHistory.historyResults.clear()
-                //searchHistory.historyResults.addAll(history)
-                //searchAdapter.notifyDataSetChanged()
-
-                // Убрала временно
-                //if (searchHistory.historyResults.isNotEmpty())
-                    //historyVisibility(View.VISIBLE)
             } else {
                 historyVisibility(View.GONE)
                 binding.trackRecycleView.visibility = View.VISIBLE
@@ -133,9 +117,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.clearHistoryButton.setOnClickListener {
-            searchHistory.clearHistory()
+            getSearchHistoryInteractor.clearHistory()
+            historyResults.clear()
             searchAdapter.notifyDataSetChanged()
-
             historyVisibility(View.GONE)
             binding.trackRecycleView.visibility = View.VISIBLE
         }
@@ -149,7 +133,7 @@ class SearchActivity : AppCompatActivity() {
                 binding.searchClearButton.visibility = clearButtonVisibility(s)
                 searchQuery = s.toString()
                 if (binding.searchEditText.hasFocus() && s?.isEmpty() == true) {
-                    if (searchHistory.historyResults.isNotEmpty()) {
+                    if (historyResults.isNotEmpty()) {
                         binding.trackRecycleView.visibility = View.GONE
                         placeholderVisibility(View.GONE)
                         binding.updateButton.visibility = View.GONE
@@ -206,8 +190,7 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
-    // Подумать над названием
-    private fun showProgress(isShow: Boolean) {
+    private fun showProgressBar(isShow: Boolean) {
         if (isShow) {
             binding.progressBar.visibility = View.VISIBLE
             binding.trackRecycleView.visibility = View.GONE
@@ -219,89 +202,45 @@ class SearchActivity : AppCompatActivity() {
 
     private fun search(request: String) {
         if (request.isNotEmpty()) {
-
-            showProgress(true)
-
+            showProgressBar(true)
             getTracksInteractor.searchTracks(
                 expression = request,
                 consumer = object : TracksInteractor.TracksConsumer {
-                    override fun consume(foundTracks: List<Track>) {
-                        handler.post {
-                            if (foundTracks.isNotEmpty()) {
-                                adapter.setItems(foundTracks)
-                                //results.clear()
-                                //results.addAll(foundTracks)
-                                //adapter.notifyDataSetChanged()
-                                showMessage("", 0, false)
-
-                                showProgress(false)
+                    override fun consume(foundTracks: Resource<List<Track>>) {
+                        when (foundTracks) {
+                            is Resource.Success -> {
+                                handler.post {
+                                    adapter.setItems(foundTracks.data)
+                                    showMessage("", 0, false)
+                                    showProgressBar(false)
+                                }
                             }
-                        }
-                        /*val currentRunnable = detailsRunnable
-                        if (currentRunnable != null) {
-                            handler.removeCallbacks(currentRunnable)
-                        }
-
-                        val newDetailsRunnable = Runnable {
-                            when (data) {
-                                is ConsumerData.Error -> showError(data.message)
-                                is ConsumerData.Data -> {
-                                    val productDetails = data.value
-                                    val productDetailsInfo = ProductDetailsMapper.map(productDetails)
-                                    showProductDetails(productDetailsInfo)
+                            is Resource.Error -> {
+                                if (foundTracks.message == "Ничего не найдено") {
+                                    handler.post {
+                                        showMessage(
+                                            getString(R.string.nothing_found),
+                                            R.drawable.not_found_placeholder,
+                                            false
+                                        )
+                                        showProgressBar(false)
+                                    }
+                                } else {
+                                    Log.d("mysearch", "нет сети")
+                                    handler.post {
+                                        showMessage(
+                                            getString(R.string.network_problems),
+                                            R.drawable.no_network_placeholder,
+                                            true
+                                        )
+                                        showProgressBar(false)
+                                    }
                                 }
                             }
                         }
-                        detailsRunnable = newDetailsRunnable
-                        handler.post(newDetailsRunnable)*/
                     }
                 }
             )
-
-            /*RetrofitItunesClient.itunesService.searchTrack(request).enqueue(object : Callback<TracksSearchResponse> {
-                    @SuppressLint("NotifyDataSetChanged")
-                    override fun onResponse(
-                        call: Call<TracksSearchResponse>,
-                        response: Response<TracksSearchResponse>
-                    ) {
-                        progressBar.visibility = View.GONE
-                        when (response.code()) {
-                            200 -> {
-                                if (response.body()?.results?.isNotEmpty() == true) {
-                                    results.clear()
-                                    results.addAll(response.body()?.results!!)
-                                    adapter.notifyDataSetChanged()
-                                    showMessage("", 0, false)
-                                    recycler.visibility = View.VISIBLE
-                                    //Toast.makeText(applicationContext, "200: ОК", Toast.LENGTH_LONG).show()
-                                } else {
-                                    showMessage(
-                                        getString(R.string.nothing_found),
-                                        R.drawable.not_found_placeholder,
-                                        false
-                                    )
-                                    //Toast.makeText(applicationContext, "200: BAD", Toast.LENGTH_LONG).show()
-                                }
-                            }
-                            else -> showMessage(
-                                getString(R.string.network_problems),
-                                R.drawable.no_network_placeholder,
-                                true
-                            )
-                            //Toast.makeText(applicationContext, "On Response: что-то пошло не так", Toast.LENGTH_LONG).show()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<TracksSearchResponse>, t: Throwable) {
-                        progressBar.visibility = View.GONE
-                        showMessage(
-                            getString(R.string.network_problems),
-                            R.drawable.no_network_placeholder,
-                            true
-                        )
-                        //Toast.makeText(applicationContext, "On Failure: что-то пошло не так", Toast.LENGTH_LONG).show()
-                    }
-                }) */
         }
     }
 
@@ -310,8 +249,6 @@ class SearchActivity : AppCompatActivity() {
         if (text.isNotEmpty()) {
             placeholderVisibility(View.VISIBLE)
             adapter.setItems(emptyList())
-            //results.clear()
-            //adapter.notifyDataSetChanged()
             binding.placeholderMessage.text = text
             binding.placeholderImage.setImageResource(resource)
             if (buttonVisibility) {

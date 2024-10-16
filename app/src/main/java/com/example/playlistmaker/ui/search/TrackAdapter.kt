@@ -7,8 +7,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
 
 class TrackAdapter(private var tracks: List<Track>,
-                   private val clickListener: (Track) -> Unit,
-                   private val searchHistory: SearchHistory
+                   private val clickListener: (Track) -> Unit
 ): RecyclerView.Adapter<TrackViewHolder> () {
 
     fun setItems(items: List<Track>) {
@@ -25,7 +24,6 @@ class TrackAdapter(private var tracks: List<Track>,
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener {
             clickListener(tracks[position])
-            searchHistory.write(tracks[position])
             notifyDataSetChanged()
         }
     }

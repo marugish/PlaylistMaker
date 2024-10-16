@@ -29,7 +29,6 @@ class PlayActivity : AppCompatActivity() {
 
     private val getMediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
 
-    // объявить где-то в одном месте
     private companion object {
         const val STATE_DEFAULT = 0
         const val STATE_PREPARED = 1

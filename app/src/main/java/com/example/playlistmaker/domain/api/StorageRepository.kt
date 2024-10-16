@@ -8,6 +8,10 @@ interface StorageRepository {
     fun saveThemeParam(saveThemeParam: SwitchTheme): Boolean
     fun getThemeParam(): SwitchTheme
     // История поиска
-    fun saveSearchHistory(tracks: List<Track>): Boolean
-    fun getSearchHistory(): List<Track>
+    fun saveSearchHistoryToSharedPreferences(tracks: List<Track>): Boolean
+    fun getSearchHistoryFromSharedPreferences(): List<Track>
+
+    fun addSearchHistoryTrack(track: Track)
+    fun getSearchHistoryTracks(): List<Track>
+    fun clearHistory()
 }
