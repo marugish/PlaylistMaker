@@ -6,18 +6,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.domain.api.SearchHistoryInteractor
-import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Resource
 import com.example.playlistmaker.domain.models.Track
 
@@ -100,16 +97,13 @@ class SearchActivity : AppCompatActivity() {
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.searchEditText.text.isEmpty()) {
 
-                getSearchHistoryInteractor.getSearchHistory(
-                    consumer = object : SearchHistoryInteractor.SearchHistoryConsumer {
-                        override fun consume(results: List<Track>) {
-                            searchAdapter.setItems(results)
-                            historyResults = results.toMutableList()
-                            if (results.isNotEmpty()) {
-                                historyVisibility(View.VISIBLE)
-                            }
-                        }
-                    })
+                getSearchHistoryInteractor.getSearchHistory { results ->
+                    searchAdapter.setItems(results)
+                    historyResults = results.toMutableList()
+                    if (results.isNotEmpty()) {
+                        historyVisibility(View.VISIBLE)
+                    }
+                }
             } else {
                 historyVisibility(View.GONE)
                 binding.trackRecycleView.visibility = View.VISIBLE
@@ -124,12 +118,8 @@ class SearchActivity : AppCompatActivity() {
             binding.trackRecycleView.visibility = View.VISIBLE
         }
 
-        val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // empty
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        binding.searchEditText.addTextChangedListener(
+            onTextChanged = { s, _, _, _ ->
                 binding.searchClearButton.visibility = clearButtonVisibility(s)
                 searchQuery = s.toString()
                 if (binding.searchEditText.hasFocus() && s?.isEmpty() == true) {
@@ -144,12 +134,7 @@ class SearchActivity : AppCompatActivity() {
                     searchDebounce()
                 }
             }
-
-            override fun afterTextChanged(s: Editable?) {
-                // empty
-            }
-        }
-        binding.searchEditText.addTextChangedListener(simpleTextWatcher)
+        )
 
         binding.updateButton.setOnClickListener {
             search(searchQuery)
@@ -204,43 +189,41 @@ class SearchActivity : AppCompatActivity() {
         if (request.isNotEmpty()) {
             showProgressBar(true)
             getTracksInteractor.searchTracks(
-                expression = request,
-                consumer = object : TracksInteractor.TracksConsumer {
-                    override fun consume(foundTracks: Resource<List<Track>>) {
-                        when (foundTracks) {
-                            is Resource.Success -> {
-                                handler.post {
-                                    adapter.setItems(foundTracks.data)
-                                    showMessage("", 0, false)
-                                    showProgressBar(false)
-                                }
+                expression = request
+            ) { foundTracks ->
+                when (foundTracks) {
+                    is Resource.Success -> {
+                        handler.post {
+                            adapter.setItems(foundTracks.data)
+                            showMessage("", 0, false)
+                            showProgressBar(false)
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        if (foundTracks.message == "Ничего не найдено") {
+                            handler.post {
+                                showMessage(
+                                    getString(R.string.nothing_found),
+                                    R.drawable.not_found_placeholder,
+                                    false
+                                )
+                                showProgressBar(false)
                             }
-                            is Resource.Error -> {
-                                if (foundTracks.message == "Ничего не найдено") {
-                                    handler.post {
-                                        showMessage(
-                                            getString(R.string.nothing_found),
-                                            R.drawable.not_found_placeholder,
-                                            false
-                                        )
-                                        showProgressBar(false)
-                                    }
-                                } else {
-                                    Log.d("mysearch", "нет сети")
-                                    handler.post {
-                                        showMessage(
-                                            getString(R.string.network_problems),
-                                            R.drawable.no_network_placeholder,
-                                            true
-                                        )
-                                        showProgressBar(false)
-                                    }
-                                }
+                        } else {
+                            Log.d("mysearch", "нет сети")
+                            handler.post {
+                                showMessage(
+                                    getString(R.string.network_problems),
+                                    R.drawable.no_network_placeholder,
+                                    true
+                                )
+                                showProgressBar(false)
                             }
                         }
                     }
                 }
-            )
+            }
         }
     }
 

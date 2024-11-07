@@ -1,5 +1,6 @@
 package com.example.playlistmaker.domain.impl
 
+import com.example.playlistmaker.PlayerStates
 import com.example.playlistmaker.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.domain.api.MediaPlayerRepository
 
@@ -24,7 +25,7 @@ class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository): 
         consumer.consumeCurrentStateAndPosition(repository.getCurrentPosition(),repository.getCurrentPlayerState())
     }
 
-    override fun changeState(state: Int) {
+    override fun changeState(state: PlayerStates) {
         repository.changeState(state)
     }
 

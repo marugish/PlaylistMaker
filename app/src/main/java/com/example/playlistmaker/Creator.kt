@@ -1,5 +1,7 @@
 package com.example.playlistmaker
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.player.MediaPlayer
 import com.example.playlistmaker.data.repository.MediaPlayerRepositoryImpl
@@ -18,8 +20,16 @@ import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
 import com.example.playlistmaker.domain.impl.SwitchThemeInteractorImpl
 import com.example.playlistmaker.domain.impl.TracksInteractorImpl
 
+private const val PLAYLIST_PREFERENCES = "playlist_preferences"
 
 object Creator {
+    private lateinit var appContext: Context
+    private lateinit var sharedPreferences: SharedPreferences
+
+    fun init(context: Context) {
+        appContext = context
+    }
+
     private fun getTracksRepository(): TracksRepository {
         return TracksRepositoryImpl(RetrofitNetworkClient())
     }
@@ -28,8 +38,15 @@ object Creator {
         return TracksInteractorImpl(getTracksRepository())
     }
 
+    private fun provideSharedPreferences(context: Context): SharedPreferences {
+        if (!::sharedPreferences.isInitialized) {
+            sharedPreferences = context.getSharedPreferences(PLAYLIST_PREFERENCES, Context.MODE_PRIVATE)
+        }
+        return sharedPreferences
+    }
+
     private fun getStorageRepository(): StorageRepository {
-        return StorageRepositoryImpl(SharedPrefsStorage(App.getContext()))//App().applicationContext))
+        return StorageRepositoryImpl(SharedPrefsStorage(provideSharedPreferences(appContext)))
     }
 
     // Тёмная тема

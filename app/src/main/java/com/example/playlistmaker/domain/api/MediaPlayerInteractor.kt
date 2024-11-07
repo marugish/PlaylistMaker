@@ -1,14 +1,16 @@
 package com.example.playlistmaker.domain.api
 
+import com.example.playlistmaker.PlayerStates
+
 interface MediaPlayerInteractor {
     fun prepare(url: String)
     fun play()
     fun pause()
     fun release()
     fun getCurrentStateAndPosition(consumer: MediaPlayerConsumer)
-    fun changeState(state: Int)
+    fun changeState(state: PlayerStates)
 
-    interface MediaPlayerConsumer {
-        fun consumeCurrentStateAndPosition(position: Int, state: Int)
+    fun interface MediaPlayerConsumer {
+        fun consumeCurrentStateAndPosition(position: Int, state: PlayerStates)
     }
 }

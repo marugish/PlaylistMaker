@@ -8,8 +8,6 @@ import com.example.playlistmaker.App
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
-import com.example.playlistmaker.domain.api.SwitchThemeInteractor
-import com.example.playlistmaker.domain.models.SwitchTheme
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
@@ -46,12 +44,9 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(openLink)
         }
 
-        getSwitchThemeInteractor.getSwitchTheme(
-            consumer = object : SwitchThemeInteractor.SwitchThemeConsumer {
-                override fun consume(switchTheme: SwitchTheme) {
-                    binding.switchTheme.isChecked = switchTheme.darkTheme
-                }
-            })
+        getSwitchThemeInteractor.getSwitchTheme { switchTheme ->
+            binding.switchTheme.isChecked = switchTheme
+        }
 
         binding.switchTheme.setOnCheckedChangeListener { _, checked ->
             getSwitchThemeInteractor.saveSwitchTheme(theme = checked)

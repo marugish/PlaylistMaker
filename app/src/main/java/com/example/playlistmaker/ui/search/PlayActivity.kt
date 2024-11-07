@@ -12,9 +12,9 @@ import androidx.core.content.IntentCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Creator
+import com.example.playlistmaker.PlayerStates
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayBinding
-import com.example.playlistmaker.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -30,11 +30,11 @@ class PlayActivity : AppCompatActivity() {
     private val getMediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
 
     private companion object {
-        const val STATE_DEFAULT = 0
+        /*const val STATE_DEFAULT = 0
         const val STATE_PREPARED = 1
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
-        const val STATE_COMPLETED = 4
+        const val STATE_COMPLETED = 4*/
         const val REFRESH_TIMER_DELAY_MILLIS = 500L // 500 миллисекунд == 0,5 секунды
     }
 
@@ -116,22 +116,21 @@ class PlayActivity : AppCompatActivity() {
     }
 
     private fun playbackControl() {
-        getMediaPlayerInteractor.getCurrentStateAndPosition(consumer = object : MediaPlayerInteractor.MediaPlayerConsumer {
-            override fun consumeCurrentStateAndPosition(position: Int, state: Int) {
-                when(state) {
-                    STATE_PLAYING -> {
-                        pausePlayer()
-                    }
-                    STATE_PREPARED, STATE_PAUSED -> {
-                        startPlayer()
-                    }
+        getMediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
+            when (state) {
+                PlayerStates.PLAYING -> {
+                    pausePlayer()
                 }
+                PlayerStates.PREPARED, PlayerStates.PAUSED -> {
+                    startPlayer()
+                }
+                else -> {}
             }
-        })
+        }
     }
 
     private fun completedPlayer() {
-        getMediaPlayerInteractor.changeState(STATE_PREPARED)
+        getMediaPlayerInteractor.changeState(PlayerStates.PREPARED)
         resetToZeroPlayer()
     }
 
@@ -143,17 +142,20 @@ class PlayActivity : AppCompatActivity() {
 
     private fun createUpdateTimerTask(): Runnable {
         return Runnable {
-            getMediaPlayerInteractor.getCurrentStateAndPosition(
-                consumer = object : MediaPlayerInteractor.MediaPlayerConsumer {
-                override fun consumeCurrentStateAndPosition(position: Int, state: Int) {
-                    if (state == STATE_PLAYING) {
-                        binding.playDurationTextView.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(position)
-                        updateTimerTask?.let { mainThreadHandler?.postDelayed(it, REFRESH_TIMER_DELAY_MILLIS) }
-                    } else if (state == STATE_COMPLETED) {
-                        completedPlayer()
+            getMediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
+                if (state == PlayerStates.PLAYING) {
+                    binding.playDurationTextView.text =
+                        SimpleDateFormat("mm:ss", Locale.getDefault()).format(position)
+                    updateTimerTask?.let {
+                        mainThreadHandler?.postDelayed(
+                            it,
+                            REFRESH_TIMER_DELAY_MILLIS
+                        )
                     }
+                } else if (state == PlayerStates.COMPLETED) {
+                    completedPlayer()
                 }
-            })
+            }
         }
     }
 

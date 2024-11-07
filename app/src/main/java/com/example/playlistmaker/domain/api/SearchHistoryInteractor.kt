@@ -8,7 +8,7 @@ interface SearchHistoryInteractor {
     fun saveSearchHistory(track: Track)
     fun clearHistory()
 
-    interface SearchHistoryConsumer {
+    fun interface SearchHistoryConsumer {
         fun consume(results: List<Track>)
     }
 }

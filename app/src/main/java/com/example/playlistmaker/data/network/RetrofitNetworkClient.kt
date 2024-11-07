@@ -13,10 +13,10 @@ class RetrofitNetworkClient: NetworkClient {
                 val body = resp.body() ?: NetworkResponse()
                 body.apply { resultCode = resp.code() }
             } else {
-                NetworkResponse().apply { resultCode = 400 }
+                NetworkResponse(400)
             }
         } catch (ex: Exception) {
-            NetworkResponse().apply { resultCode = 400 }
+            NetworkResponse(400)
         }
     }
 }

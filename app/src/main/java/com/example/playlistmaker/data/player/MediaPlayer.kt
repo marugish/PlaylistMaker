@@ -1,39 +1,32 @@
 package com.example.playlistmaker.data.player
 
 import android.media.MediaPlayer
+import com.example.playlistmaker.PlayerStates
 import com.example.playlistmaker.data.MediaPlayerInterface
 
 class MediaPlayer: MediaPlayerInterface {
     private val mediaPlayer = MediaPlayer()
-
-    private companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-        const val STATE_COMPLETED = 4
-    }
-    private var playerState = STATE_DEFAULT
+    private var playerState = PlayerStates.DEFAULT
 
     override fun prepare(url: String) {
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerState = STATE_PREPARED
+            playerState = PlayerStates.PREPARED
         }
         mediaPlayer.setOnCompletionListener {
-            playerState = STATE_COMPLETED
+            playerState = PlayerStates.COMPLETED
         }
     }
 
     override fun start() {
         mediaPlayer.start()
-        playerState = STATE_PLAYING
+        playerState = PlayerStates.PLAYING
     }
 
     override fun pause() {
         mediaPlayer.pause()
-        playerState = STATE_PAUSED
+        playerState = PlayerStates.PAUSED
     }
 
     override fun release() {
@@ -44,12 +37,12 @@ class MediaPlayer: MediaPlayerInterface {
         return mediaPlayer.currentPosition
     }
 
-    override fun getCurrentPlayerState(): Int {
+    override fun getCurrentPlayerState(): PlayerStates {
         return playerState
     }
 
-    override fun changeState(state: Int) {
-        if (playerState == STATE_COMPLETED && state == STATE_PREPARED) {
+    override fun changeState(state: PlayerStates) {
+        if (playerState == PlayerStates.COMPLETED && state == PlayerStates.PREPARED) {
             playerState = state
         }
     }

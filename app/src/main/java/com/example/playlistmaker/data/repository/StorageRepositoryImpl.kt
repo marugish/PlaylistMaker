@@ -1,22 +1,19 @@
 package com.example.playlistmaker.data.repository
 
 import com.example.playlistmaker.data.Storage
-import com.example.playlistmaker.data.dto.SwitchThemeDto
 import com.example.playlistmaker.data.dto.TrackDto
 import com.example.playlistmaker.domain.api.StorageRepository
-import com.example.playlistmaker.domain.models.SwitchTheme
 import com.example.playlistmaker.domain.models.Track
 
 class StorageRepositoryImpl(private val storage: Storage): StorageRepository {
     private var trackCache: MutableList<Track> = getSearchHistoryTracks().toMutableList()
 
-    override fun saveThemeParam(saveThemeParam: SwitchTheme): Boolean {
-        return storage.save(mapToDataSwitchTheme(saveThemeParam))
+    override fun saveThemeParam(saveThemeParam: Boolean): Boolean {
+        return storage.save(saveThemeParam)
     }
 
-    override fun getThemeParam(): SwitchTheme {
-        val theme = storage.getTheme()
-        return mapToDomainSwitchTheme(theme)
+    override fun getThemeParam(): Boolean {
+        return storage.getTheme()
     }
 
     override fun getSearchHistoryTracks(): List<Track> {
@@ -48,14 +45,6 @@ class StorageRepositoryImpl(private val storage: Storage): StorageRepository {
     override fun clearHistory() {
         storage.clearHistory()
         trackCache = mutableListOf()
-    }
-
-    private fun mapToDataSwitchTheme(saveThemeParam: SwitchTheme): SwitchThemeDto {
-        return SwitchThemeDto(darkTheme = saveThemeParam.darkTheme)
-    }
-
-    private fun mapToDomainSwitchTheme(theme: SwitchThemeDto): SwitchTheme {
-        return SwitchTheme(darkTheme = theme.darkTheme)
     }
 
     private fun mapToDomainSearchHistory(tracksDto: List<TrackDto>): List<Track> {
