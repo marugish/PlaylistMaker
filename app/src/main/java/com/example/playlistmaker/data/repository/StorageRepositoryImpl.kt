@@ -1,11 +1,12 @@
 package com.example.playlistmaker.data.repository
 
 import com.example.playlistmaker.data.Storage
-import com.example.playlistmaker.data.dto.TrackDto
+import com.example.playlistmaker.data.mapper.TracksMapper
 import com.example.playlistmaker.domain.api.StorageRepository
 import com.example.playlistmaker.domain.models.Track
 
-class StorageRepositoryImpl(private val storage: Storage): StorageRepository {
+class StorageRepositoryImpl(private val storage: Storage, private val trackMapper: TracksMapper) :
+    StorageRepository {
     private var trackCache: MutableList<Track> = getSearchHistoryTracks().toMutableList()
 
     override fun saveThemeParam(saveThemeParam: Boolean): Boolean {
@@ -17,7 +18,8 @@ class StorageRepositoryImpl(private val storage: Storage): StorageRepository {
     }
 
     override fun getSearchHistoryTracks(): List<Track> {
-        trackCache = getSearchHistoryFromSharedPreferences().toMutableList()// Загрузка из SharedPreferences
+        trackCache =
+            getSearchHistoryFromSharedPreferences().toMutableList()// Загрузка из SharedPreferences
         return trackCache
     }
 
@@ -34,26 +36,16 @@ class StorageRepositoryImpl(private val storage: Storage): StorageRepository {
     }
 
     override fun saveSearchHistoryToSharedPreferences(tracks: List<Track>): Boolean {
-        return storage.save(mapToStorageSearchHistory(tracks))
+        return storage.save(tracks.map(trackMapper::mapToStorage))
     }
 
     override fun getSearchHistoryFromSharedPreferences(): List<Track> {
         val foundTracks = storage.getHistoryTracks()
-        return mapToDomainSearchHistory(foundTracks)
+        return foundTracks.map(trackMapper::mapToDomain)
     }
 
     override fun clearHistory() {
         storage.clearHistory()
         trackCache = mutableListOf()
-    }
-
-    private fun mapToDomainSearchHistory(tracksDto: List<TrackDto>): List<Track> {
-        return tracksDto.map { Track(it.trackName, it.artistName, it.trackTimeMillis, it.artworkUrl100,
-            it.collectionName, it.releaseDate, it.primaryGenreName, it.country, it.previewUrl) }
-    }
-
-    private fun mapToStorageSearchHistory(tracks: List<Track>): List<TrackDto> {
-        return tracks.map { TrackDto(it.trackName, it.artistName, it.trackTimeMillis, it.artworkUrl100,
-            it.collectionName, it.releaseDate, it.primaryGenreName, it.country, it.previewUrl) }
     }
 }

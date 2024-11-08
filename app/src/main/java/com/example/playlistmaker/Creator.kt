@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.playlistmaker.data.mapper.TracksMapper
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.player.MediaPlayer
 import com.example.playlistmaker.data.repository.MediaPlayerRepositoryImpl
@@ -31,7 +32,10 @@ object Creator {
     }
 
     private fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient())
+        return TracksRepositoryImpl(
+            networkClient = RetrofitNetworkClient(appContext),
+            trackMapper = TracksMapper
+        )
     }
 
     fun provideTracksInteractor(): TracksInteractor {
@@ -46,7 +50,10 @@ object Creator {
     }
 
     private fun getStorageRepository(): StorageRepository {
-        return StorageRepositoryImpl(SharedPrefsStorage(provideSharedPreferences(appContext)))
+        return StorageRepositoryImpl(
+            storage = SharedPrefsStorage(provideSharedPreferences(appContext)),
+            trackMapper = TracksMapper
+        )
     }
 
     // Тёмная тема

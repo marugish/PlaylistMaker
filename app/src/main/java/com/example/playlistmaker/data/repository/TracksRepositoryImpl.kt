@@ -1,5 +1,6 @@
 package com.example.playlistmaker.data.repository
 
+import com.example.playlistmaker.SearchError
 import com.example.playlistmaker.data.NetworkClient
 import com.example.playlistmaker.data.dto.TracksSearchRequest
 import com.example.playlistmaker.data.dto.TracksSearchResponse
@@ -8,20 +9,26 @@ import com.example.playlistmaker.domain.api.TracksRepository
 import com.example.playlistmaker.domain.models.Resource
 import com.example.playlistmaker.domain.models.Track
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val trackMapper: TracksMapper
+) : TracksRepository {
     override fun searchTracks(expression: String): Resource<List<Track>> {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
-        return if (response.resultCode == 200) {
-            if ((response as TracksSearchResponse).results.isEmpty()) {
-                Resource.Error("Ничего не найдено")
-            } else {
-                Resource.Success(TracksMapper.mapToDomain(response.results))
+        return when (response.resultCode) {
+            -1 -> {
+                Resource.Error(SearchError.NETWORK_ERROR)
             }
-        } else {
-            Resource.Error("Произошла сетевая ошибка")
+            200 -> {
+                if ((response as TracksSearchResponse).results.isEmpty()) {
+                    Resource.Error(SearchError.NO_RESULTS)
+                } else {
+                    Resource.Success(response.results.map(trackMapper::mapToDomain))
+                }
+            }
+            else -> {
+                Resource.Error(SearchError.NETWORK_ERROR)
+            }
         }
     }
 }
-
-
-

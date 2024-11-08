@@ -5,17 +5,31 @@ import com.example.playlistmaker.domain.models.Track
 
 
 object TracksMapper {
-    fun mapToDomain(trackDto: List<TrackDto>): List<Track> {
-        return trackDto.map { Track(it.trackName,
-            it.artistName,
-            it.trackTimeMillis,
-            it.artworkUrl100,
-            it.collectionName,
-            it.releaseDate,
-            it.primaryGenreName,
-            it.country,
-            it.previewUrl)
-        }
+    fun mapToDomain(tracksDto: TrackDto): Track {
+        return Track(
+            trackName = tracksDto.trackName,
+            artistName = tracksDto.artistName,
+            trackTimeMillis = tracksDto.trackTimeMillis,
+            artworkUrl100 = tracksDto.artworkUrl100,
+            collectionName = tracksDto.collectionName,
+            releaseDate = tracksDto.releaseDate,
+            primaryGenreName = tracksDto.primaryGenreName,
+            country = tracksDto.country,
+            previewUrl = tracksDto.previewUrl
+        )
+    }
 
+    fun mapToStorage(tracks: Track): TrackDto {
+        return TrackDto(
+            trackName = tracks.trackName,
+            artistName = tracks.artistName,
+            trackTimeMillis = tracks.trackTimeMillis,
+            artworkUrl100 = tracks.artworkUrl100,
+            collectionName = tracks.collectionName,
+            releaseDate = tracks.releaseDate,
+            primaryGenreName = tracks.primaryGenreName,
+            country = tracks.country,
+            previewUrl = tracks.previewUrl
+        )
     }
 }

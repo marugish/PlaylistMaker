@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
@@ -14,8 +13,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
+import com.example.playlistmaker.SearchError
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.domain.models.Resource
 import com.example.playlistmaker.domain.models.Track
 
 
@@ -188,37 +187,29 @@ class SearchActivity : AppCompatActivity() {
     private fun search(request: String) {
         if (request.isNotEmpty()) {
             showProgressBar(true)
-            getTracksInteractor.searchTracks(
-                expression = request
-            ) { foundTracks ->
-                when (foundTracks) {
-                    is Resource.Success -> {
-                        handler.post {
-                            adapter.setItems(foundTracks.data)
-                            showMessage("", 0, false)
-                            showProgressBar(false)
-                        }
+            getTracksInteractor.searchTracks(expression = request
+            ) { foundTracks, errorMessage ->
+                handler.post {
+                    showProgressBar(false)
+                    if (foundTracks != null) {
+                        adapter.setItems(foundTracks)
+                        showMessage("", 0, false)
                     }
-
-                    is Resource.Error -> {
-                        if (foundTracks.message == "Ничего не найдено") {
-                            handler.post {
+                    if (errorMessage != null) {
+                        when (errorMessage) {
+                            SearchError.NO_RESULTS -> {
                                 showMessage(
                                     getString(R.string.nothing_found),
                                     R.drawable.not_found_placeholder,
                                     false
                                 )
-                                showProgressBar(false)
                             }
-                        } else {
-                            Log.d("mysearch", "нет сети")
-                            handler.post {
+                            SearchError.NETWORK_ERROR -> {
                                 showMessage(
                                     getString(R.string.network_problems),
                                     R.drawable.no_network_placeholder,
                                     true
                                 )
-                                showProgressBar(false)
                             }
                         }
                     }
