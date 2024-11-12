@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.util
 
 enum class SearchError(private val error: String) {
     NO_RESULTS("Ничего не найдено"),

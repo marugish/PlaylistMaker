@@ -1,7 +1,7 @@
 package com.example.playlistmaker.data.player
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.PlayerStates
+import com.example.playlistmaker.util.PlayerStates
 import com.example.playlistmaker.data.MediaPlayerInterface
 
 class MediaPlayer: MediaPlayerInterface {

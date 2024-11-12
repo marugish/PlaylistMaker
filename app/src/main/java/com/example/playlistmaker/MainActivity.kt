@@ -5,8 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.databinding.ActivityMainBinding
 import com.example.playlistmaker.ui.mediaLibrary.MediaLibraryActivity
-import com.example.playlistmaker.ui.search.SearchActivity
-import com.example.playlistmaker.ui.settings.SettingsActivity
+import com.example.playlistmaker.ui.search.activity.SearchActivity
+import com.example.playlistmaker.ui.settings.activity.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

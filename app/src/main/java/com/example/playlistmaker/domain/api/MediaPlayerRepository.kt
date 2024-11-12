@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.api
 
-import com.example.playlistmaker.PlayerStates
+import com.example.playlistmaker.util.PlayerStates
 
 interface MediaPlayerRepository {
     fun prepare(url: String)

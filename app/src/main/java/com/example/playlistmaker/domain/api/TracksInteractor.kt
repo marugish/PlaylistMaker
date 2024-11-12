@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.api
 
-import com.example.playlistmaker.SearchError
+import com.example.playlistmaker.util.SearchError
 import com.example.playlistmaker.domain.models.Track
 
 interface TracksInteractor {

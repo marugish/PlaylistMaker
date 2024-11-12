@@ -1,27 +1,32 @@
-package com.example.playlistmaker.ui.search
+package com.example.playlistmaker.ui.player.activity
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
+import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.Creator
-import com.example.playlistmaker.PlayerStates
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityPlayBinding
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.player.PlayStatus
+import com.example.playlistmaker.ui.player.TrackScreenState
+import com.example.playlistmaker.ui.player.view_model.PlayViewModel
+import com.example.playlistmaker.util.PlayerStates
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class PlayActivity : AppCompatActivity() {
-
+class PlayActivity : ComponentActivity() {
+    private lateinit var viewModel: PlayViewModel
     private lateinit var binding: ActivityPlayBinding
 
     private var mainThreadHandler: Handler? = null
@@ -30,11 +35,6 @@ class PlayActivity : AppCompatActivity() {
     private val getMediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
 
     private companion object {
-        /*const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-        const val STATE_COMPLETED = 4*/
         const val REFRESH_TIMER_DELAY_MILLIS = 500L // 500 миллисекунд == 0,5 секунды
     }
 
@@ -59,14 +59,60 @@ class PlayActivity : AppCompatActivity() {
         playImage = ContextCompat.getDrawable(this, R.drawable.play_button)!!
 
         val track = IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
-        if (track != null) {
+        viewModel = ViewModelProvider(this, PlayViewModel.factory(track))[PlayViewModel::class.java]
+
+        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+            when (screenState) {
+                is TrackScreenState.Loading -> {
+                    showLoading(loading = true)
+                }
+                is TrackScreenState.Content -> {
+                    showLoading(loading = false)
+                    if (track != null) {
+                        showTrackDetails(track = screenState.track)
+
+                        // !!!!
+                        trackUrl = screenState.track.previewUrl
+                        if (trackUrl.isNotEmpty()) {
+                            viewModel.prepareMediaPlayer(trackUrl)
+                        }
+                        // !!!
+
+                    }
+                }
+                is TrackScreenState.Error -> {
+
+                }
+                is TrackScreenState.Empty -> {
+
+                    // должен быть трек с заглушками в полях
+                }
+            }
+        }
+
+        viewModel.getPlayStatusLiveData().observe(this) { playStatus ->
+            when (playStatus) {
+                is PlayStatus.Prepared -> {
+                    // поменять состояние кнопки
+                    // ...
+                }
+
+            }
+            //changeButtonStyle(playStatus)
+            // 2
+            //binding.seekBar.value = playStatus.progress
+        }
+
+
+
+        /*if (track != null) {
             showTrackDetails(track)
 
             trackUrl = track.previewUrl
             if (trackUrl.isNotEmpty()) {
                 getMediaPlayerInteractor.prepare(trackUrl)
             }
-        }
+        }*/
 
         binding.playButton.setOnClickListener {
             if (trackUrl.isNotEmpty()) {
@@ -75,6 +121,10 @@ class PlayActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, getString(R.string.no_preview_track), Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun showLoading(loading: Boolean) {
+        binding.progressBar.isVisible = loading
     }
 
     private fun showTrackDetails(track: Track) {

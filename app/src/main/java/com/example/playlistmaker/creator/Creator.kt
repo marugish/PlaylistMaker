@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.creator
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -8,6 +8,8 @@ import com.example.playlistmaker.data.player.MediaPlayer
 import com.example.playlistmaker.data.repository.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.data.repository.StorageRepositoryImpl
 import com.example.playlistmaker.data.repository.TracksRepositoryImpl
+import com.example.playlistmaker.data.settings.SettingsRepository
+import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
 import com.example.playlistmaker.data.storage.SharedPrefsStorage
 import com.example.playlistmaker.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.domain.api.MediaPlayerRepository
@@ -20,12 +22,14 @@ import com.example.playlistmaker.domain.impl.MediaPlayerInteractorImpl
 import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
 import com.example.playlistmaker.domain.impl.SwitchThemeInteractorImpl
 import com.example.playlistmaker.domain.impl.TracksInteractorImpl
+import com.example.playlistmaker.domain.settings.SettingsInteractor
+import com.example.playlistmaker.domain.settings.impl.SettingsInteractorImpl
 
-private const val PLAYLIST_PREFERENCES = "playlist_preferences"
 
 object Creator {
     private lateinit var appContext: Context
     private lateinit var sharedPreferences: SharedPreferences
+    private const val PLAYLIST_PREFERENCES = "playlist_preferences"
 
     fun init(context: Context) {
         appContext = context
@@ -43,7 +47,7 @@ object Creator {
     }
 
     private fun provideSharedPreferences(context: Context): SharedPreferences {
-        if (!::sharedPreferences.isInitialized) {
+        if (!Creator::sharedPreferences.isInitialized) {
             sharedPreferences = context.getSharedPreferences(PLAYLIST_PREFERENCES, Context.MODE_PRIVATE)
         }
         return sharedPreferences
@@ -59,6 +63,15 @@ object Creator {
     // Тёмная тема
     fun provideSwitchThemeInteractor(): SwitchThemeInteractor {
         return SwitchThemeInteractorImpl(getStorageRepository())
+    }
+
+    // Новая тёмная тема ??????????
+    private fun getSettingsRepository(): SettingsRepository {
+        return SettingsRepositoryImpl(storage = SharedPrefsStorage(provideSharedPreferences(appContext)))
+    }
+
+    fun provideSettingsInteractor(): SettingsInteractor {
+        return SettingsInteractorImpl(getSettingsRepository())
     }
 
     // История поиска

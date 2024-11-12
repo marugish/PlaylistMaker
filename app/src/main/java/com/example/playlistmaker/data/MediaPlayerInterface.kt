@@ -1,6 +1,6 @@
 package com.example.playlistmaker.data
 
-import com.example.playlistmaker.PlayerStates
+import com.example.playlistmaker.util.PlayerStates
 
 interface MediaPlayerInterface {
     fun prepare(url: String)
