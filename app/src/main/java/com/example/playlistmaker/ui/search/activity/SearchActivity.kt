@@ -13,11 +13,12 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.ui.search.TracksState
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.player.activity.PlayActivity
+import com.example.playlistmaker.ui.search.HistoryState
 import com.example.playlistmaker.ui.search.TrackAdapter
+import com.example.playlistmaker.ui.search.TracksState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.example.playlistmaker.util.SearchError
 
@@ -90,13 +91,33 @@ class SearchActivity : ComponentActivity() {    //AppCompatActivity() {
         binding.searchRecycleView.layoutManager = LinearLayoutManager(this)
         binding.searchRecycleView.adapter = searchAdapter
 
-        // Подписываемся на изменения
+        // Подписываемся на изменения Обычного поиска
         viewModel.observeState().observe(this) {
             render(it)
         }
 
+        // Подписываемся на изменения Истории поиска
+        viewModel.observeHistoryState().observe(this) {
+            render(it)
+        }
+
+        binding.updateButton.setOnClickListener {
+            viewModel.searchRequest(searchQuery)
+
+            //search(searchQuery)
+        }
+
+        binding.clearHistoryButton.setOnClickListener {
+            viewModel.clearHistorySearch()
+            //getSearchHistoryInteractor.clearHistory()
+            //historyResults.clear()
+            //searchAdapter.notifyDataSetChanged()
+            //historyVisibility(View.GONE)
+            //binding.trackRecycleView.visibility = View.VISIBLE
+        }
 
 
+        // ,,,
 
         binding.toolbarSearch.setNavigationOnClickListener {
             finish()
@@ -113,28 +134,22 @@ class SearchActivity : ComponentActivity() {    //AppCompatActivity() {
 
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.searchEditText.text.isEmpty()) {
+                viewModel.getHistorySearch()
 
-                getSearchHistoryInteractor.getSearchHistory { results ->
-                    searchAdapter.setItems(results)
+                //getSearchHistoryInteractor.getSearchHistory { results ->
+                    /*searchAdapter.setItems(results)
                     historyResults = results.toMutableList()
                     if (results.isNotEmpty()) {
                         historyVisibility(View.VISIBLE)
-                    }
-                }
+                    }*/
+                //}
             } else {
                 historyVisibility(View.GONE)
                 binding.trackRecycleView.visibility = View.VISIBLE
             }
         }
 
-        binding.clearHistoryButton.setOnClickListener {
-            // скорее всего будет новый observer
-            getSearchHistoryInteractor.clearHistory()
-            historyResults.clear()
-            searchAdapter.notifyDataSetChanged()
-            historyVisibility(View.GONE)
-            binding.trackRecycleView.visibility = View.VISIBLE
-        }
+
 
         binding.searchEditText.addTextChangedListener(
             onTextChanged = { s, _, _, _ ->
@@ -153,11 +168,6 @@ class SearchActivity : ComponentActivity() {    //AppCompatActivity() {
                 }
             }
         )
-
-        binding.updateButton.setOnClickListener {
-            viewModel.searchRequest(searchQuery)
-            //search(searchQuery)
-        }
 
     }
 
@@ -232,6 +242,34 @@ class SearchActivity : ComponentActivity() {    //AppCompatActivity() {
             is TracksState.Error -> showError(state.errorMessage)
             is TracksState.Empty -> showEmpty(state.message)
         }
+    }
+
+    private fun render(historyState: HistoryState) {
+        when (historyState) {
+            is HistoryState.Clear -> clearSearchHistory()
+            is HistoryState.Content -> showHistoryContent(historyState.tracks)
+        }
+    }
+
+    private fun clearSearchHistory() {
+        historyVisibility(View.GONE)
+        binding.trackRecycleView.visibility = View.VISIBLE
+
+        // ПЕРЕПРОВЕРИТЬ !!!!!!!
+        historyResults.clear()
+        searchAdapter.notifyDataSetChanged()
+    }
+
+    private fun showHistoryContent(historyTracks: List<Track>) {
+        searchAdapter.setItems(historyTracks)
+        historyResults = historyTracks.toMutableList()
+        if (historyTracks.isNotEmpty()) {
+            historyVisibility(View.VISIBLE)
+        }
+
+
+        // нужно ли тут что-то выводить?? связанное с visibility
+        binding.trackRecycleView.visibility = View.GONE
     }
 
     private fun placeholderVisibility(visibilityStatus: Int) {

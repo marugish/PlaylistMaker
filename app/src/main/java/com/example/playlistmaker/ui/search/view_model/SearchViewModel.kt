@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.search.HistoryState
 import com.example.playlistmaker.ui.search.TracksState
 import com.example.playlistmaker.util.SearchError
 
@@ -23,8 +24,14 @@ class SearchViewModel: ViewModel() {
     private val tracksInteractor = Creator.provideTracksInteractor()
     private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
 
+    // Обычный поиск
     private val stateLiveData = MutableLiveData<TracksState>()
     fun observeState(): LiveData<TracksState> = stateLiveData
+
+    // История поиска
+    private val historyStateLiveData = MutableLiveData<HistoryState>()
+    fun observeHistoryState(): LiveData<HistoryState> = historyStateLiveData
+
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -77,6 +84,16 @@ class SearchViewModel: ViewModel() {
         }
     }
 
+    fun clearHistorySearch() {
+        searchHistoryInteractor.clearHistory()
+        renderState(HistoryState.Clear)
+    }
+
+    fun getHistorySearch() {
+        searchHistoryInteractor.getSearchHistory{ results ->
+            renderState(HistoryState.Content(results))
+        }
+    }
 
 // ИЛИ тут необходимо обращение к application?? чтобы потом не обращаться к R.string
 
@@ -90,6 +107,10 @@ class SearchViewModel: ViewModel() {
 
     private fun renderState(state: TracksState) {
         stateLiveData.postValue(state)
+    }
+
+    private fun renderState(historyState: HistoryState) {
+        historyStateLiveData.postValue(historyState)
     }
 
 

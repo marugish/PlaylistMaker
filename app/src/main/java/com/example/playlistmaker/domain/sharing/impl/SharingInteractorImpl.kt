@@ -19,13 +19,16 @@ class SharingInteractorImpl(private val externalNavigator: ExternalNavigator): S
 
     private fun getShareAppLink(): String {
         // Нужно реализовать
+        return ""
     }
 
     private fun getSupportEmailData(): EmailData {
         // Нужно реализовать
+        return EmailData("marugish@yandex.ru")
     }
 
     private fun getTermsLink(): String {
         // Нужно реализовать
+        return ""
     }
 }
