@@ -20,28 +20,28 @@
             app:iconPadding="@dimen/icon_padding"
             app:buttonGravity="center_vertical" />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_theme"
             style="@style/SettingsTextStyle"
             android:text="@string/dark_theme"
             android:thumbTintMode="screen" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/share"
             style="@style/SettingsTextStyle"
-            app:drawableEndCompat="@drawable/share"
-            android:text="@string/share_app" />
+            android:text="@string/share_app"
+            android:drawableEnd="@drawable/share" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/support"
             style="@style/SettingsTextStyle"
-            app:drawableEndCompat="@drawable/support"
+            android:drawableEnd="@drawable/support"
             android:text="@string/write_to_support"/>
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/user_agreement"
             style="@style/SettingsTextStyle"
-            app:drawableEndCompat="@drawable/arrow_forward"
+            android:drawableEnd="@drawable/arrow_forward"
             android:text="@string/user_agreement" />
 
 </LinearLayout>

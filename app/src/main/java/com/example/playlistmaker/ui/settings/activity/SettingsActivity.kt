@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
@@ -25,7 +24,7 @@ class SettingsActivity : ComponentActivity() {
         setContentView(binding.root)
 
         // Инициализация ViewModel
-        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
+        //viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
 
 
         // ........
@@ -64,6 +63,7 @@ class SettingsActivity : ComponentActivity() {
 
         //viewModel.getSwitchTheme()
         getSwitchThemeInteractor.getSwitchTheme { switchTheme ->
+            Log.d("settingsactivity", "$switchTheme")
             binding.switchTheme.isChecked = switchTheme
         }
 

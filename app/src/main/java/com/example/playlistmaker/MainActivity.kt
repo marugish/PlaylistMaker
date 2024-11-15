@@ -3,7 +3,6 @@ package com.example.playlistmaker
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.databinding.ActivityMainBinding
 import com.example.playlistmaker.ui.mediaLibrary.activity.MediaLibraryActivity
 import com.example.playlistmaker.ui.search.activity.SearchActivity
@@ -20,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Инициализируем
-        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
+        //viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
 
         /*viewModel.observeThemeState().observe(this) {
             render(it)
