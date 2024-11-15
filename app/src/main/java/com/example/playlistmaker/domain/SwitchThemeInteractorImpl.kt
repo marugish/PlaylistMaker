@@ -1,7 +1,7 @@
-package com.example.playlistmaker.domain.impl
+package com.example.playlistmaker.domain
 
-import com.example.playlistmaker.domain.api.StorageRepository
-import com.example.playlistmaker.domain.api.SwitchThemeInteractor
+import com.example.playlistmaker.domain.search.StorageRepository
+import com.example.playlistmaker.domain.SwitchThemeInteractor
 
 class SwitchThemeInteractorImpl(private val repository: StorageRepository): SwitchThemeInteractor {
 

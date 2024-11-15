@@ -1,7 +1,7 @@
-package com.example.playlistmaker.domain.impl
+package com.example.playlistmaker.domain.search.impl
 
-import com.example.playlistmaker.domain.api.TracksInteractor
-import com.example.playlistmaker.domain.api.TracksRepository
+import com.example.playlistmaker.domain.search.TracksInteractor
+import com.example.playlistmaker.domain.search.TracksRepository
 import com.example.playlistmaker.util.Resource
 import java.util.concurrent.Executors
 

@@ -1,10 +1,11 @@
-package com.example.playlistmaker.domain.impl
+package com.example.playlistmaker.domain.player.impl
 
-import com.example.playlistmaker.domain.api.MediaPlayerInteractor
-import com.example.playlistmaker.domain.api.MediaPlayerRepository
+import com.example.playlistmaker.domain.player.MediaPlayerInteractor
+import com.example.playlistmaker.domain.player.MediaPlayerRepository
 import com.example.playlistmaker.util.PlayerStates
 
-class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository): MediaPlayerInteractor {
+class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository):
+    MediaPlayerInteractor {
     override fun prepare(url: String) {
         repository.prepare(url)
     }

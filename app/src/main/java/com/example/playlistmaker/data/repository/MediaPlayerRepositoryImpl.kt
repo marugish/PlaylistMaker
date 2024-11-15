@@ -2,7 +2,7 @@ package com.example.playlistmaker.data.repository
 
 import com.example.playlistmaker.util.PlayerStates
 import com.example.playlistmaker.data.player.MediaPlayer
-import com.example.playlistmaker.domain.api.MediaPlayerRepository
+import com.example.playlistmaker.domain.player.MediaPlayerRepository
 
 class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer): MediaPlayerRepository {
 

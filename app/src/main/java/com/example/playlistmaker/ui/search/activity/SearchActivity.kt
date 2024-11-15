@@ -8,22 +8,21 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.player.activity.PlayActivity
-import com.example.playlistmaker.ui.search.HistoryState
-import com.example.playlistmaker.ui.search.TrackAdapter
-import com.example.playlistmaker.ui.search.TracksState
+import com.example.playlistmaker.ui.search.state.HistoryState
+import com.example.playlistmaker.ui.search.state.TracksState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.example.playlistmaker.util.SearchError
 
 
-class SearchActivity : ComponentActivity() {    //AppCompatActivity() {
+class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var viewModel: SearchViewModel
 

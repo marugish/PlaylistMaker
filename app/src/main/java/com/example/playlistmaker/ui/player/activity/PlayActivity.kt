@@ -3,8 +3,7 @@ package com.example.playlistmaker.ui.player.activity
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
@@ -12,28 +11,18 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityPlayBinding
-import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.player.PlayStatus
-import com.example.playlistmaker.ui.player.TrackScreenState
+import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.player.state.PlayStatusState
+import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.ui.player.view_model.PlayViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class PlayActivity : ComponentActivity() {
+class PlayActivity : AppCompatActivity() {
     private lateinit var viewModel: PlayViewModel
     private lateinit var binding: ActivityPlayBinding
-
-    //private var mainThreadHandler: Handler? = null
-    //private var updateTimerTask: Runnable? = createUpdateTimerTask()
-
-    private val getMediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
-
-    /*private companion object {
-        const val REFRESH_TIMER_DELAY_MILLIS = 500L // 500 миллисекунд == 0,5 секунды
-    }*/
 
     private lateinit var pauseImage: Drawable
     private lateinit var playImage: Drawable
@@ -43,15 +32,11 @@ class PlayActivity : ComponentActivity() {
         binding = ActivityPlayBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //mainThreadHandler = Handler(Looper.getMainLooper())
-
-        val toolbarBack = findViewById<Toolbar>(R.id.toolbar_play)
-        toolbarBack.setNavigationOnClickListener {
+        binding.toolbarPlay.setNavigationOnClickListener {
             finish()
         }
 
         // Для превью трека
-        var trackUrl = ""
         pauseImage = ContextCompat.getDrawable(this, R.drawable.pause_button)!!
         playImage = ContextCompat.getDrawable(this, R.drawable.play_button)!!
 
@@ -67,17 +52,10 @@ class PlayActivity : ComponentActivity() {
                     showLoading(loading = false)
                     if (track != null) {
                         showTrackDetails(track = screenState.track)
-
-                        // !!!!
-                        trackUrl = screenState.track.previewUrl
-                        trackUrl = ""
-
-                       // if (trackUrl.isNotEmpty()) {
-                            viewModel.prepareMediaPlayer(trackUrl)
-                        //}
-
-
+                        viewModel.prepareMediaPlayer(screenState.track.previewUrl)
                     }
+
+
                     // а если track пустой
                     // то Toast и кнопка назад
                 }
@@ -93,33 +71,26 @@ class PlayActivity : ComponentActivity() {
 
         viewModel.getPlayStatusLiveData().observe(this) { playStatus ->
             when (playStatus) {
-                is PlayStatus.Prepared -> {
-                    // поменять состояние кнопки
-                    // ...
-                }
-                is PlayStatus.Pause -> {
+                is PlayStatusState.Pause -> {
                     binding.playButton.setImageDrawable(playImage)
                 }
-                is PlayStatus.Error -> {
+                is PlayStatusState.Error -> {
                     binding.playButton.isEnabled = false
                     binding.playButton.alpha = 0.5f
                     Toast.makeText(applicationContext, getString(R.string.no_preview_track), Toast.LENGTH_LONG).show()
                 }
-                is PlayStatus.Start -> {
+                is PlayStatusState.Start -> {
                     binding.playButton.setImageDrawable(pauseImage)
                 }
-                is PlayStatus.ToZero -> {
+                is PlayStatusState.ToZero -> {
                     binding.playButton.setImageDrawable(playImage)
                     binding.playDurationTextView.text = getString(R.string.play_time)
                 }
-                is PlayStatus.Play -> {
+                is PlayStatusState.PlayState -> {
                     binding.playDurationTextView.text =
                         SimpleDateFormat("mm:ss", Locale.getDefault()).format(playStatus.time)
                 }
             }
-            //changeButtonStyle(playStatus)
-            // 2
-            //binding.seekBar.value = playStatus.progress
         }
 
 
@@ -134,13 +105,9 @@ class PlayActivity : ComponentActivity() {
         }*/
 
         binding.playButton.setOnClickListener {
-            viewModel.playbackControl(trackUrl)
-
-            //if (trackUrl.isNotEmpty()) {
-                //playbackControl()
-            //} else {
-                //Toast.makeText(applicationContext, getString(R.string.no_preview_track), Toast.LENGTH_LONG).show()
-            //}
+            if (track != null) {
+                viewModel.playbackControl(track.previewUrl)
+            }
         }
     }
 
@@ -171,72 +138,11 @@ class PlayActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-
         viewModel.pausePlayer()
-        //pausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
         viewModel.releasePlayer()
-        //getMediaPlayerInteractor.release()
-        //resetToZeroPlayer()
     }
-
-    /*private fun resetToZeroPlayer() {
-        binding.playButton.setImageDrawable(playImage)
-        binding.playDurationTextView.text = getString(R.string.play_time)
-        updateTimerTask?.let { mainThreadHandler?.removeCallbacks(it) }
-    }*/
-
-    /*private fun playbackControl() {
-        getMediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
-            when (state) {
-                PlayerStates.PLAYING -> {
-                    pausePlayer()
-                }
-                PlayerStates.PREPARED, PlayerStates.PAUSED -> {
-                    startPlayer()
-                }
-                else -> {}
-            }
-        }
-    }*/
-
-    /*private fun completedPlayer() {
-        getMediaPlayerInteractor.changeState(PlayerStates.PREPARED)
-        resetToZeroPlayer()
-    }*/
-
-    /*private fun startPlayer() {
-        getMediaPlayerInteractor.play()
-        binding.playButton.setImageDrawable(pauseImage)
-        updateTimerTask?.let { mainThreadHandler?.post(it) }
-    }*/
-
-    /*private fun createUpdateTimerTask(): Runnable {
-        return Runnable {
-            getMediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
-                if (state == PlayerStates.PLAYING) {
-                    binding.playDurationTextView.text =
-                        SimpleDateFormat("mm:ss", Locale.getDefault()).format(position)
-                    updateTimerTask?.let {
-                        mainThreadHandler?.postDelayed(
-                            it,
-                            REFRESH_TIMER_DELAY_MILLIS
-                        )
-                    }
-                } else if (state == PlayerStates.COMPLETED) {
-                    completedPlayer()
-                }
-            }
-        }
-    }*/
-
-    /*private fun pausePlayer() {
-        getMediaPlayerInteractor.pause()
-        binding.playButton.setImageDrawable(playImage)
-        updateTimerTask?.let { mainThreadHandler?.removeCallbacks(it) }
-    }*/
 }

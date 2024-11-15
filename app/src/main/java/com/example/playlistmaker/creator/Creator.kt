@@ -13,17 +13,15 @@ import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
 import com.example.playlistmaker.data.sharing.ExternalNavigator
 import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.example.playlistmaker.data.storage.SharedPrefsStorage
-import com.example.playlistmaker.domain.api.MediaPlayerInteractor
-import com.example.playlistmaker.domain.api.MediaPlayerRepository
-import com.example.playlistmaker.domain.api.SearchHistoryInteractor
-import com.example.playlistmaker.domain.api.StorageRepository
-import com.example.playlistmaker.domain.api.SwitchThemeInteractor
-import com.example.playlistmaker.domain.api.TracksInteractor
-import com.example.playlistmaker.domain.api.TracksRepository
-import com.example.playlistmaker.domain.impl.MediaPlayerInteractorImpl
-import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
-import com.example.playlistmaker.domain.impl.SwitchThemeInteractorImpl
-import com.example.playlistmaker.domain.impl.TracksInteractorImpl
+import com.example.playlistmaker.domain.player.MediaPlayerInteractor
+import com.example.playlistmaker.domain.player.MediaPlayerRepository
+import com.example.playlistmaker.domain.search.SearchHistoryInteractor
+import com.example.playlistmaker.domain.search.StorageRepository
+import com.example.playlistmaker.domain.search.TracksInteractor
+import com.example.playlistmaker.domain.search.TracksRepository
+import com.example.playlistmaker.domain.player.impl.MediaPlayerInteractorImpl
+import com.example.playlistmaker.domain.search.impl.SearchHistoryInteractorImpl
+import com.example.playlistmaker.domain.search.impl.TracksInteractorImpl
 import com.example.playlistmaker.domain.settings.SettingsInteractor
 import com.example.playlistmaker.domain.settings.impl.SettingsInteractorImpl
 import com.example.playlistmaker.domain.sharing.SharingInteractor
@@ -64,27 +62,7 @@ object Creator {
         )
     }
 
-    // Тёмная тема
-    fun provideSwitchThemeInteractor(): SwitchThemeInteractor {
-        return SwitchThemeInteractorImpl(getStorageRepository())
-    }
 
-    // Новая тёмная тема ??????????
-    private fun getSettingsRepository(): SettingsRepository {
-        return SettingsRepositoryImpl(storage = SharedPrefsStorage(provideSharedPreferences(appContext)))
-    }
-
-    fun provideSettingsInteractor(): SettingsInteractor {
-        return SettingsInteractorImpl(getSettingsRepository())
-    }
-
-    // Sharing
-    private fun getExternalNavigator(): ExternalNavigator {
-        return ExternalNavigatorImpl()
-    }
-    fun provideSharingInteractor(): SharingInteractor {
-        return SharingInteractorImpl(getExternalNavigator())
-    }
 
     // История поиска
     fun provideSearchHistoryInteractor(): SearchHistoryInteractor {
@@ -99,4 +77,27 @@ object Creator {
     fun provideMediaPlayerInteractor(): MediaPlayerInteractor {
         return MediaPlayerInteractorImpl(getMediaPlayerRepository())
     }
+
+    // Новая тёмная тема
+    private fun getSettingsRepository(): SettingsRepository {
+        return SettingsRepositoryImpl(storage = SharedPrefsStorage(provideSharedPreferences(appContext)))
+    }
+
+    fun provideSettingsInteractor(): SettingsInteractor {
+        return SettingsInteractorImpl(getSettingsRepository())
+    }
+
+    // Sharing
+    private fun getExternalNavigator(context: Context): ExternalNavigator {
+        return ExternalNavigatorImpl(context = context)
+    }
+
+    fun provideSharingInteractor(context: Context): SharingInteractor {
+        return SharingInteractorImpl(getExternalNavigator(context = context), context)
+    }
+
+    // Тёмная тема - старая реализация
+    /*fun provideSwitchThemeInteractor(): SwitchThemeInteractor {
+        return SwitchThemeInteractorImpl(getStorageRepository())
+    }*/
 }

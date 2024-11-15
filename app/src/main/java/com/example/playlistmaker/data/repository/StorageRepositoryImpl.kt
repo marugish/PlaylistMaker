@@ -2,8 +2,8 @@ package com.example.playlistmaker.data.repository
 
 import com.example.playlistmaker.data.Storage
 import com.example.playlistmaker.data.mapper.TracksMapper
-import com.example.playlistmaker.domain.api.StorageRepository
-import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.search.StorageRepository
+import com.example.playlistmaker.domain.search.model.Track
 
 class StorageRepositoryImpl(private val storage: Storage, private val trackMapper: TracksMapper) :
     StorageRepository {

@@ -7,9 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.search.HistoryState
-import com.example.playlistmaker.ui.search.TracksState
+import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.search.state.HistoryState
+import com.example.playlistmaker.ui.search.state.TracksState
 import com.example.playlistmaker.util.SearchError
 
 class SearchViewModel: ViewModel() {
