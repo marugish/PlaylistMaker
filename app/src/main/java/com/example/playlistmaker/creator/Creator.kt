@@ -10,6 +10,8 @@ import com.example.playlistmaker.data.repository.StorageRepositoryImpl
 import com.example.playlistmaker.data.repository.TracksRepositoryImpl
 import com.example.playlistmaker.data.settings.SettingsRepository
 import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
+import com.example.playlistmaker.data.sharing.ExternalNavigator
+import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.example.playlistmaker.data.storage.SharedPrefsStorage
 import com.example.playlistmaker.domain.api.MediaPlayerInteractor
 import com.example.playlistmaker.domain.api.MediaPlayerRepository
@@ -24,6 +26,8 @@ import com.example.playlistmaker.domain.impl.SwitchThemeInteractorImpl
 import com.example.playlistmaker.domain.impl.TracksInteractorImpl
 import com.example.playlistmaker.domain.settings.SettingsInteractor
 import com.example.playlistmaker.domain.settings.impl.SettingsInteractorImpl
+import com.example.playlistmaker.domain.sharing.SharingInteractor
+import com.example.playlistmaker.domain.sharing.impl.SharingInteractorImpl
 
 
 object Creator {
@@ -72,6 +76,14 @@ object Creator {
 
     fun provideSettingsInteractor(): SettingsInteractor {
         return SettingsInteractorImpl(getSettingsRepository())
+    }
+
+    // Sharing
+    private fun getExternalNavigator(): ExternalNavigator {
+        return ExternalNavigatorImpl()
+    }
+    fun provideSharingInteractor(): SharingInteractor {
+        return SharingInteractorImpl(getExternalNavigator())
     }
 
     // История поиска
