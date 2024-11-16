@@ -11,7 +11,7 @@ class App : Application() {
 
         Creator.init(this)
 
-        val getSwitchThemeInteractor = Creator.provideSettingsInteractor()//provideSwitchThemeInteractor()
+        val getSwitchThemeInteractor = Creator.provideSettingsInteractor()
         val theme = getSwitchThemeInteractor.getThemeSettings()
         switchTheme(theme.darkTheme)
     }

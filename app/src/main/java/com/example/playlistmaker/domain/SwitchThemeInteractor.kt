@@ -1,5 +1,6 @@
 package com.example.playlistmaker.domain
 
+// старая реализация
 interface SwitchThemeInteractor {
 
     fun saveSwitchTheme(theme: Boolean)

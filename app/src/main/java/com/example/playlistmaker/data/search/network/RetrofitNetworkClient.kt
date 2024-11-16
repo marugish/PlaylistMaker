@@ -1,11 +1,11 @@
-package com.example.playlistmaker.data.network
+package com.example.playlistmaker.data.search.network
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import com.example.playlistmaker.data.NetworkClient
-import com.example.playlistmaker.data.dto.NetworkResponse
-import com.example.playlistmaker.data.dto.TracksSearchRequest
+import com.example.playlistmaker.data.search.NetworkClient
+import com.example.playlistmaker.data.search.dto.NetworkResponse
+import com.example.playlistmaker.data.search.dto.TracksSearchRequest
 
 class RetrofitNetworkClient(private val context: Context): NetworkClient {
 

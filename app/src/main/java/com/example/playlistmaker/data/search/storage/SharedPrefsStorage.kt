@@ -1,9 +1,9 @@
-package com.example.playlistmaker.data.storage
+package com.example.playlistmaker.data.search.storage
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.example.playlistmaker.data.Storage
-import com.example.playlistmaker.data.dto.TrackDto
+import com.example.playlistmaker.data.search.Storage
+import com.example.playlistmaker.data.search.dto.TrackDto
 import com.google.gson.Gson
 
 private const val THEME_SWITCH_KEY = "key_for_theme_switch"

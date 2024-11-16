@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data.dto
+package com.example.playlistmaker.data.search.dto
 
 import java.io.Serializable
 

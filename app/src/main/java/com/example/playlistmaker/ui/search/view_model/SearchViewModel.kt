@@ -95,8 +95,6 @@ class SearchViewModel: ViewModel() {
         }
     }
 
-// ИЛИ тут необходимо обращение к application?? чтобы потом не обращаться к R.string
-
     override fun onCleared() {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }

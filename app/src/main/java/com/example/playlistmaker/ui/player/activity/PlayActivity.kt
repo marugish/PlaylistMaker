@@ -54,17 +54,10 @@ class PlayActivity : AppCompatActivity() {
                         showTrackDetails(track = screenState.track)
                         viewModel.prepareMediaPlayer(screenState.track.previewUrl)
                     }
-
-
-                    // а если track пустой
-                    // то Toast и кнопка назад
-                }
-                is TrackScreenState.Error -> {
-
                 }
                 is TrackScreenState.Empty -> {
-
-                    // должен быть трек с заглушками в полях
+                    finish()
+                    Toast.makeText(applicationContext, getString(R.string.load_error), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -92,18 +85,6 @@ class PlayActivity : AppCompatActivity() {
                 }
             }
         }
-
-
-
-        /*if (track != null) {
-            showTrackDetails(track)
-
-            trackUrl = track.previewUrl
-            if (trackUrl.isNotEmpty()) {
-                getMediaPlayerInteractor.prepare(trackUrl)
-            }
-        }*/
-
         binding.playButton.setOnClickListener {
             if (track != null) {
                 viewModel.playbackControl(track.previewUrl)

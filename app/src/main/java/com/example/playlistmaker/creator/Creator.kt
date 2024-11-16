@@ -2,17 +2,17 @@ package com.example.playlistmaker.creator
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.playlistmaker.data.mapper.TracksMapper
-import com.example.playlistmaker.data.network.RetrofitNetworkClient
-import com.example.playlistmaker.data.player.MediaPlayer
-import com.example.playlistmaker.data.repository.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.data.repository.StorageRepositoryImpl
-import com.example.playlistmaker.data.repository.TracksRepositoryImpl
+import com.example.playlistmaker.data.search.mapper.TracksMapper
+import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
+import com.example.playlistmaker.data.player.impl.MediaPlayer
+import com.example.playlistmaker.data.player.impl.MediaPlayerRepositoryImpl
+import com.example.playlistmaker.data.search.storage.StorageRepositoryImpl
+import com.example.playlistmaker.data.search.impl.TracksRepositoryImpl
 import com.example.playlistmaker.data.settings.SettingsRepository
 import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
 import com.example.playlistmaker.data.sharing.ExternalNavigator
 import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
-import com.example.playlistmaker.data.storage.SharedPrefsStorage
+import com.example.playlistmaker.data.search.storage.SharedPrefsStorage
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerRepository
 import com.example.playlistmaker.domain.search.SearchHistoryInteractor

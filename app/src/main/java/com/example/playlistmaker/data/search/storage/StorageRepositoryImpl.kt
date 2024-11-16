@@ -1,7 +1,7 @@
-package com.example.playlistmaker.data.repository
+package com.example.playlistmaker.data.search.storage
 
-import com.example.playlistmaker.data.Storage
-import com.example.playlistmaker.data.mapper.TracksMapper
+import com.example.playlistmaker.data.search.Storage
+import com.example.playlistmaker.data.search.mapper.TracksMapper
 import com.example.playlistmaker.domain.search.StorageRepository
 import com.example.playlistmaker.domain.search.model.Track
 

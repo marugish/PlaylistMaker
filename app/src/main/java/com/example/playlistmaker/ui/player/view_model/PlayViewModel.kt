@@ -24,16 +24,12 @@ class PlayViewModel(private val track: Track?): ViewModel() {
     private var mainThreadHandler= Handler(Looper.getMainLooper())
     private var updateTimerTask: Runnable? = createUpdateTimerTask()
 
-    // Проверить инициализацию
     init {
         if (track == null) {
             screenStateLiveData.postValue(TrackScreenState.Empty)
         } else {
             screenStateLiveData.postValue(TrackScreenState.Content(track))
         }
-
-        // приготовить трек тут ли?
-
     }
 
     fun getScreenStateLiveData(): LiveData<TrackScreenState> = screenStateLiveData
@@ -57,18 +53,11 @@ class PlayViewModel(private val track: Track?): ViewModel() {
         } else {
             playStatusStateLiveData.postValue(PlayStatusState.Error)
         }
-
-
-
-        // тут ли мы меняем статус??? нет, не тут, а когда в listener поменяется статус
-        //playStatusLiveData.postValue(PlayStatus.Prepared)
     }
 
     override fun onCleared() {
         releasePlayer()
         updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
-        // скорее всего тут нужно будет в статус release плеер перевести
-        // также скорее всего удалить callbacks
     }
 
     fun playbackControl(trackUrl: String) {
@@ -114,7 +103,6 @@ class PlayViewModel(private val track: Track?): ViewModel() {
         resetToZeroPlayer()
     }
 
-    // тут точно return?????
     private fun createUpdateTimerTask(): Runnable {
         return Runnable {
             mediaPlayerInteractor.getCurrentStateAndPosition { position, state ->

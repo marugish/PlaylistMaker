@@ -1,8 +1,8 @@
 package com.example.playlistmaker.domain
 
 import com.example.playlistmaker.domain.search.StorageRepository
-import com.example.playlistmaker.domain.SwitchThemeInteractor
 
+// старая реализация
 class SwitchThemeInteractorImpl(private val repository: StorageRepository): SwitchThemeInteractor {
 
     override fun saveSwitchTheme(theme: Boolean) {

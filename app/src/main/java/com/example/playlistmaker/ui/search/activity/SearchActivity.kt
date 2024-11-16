@@ -27,14 +27,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var viewModel: SearchViewModel
 
     // Обычный поиск
-    //private val getTracksInteractor = Creator.provideTracksInteractor()
-
     private val results: MutableList<Track> = mutableListOf()
     private val adapter = TrackAdapter(results) { track -> showTrackPlayer(track) }
 
     // История поиска
-    //private val getSearchHistoryInteractor = Creator.provideSearchHistoryInteractor()
-
     private var historyResults: MutableList<Track> = mutableListOf()
     private val searchAdapter = TrackAdapter(historyResults) { track -> showTrackPlayer(track) }
 
@@ -43,7 +39,7 @@ class SearchActivity : AppCompatActivity() {
             val intent = Intent(this, PlayActivity::class.java)
             intent.putExtra("track", track)
             startActivity(intent)
-            viewModel.saveSearchHistory(track)//getSearchHistoryInteractor.saveSearchHistory(track)
+            viewModel.saveSearchHistory(track)
         }
     }
 
@@ -52,7 +48,6 @@ class SearchActivity : AppCompatActivity() {
     private var isClickAllowed = true
 
     private val handler = Handler(Looper.getMainLooper())
-    //private val searchRunnable = Runnable { search(binding.searchEditText.text.toString()) }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -62,7 +57,6 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val EDIT_TEXT = "EDIT_TEXT"
         private const val SEARCH_QUERY = ""
-        //private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
@@ -73,7 +67,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
@@ -102,21 +95,11 @@ class SearchActivity : AppCompatActivity() {
 
         binding.updateButton.setOnClickListener {
             viewModel.searchRequest(searchQuery)
-
-            //search(searchQuery)
         }
 
         binding.clearHistoryButton.setOnClickListener {
             viewModel.clearHistorySearch()
-            //getSearchHistoryInteractor.clearHistory()
-            //historyResults.clear()
-            //searchAdapter.notifyDataSetChanged()
-            //historyVisibility(View.GONE)
-            //binding.trackRecycleView.visibility = View.VISIBLE
         }
-
-
-        // ,,,
 
         binding.toolbarSearch.setNavigationOnClickListener {
             finish()
@@ -134,21 +117,11 @@ class SearchActivity : AppCompatActivity() {
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.searchEditText.text.isEmpty()) {
                 viewModel.getHistorySearch()
-
-                //getSearchHistoryInteractor.getSearchHistory { results ->
-                    /*searchAdapter.setItems(results)
-                    historyResults = results.toMutableList()
-                    if (results.isNotEmpty()) {
-                        historyVisibility(View.VISIBLE)
-                    }*/
-                //}
             } else {
                 historyVisibility(View.GONE)
                 binding.trackRecycleView.visibility = View.VISIBLE
             }
         }
-
-
 
         binding.searchEditText.addTextChangedListener(
             onTextChanged = { s, _, _, _ ->
@@ -156,13 +129,9 @@ class SearchActivity : AppCompatActivity() {
                 searchQuery = s.toString()
                 if (binding.searchEditText.hasFocus() && s?.isEmpty() == true) {
                     if (historyResults.isNotEmpty()) {
-                        binding.trackRecycleView.visibility = View.GONE
-                        placeholderVisibility(View.GONE)
-                        binding.updateButton.visibility = View.GONE
-                        historyVisibility(View.VISIBLE)
+                        showHistory()
                     }
                 } else {
-                    historyVisibility(View.GONE)
                     viewModel.searchDebounce(changedText = s?.toString() ?: "")
                 }
             }
@@ -170,13 +139,18 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+    private fun showHistory() {
+        binding.trackRecycleView.visibility = View.GONE
+        placeholderVisibility(View.GONE)
+        binding.updateButton.visibility = View.GONE
+        historyVisibility(View.VISIBLE)
+    }
+
     private fun historyVisibility(visibilityStatus: Int) {
         binding.historySearch.visibility = visibilityStatus
         binding.clearHistoryButton.visibility = visibilityStatus
         binding.searchRecycleView.visibility = visibilityStatus
     }
-
-
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -186,11 +160,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    /*private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }*/
-
     private fun clickDebounce() : Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
@@ -199,40 +168,6 @@ class SearchActivity : AppCompatActivity() {
         }
         return current
     }
-
-    /*private fun search(request: String) {
-        if (request.isNotEmpty()) {
-            showProgressBar(true)
-            getTracksInteractor.searchTracks(expression = request
-            ) { foundTracks, errorMessage ->
-                handler.post {
-                    showProgressBar(false)
-                    if (foundTracks != null) {
-                        adapter.setItems(foundTracks)
-                        showMessage("", 0, false)
-                    }
-                    if (errorMessage != null) {
-                        when (errorMessage) {
-                            SearchError.NO_RESULTS -> {
-                                showMessage(
-                                    getString(R.string.nothing_found),
-                                    R.drawable.not_found_placeholder,
-                                    false
-                                )
-                            }
-                            SearchError.NETWORK_ERROR -> {
-                                showMessage(
-                                    getString(R.string.network_problems),
-                                    R.drawable.no_network_placeholder,
-                                    true
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }*/
 
     private fun render(state: TracksState) {
         when (state) {
@@ -250,11 +185,10 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun clearSearchHistory() {
         historyVisibility(View.GONE)
         binding.trackRecycleView.visibility = View.VISIBLE
-
-        // ПЕРЕПРОВЕРИТЬ !!!!!!!
         historyResults.clear()
         searchAdapter.notifyDataSetChanged()
     }
@@ -265,9 +199,6 @@ class SearchActivity : AppCompatActivity() {
         if (historyTracks.isNotEmpty()) {
             historyVisibility(View.VISIBLE)
         }
-
-
-        // нужно ли тут что-то выводить?? связанное с visibility
         binding.trackRecycleView.visibility = View.GONE
     }
 
@@ -278,24 +209,11 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showLoading() {
         binding.trackRecycleView.visibility = View.GONE
-        // то, что идёт вместе с placeholder
         placeholderVisibility(View.GONE)
-        //binding.placeholderMessage.visibility = View.GONE
-        //binding.placeholderImage.visibility = View.GONE
         binding.updateButton.visibility = View.GONE
-        // скорее всего нужно будет ещё скрыть Историю
-        // ...
+        historyVisibility(View.GONE)
         binding.progressBar.visibility = View.VISIBLE
     }
-    /*private fun showProgressBar(isShow: Boolean) {
-        if (isShow) {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.trackRecycleView.visibility = View.GONE
-        } else {
-            binding.progressBar.visibility = View.GONE
-            binding.trackRecycleView.visibility = View.VISIBLE
-        }
-    }*/
 
     private fun showContent(tracks: List<Track>) {
         binding.trackRecycleView.visibility = View.VISIBLE
@@ -304,14 +222,13 @@ class SearchActivity : AppCompatActivity() {
         binding.updateButton.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
 
-        adapter.setItems(tracks)
-        //adapter.movies.clear()
-        //adapter.movies.addAll(movies)
-        //adapter.notifyDataSetChanged()
-    }
-    private fun showError(errorMessage: SearchError) {
+        historyVisibility(View.GONE)
 
-        adapter.setItems(emptyList()) // ?????????
+        adapter.setItems(tracks)
+    }
+
+    private fun showError(errorMessage: SearchError) {
+        adapter.setItems(emptyList())
 
         binding.trackRecycleView.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
@@ -333,22 +250,5 @@ class SearchActivity : AppCompatActivity() {
     private fun showEmpty(emptyMessage: SearchError) {
         showError(emptyMessage)
     }
-
-    /*private fun showMessage(text: String, resource: Int, buttonVisibility: Boolean) {
-        if (text.isNotEmpty()) {
-            placeholderVisibility(View.VISIBLE)
-            adapter.setItems(emptyList())
-            binding.placeholderMessage.text = text
-            binding.placeholderImage.setImageResource(resource)
-            if (buttonVisibility) {
-                binding.updateButton.visibility = View.VISIBLE
-            } else {
-                binding.updateButton.visibility = View.GONE
-            }
-        } else {
-            placeholderVisibility(View.GONE)
-            binding.updateButton.visibility = View.GONE
-        }
-    }*/
 
 }

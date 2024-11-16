@@ -1,8 +1,8 @@
-package com.example.playlistmaker.data.player
+package com.example.playlistmaker.data.player.impl
 
 import android.media.MediaPlayer
+import com.example.playlistmaker.data.player.MediaPlayerInterface
 import com.example.playlistmaker.util.PlayerStates
-import com.example.playlistmaker.data.MediaPlayerInterface
 
 class MediaPlayer: MediaPlayerInterface {
     private val mediaPlayer = MediaPlayer()

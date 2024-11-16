@@ -1,6 +1,6 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.data.search
 
-import com.example.playlistmaker.data.dto.TrackDto
+import com.example.playlistmaker.data.search.dto.TrackDto
 
 interface Storage {
     fun save(darkTheme: Boolean): Boolean
