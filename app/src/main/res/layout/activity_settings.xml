@@ -24,7 +24,11 @@
             android:id="@+id/switch_theme"
             style="@style/SettingsTextStyle"
             android:text="@string/dark_theme"
-            android:thumbTintMode="screen" />
+            app:thumbTint="?attr/switchThumbTint"
+            app:trackTint="?attr/switchTrackTint"
+            android:minWidth="@dimen/switch_width"
+            android:minHeight="@dimen/switch_height"
+            android:thumbTintMode="screen"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/share"

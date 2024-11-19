@@ -6,23 +6,21 @@ import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.domain.search.SearchHistoryInteractor
+import com.example.playlistmaker.domain.search.TracksInteractor
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.search.state.HistoryState
 import com.example.playlistmaker.ui.search.state.TracksState
 import com.example.playlistmaker.util.SearchError
 
-class SearchViewModel: ViewModel() {
-
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
-    }
+class SearchViewModel(private val tracksInteractor: TracksInteractor,
+                      private val searchHistoryInteractor: SearchHistoryInteractor): ViewModel() {
 
     private var latestSearchText: String? = null
-
-    private val tracksInteractor = Creator.provideTracksInteractor()
-    private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
 
     // Обычный поиск
     private val stateLiveData = MutableLiveData<TracksState>()
@@ -31,7 +29,6 @@ class SearchViewModel: ViewModel() {
     // История поиска
     private val historyStateLiveData = MutableLiveData<HistoryState>()
     fun observeHistoryState(): LiveData<HistoryState> = historyStateLiveData
-
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -62,8 +59,6 @@ class SearchViewModel: ViewModel() {
                 val tracks = mutableListOf<Track>()
                 if (foundTracks != null) {
                     tracks.addAll(foundTracks)
-                    //adapter.setItems(foundTracks)
-                    //showMessage("", 0, false)
                 }
                 when {
                     errorMessage != null -> {
@@ -111,5 +106,21 @@ class SearchViewModel: ViewModel() {
         historyStateLiveData.postValue(historyState)
     }
 
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private val SEARCH_REQUEST_TOKEN = Any()
+
+        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val interactorTracks = Creator.provideTracksInteractor()
+                val interactorSearchHistory = Creator.provideSearchHistoryInteractor()
+
+                SearchViewModel(
+                    tracksInteractor = interactorTracks,
+                    searchHistoryInteractor = interactorSearchHistory
+                )
+            }
+        }
+    }
 
 }

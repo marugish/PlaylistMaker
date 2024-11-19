@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui.search.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -27,12 +26,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var viewModel: SearchViewModel
 
     // Обычный поиск
-    private val results: MutableList<Track> = mutableListOf()
-    private val adapter = TrackAdapter(results) { track -> showTrackPlayer(track) }
+    private val adapter = TrackAdapter { track -> showTrackPlayer(track) }
 
     // История поиска
-    private var historyResults: MutableList<Track> = mutableListOf()
-    private val searchAdapter = TrackAdapter(historyResults) { track -> showTrackPlayer(track) }
+    private val searchAdapter = TrackAdapter { track -> showTrackPlayer(track) }
 
     private fun showTrackPlayer(track: Track) {
         if (clickDebounce()) {
@@ -73,7 +70,7 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Инициализация ViewModel
-        viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
+        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
 
         // Обычный поиск
         binding.trackRecycleView.layoutManager = LinearLayoutManager(this)
@@ -127,23 +124,25 @@ class SearchActivity : AppCompatActivity() {
             onTextChanged = { s, _, _, _ ->
                 binding.searchClearButton.visibility = clearButtonVisibility(s)
                 searchQuery = s.toString()
+                viewModel.searchDebounce(changedText = s?.toString() ?: "")
                 if (binding.searchEditText.hasFocus() && s?.isEmpty() == true) {
-                    if (historyResults.isNotEmpty()) {
-                        showHistory()
+                    val historyState = viewModel.observeHistoryState().value
+                    if (historyState is HistoryState.Content){
+                        showHistory(historyState.tracks)
                     }
-                } else {
-                    viewModel.searchDebounce(changedText = s?.toString() ?: "")
                 }
             }
         )
 
     }
 
-    private fun showHistory() {
+    private fun showHistory(historyTracks: List<Track>) {
         binding.trackRecycleView.visibility = View.GONE
         placeholderVisibility(View.GONE)
         binding.updateButton.visibility = View.GONE
-        historyVisibility(View.VISIBLE)
+        if (historyTracks.isNotEmpty()) {
+            historyVisibility(View.VISIBLE)
+        }
     }
 
     private fun historyVisibility(visibilityStatus: Int) {
@@ -185,17 +184,14 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun clearSearchHistory() {
         historyVisibility(View.GONE)
         binding.trackRecycleView.visibility = View.VISIBLE
-        historyResults.clear()
-        searchAdapter.notifyDataSetChanged()
+        searchAdapter.setItems(emptyList())
     }
 
     private fun showHistoryContent(historyTracks: List<Track>) {
         searchAdapter.setItems(historyTracks)
-        historyResults = historyTracks.toMutableList()
         if (historyTracks.isNotEmpty()) {
             historyVisibility(View.VISIBLE)
         }

@@ -8,6 +8,8 @@
     <attr name="nameTrackText" format="reference"/>
     <attr name="infoTrackText" format="reference"/>
     <attr name="progressBarColor" format="reference"/>
+    <attr name="switchThumbTint" format="reference"/>
+    <attr name="switchTrackTint" format="reference"/>
 
     <style name="HeadingTextStyle">
         <item name="android:textSize">@dimen/heading_text_size</item>

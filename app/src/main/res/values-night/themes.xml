@@ -16,6 +16,9 @@
         <item name="nameTrackText">@color/white</item>
         <item name="infoTrackText">@color/icon_color</item>
         <item name="progressBarColor">@color/blue_background</item>
+        <!-- Switch color. -->
+        <item name="switchThumbTint">@color/blue_background</item>
+        <item name="switchTrackTint">@color/switch_track_tint</item>
     </style>
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 </resources>

@@ -43,16 +43,42 @@ class PlayActivity : AppCompatActivity() {
         val track = IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
         viewModel = ViewModelProvider(this, PlayViewModel.factory(track))[PlayViewModel::class.java]
 
+        var isContentStateHandled = false
         viewModel.getScreenStateLiveData().observe(this) { screenState ->
             when (screenState) {
                 is TrackScreenState.Loading -> {
                     showLoading(loading = true)
                 }
                 is TrackScreenState.Content -> {
-                    showLoading(loading = false)
-                    if (track != null) {
-                        showTrackDetails(track = screenState.track)
-                        viewModel.prepareMediaPlayer(screenState.track.previewUrl)
+                    val contentTrack = screenState.track
+                    val playStatus = screenState.playStatus
+
+                    if (!isContentStateHandled) {
+                        isContentStateHandled = true
+                        showLoading(loading = false)
+                        showTrackDetails(track = contentTrack)
+                    }
+
+                    when (playStatus) {
+                        is PlayStatusState.Pause -> {
+                            binding.playButton.setImageDrawable(playImage)
+                        }
+                        is PlayStatusState.Error -> {
+                            binding.playButton.isEnabled = false
+                            binding.playButton.alpha = 0.5f
+                            Toast.makeText(applicationContext, getString(R.string.no_preview_track), Toast.LENGTH_LONG).show()
+                        }
+                        is PlayStatusState.Start -> {
+                            binding.playButton.setImageDrawable(pauseImage)
+                        }
+                        is PlayStatusState.ToZero -> {
+                            binding.playButton.setImageDrawable(playImage)
+                            binding.playDurationTextView.text = getString(R.string.play_time)
+                        }
+                        is PlayStatusState.PlayState -> {
+                            binding.playDurationTextView.text =
+                                SimpleDateFormat("mm:ss", Locale.getDefault()).format(playStatus.time)
+                        }
                     }
                 }
                 is TrackScreenState.Empty -> {
@@ -62,29 +88,6 @@ class PlayActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.getPlayStatusLiveData().observe(this) { playStatus ->
-            when (playStatus) {
-                is PlayStatusState.Pause -> {
-                    binding.playButton.setImageDrawable(playImage)
-                }
-                is PlayStatusState.Error -> {
-                    binding.playButton.isEnabled = false
-                    binding.playButton.alpha = 0.5f
-                    Toast.makeText(applicationContext, getString(R.string.no_preview_track), Toast.LENGTH_LONG).show()
-                }
-                is PlayStatusState.Start -> {
-                    binding.playButton.setImageDrawable(pauseImage)
-                }
-                is PlayStatusState.ToZero -> {
-                    binding.playButton.setImageDrawable(playImage)
-                    binding.playDurationTextView.text = getString(R.string.play_time)
-                }
-                is PlayStatusState.PlayState -> {
-                    binding.playDurationTextView.text =
-                        SimpleDateFormat("mm:ss", Locale.getDefault()).format(playStatus.time)
-                }
-            }
-        }
         binding.playButton.setOnClickListener {
             if (track != null) {
                 viewModel.playbackControl(track.previewUrl)

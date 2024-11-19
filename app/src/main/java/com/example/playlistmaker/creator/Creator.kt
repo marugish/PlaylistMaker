@@ -2,24 +2,26 @@ package com.example.playlistmaker.creator
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.playlistmaker.data.search.mapper.TracksMapper
-import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.player.impl.MediaPlayer
 import com.example.playlistmaker.data.player.impl.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.data.search.storage.StorageRepositoryImpl
 import com.example.playlistmaker.data.search.impl.TracksRepositoryImpl
-import com.example.playlistmaker.data.settings.SettingsRepository
-import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
-import com.example.playlistmaker.data.sharing.ExternalNavigator
-import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
+import com.example.playlistmaker.data.search.mapper.TracksMapper
+import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.search.storage.SharedPrefsStorage
+import com.example.playlistmaker.data.search.storage.StorageRepositoryImpl
+import com.example.playlistmaker.domain.settings.SettingsRepository
+import com.example.playlistmaker.data.settings.SettingsRepositoryImpl
+import com.example.playlistmaker.data.sharing.ExternalNavigator
+import com.example.playlistmaker.data.sharing.StringProvider
+import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
+import com.example.playlistmaker.data.sharing.impl.StringProviderImpl
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerRepository
+import com.example.playlistmaker.domain.player.impl.MediaPlayerInteractorImpl
 import com.example.playlistmaker.domain.search.SearchHistoryInteractor
 import com.example.playlistmaker.domain.search.StorageRepository
 import com.example.playlistmaker.domain.search.TracksInteractor
 import com.example.playlistmaker.domain.search.TracksRepository
-import com.example.playlistmaker.domain.player.impl.MediaPlayerInteractorImpl
 import com.example.playlistmaker.domain.search.impl.SearchHistoryInteractorImpl
 import com.example.playlistmaker.domain.search.impl.TracksInteractorImpl
 import com.example.playlistmaker.domain.settings.SettingsInteractor
@@ -91,9 +93,15 @@ object Creator {
     private fun getExternalNavigator(context: Context): ExternalNavigator {
         return ExternalNavigatorImpl(context = context)
     }
+    private fun getStringProvider(context: Context): StringProvider {
+        return StringProviderImpl(context = context)
+    }
 
     fun provideSharingInteractor(context: Context): SharingInteractor {
-        return SharingInteractorImpl(getExternalNavigator(context = context), context)
+        return SharingInteractorImpl(
+            getExternalNavigator(context = context),
+            getStringProvider(context = context)
+        )
     }
 
     // Тёмная тема - старая реализация
