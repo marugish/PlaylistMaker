@@ -26,4 +26,6 @@
     <dimen name="search_text_height">52dp</dimen>
     <dimen name="progress_bar_size">44dp</dimen>
     <dimen name="progress_bar_margin">140dp</dimen>
+    <dimen name="switch_width">35dp</dimen>
+    <dimen name="switch_height">18dp</dimen>
 </resources>

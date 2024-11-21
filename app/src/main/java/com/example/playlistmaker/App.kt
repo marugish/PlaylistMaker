@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.creator.Creator
 
 class App : Application() {
 
@@ -10,17 +11,19 @@ class App : Application() {
 
         Creator.init(this)
 
-        val getSwitchThemeInteractor = Creator.provideSwitchThemeInteractor()
-        getSwitchThemeInteractor.getSwitchTheme { switchTheme -> switchTheme(switchTheme) }
+        val getSwitchThemeInteractor = Creator.provideSettingsInteractor()
+        val theme = getSwitchThemeInteractor.getThemeSettings()
+        switchTheme(theme.darkTheme)
     }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
+    fun switchTheme(isDark: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
+            if (isDark) {
                 AppCompatDelegate.MODE_NIGHT_YES
             } else {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
     }
+
 }

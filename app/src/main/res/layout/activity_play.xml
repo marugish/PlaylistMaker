@@ -196,4 +196,18 @@
         app:iconPadding="@dimen/icon_padding"
         app:buttonGravity="center_vertical" />
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            android:layout_marginTop="@dimen/progress_bar_margin"
+            android:layout_gravity="center_horizontal"
+            android:indeterminateTint="?attr/progressBarColor"
+            android:visibility="gone"/>
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

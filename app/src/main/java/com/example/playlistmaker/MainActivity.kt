@@ -4,11 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.databinding.ActivityMainBinding
-import com.example.playlistmaker.ui.mediaLibrary.MediaLibraryActivity
-import com.example.playlistmaker.ui.search.SearchActivity
-import com.example.playlistmaker.ui.settings.SettingsActivity
+import com.example.playlistmaker.ui.mediaLibrary.activity.MediaLibraryActivity
+import com.example.playlistmaker.ui.search.activity.SearchActivity
+import com.example.playlistmaker.ui.settings.activity.SettingsActivity
+import com.example.playlistmaker.ui.settings.view_model.SettingsViewModel
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var viewModel: SettingsViewModel
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

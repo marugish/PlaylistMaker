@@ -20,6 +20,9 @@
         <item name="progressBarColor">@color/blue_background</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/blue_background</item>
+        <!-- Switch color. -->
+        <item name="switchThumbTint">@color/icon_color</item>
+        <item name="switchTrackTint">@color/edit_text_color</item>
 
     </style>
 
