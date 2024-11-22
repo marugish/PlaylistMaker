@@ -14,13 +14,15 @@ import com.example.playlistmaker.data.sharing.StringProvider
 import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.example.playlistmaker.data.sharing.impl.StringProviderImpl
 import com.google.gson.Gson
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
-    single {
+    // Player
+    factory {
         android.media.MediaPlayer()
     }
 
@@ -28,7 +30,7 @@ val dataModule = module {
         MediaPlayer(get())
     }
 
-    // Player
+
 
 
 
@@ -72,11 +74,11 @@ val dataModule = module {
 
     // Sharing
     single<ExternalNavigator> {
-        ExternalNavigatorImpl(androidContext())
+        ExternalNavigatorImpl(androidApplication())//androidContext())
     }
 
     single<StringProvider> {
-        StringProviderImpl(androidContext())
+        StringProviderImpl(androidApplication())//androidContext())
     }
 
 }

@@ -8,25 +8,39 @@ import com.example.playlistmaker.domain.sharing.model.EmailData
 
 class ExternalNavigatorImpl(val context: Context): ExternalNavigator {
     override fun shareLink(shareLink: String) {
+        //Log.d("ExternalNavigator", "$context")
+        //Log.d("ExternalNavigator", "$shareLink")
         val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        shareIntent.setType("text/plain")
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "URL")
+        val new_intent = Intent.createChooser(shareIntent, "Share via")
+        new_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(new_intent)
 
-        //val intent = Intent(context, YourActivity::class.java)
-        //intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
+        /*val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.setType("text/plain")
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareLink)
-        context.startActivity(Intent.createChooser(shareIntent, "Поделиться приложением"))
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (shareIntent.resolveActivity(context.packageManager) != null)
+            context.startActivity(Intent.createChooser(shareIntent, "Поделиться приложением"))
+        else
+            Log.e("ShareIntent", "No application available to share the link.")
+        try {
+            context.startActivity(Intent.createChooser(shareIntent, "Поделиться приложением"))
+        } catch (e: ActivityNotFoundException) {
+            Log.e("ExternalNavigator", "No activity found to handle the intent.", e)
+        }*/
+
     }
 
     override fun openEmail(emailData: EmailData) {
         val shareIntent = Intent(Intent.ACTION_SENDTO)
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         shareIntent.data = Uri.parse("mailto:")
         shareIntent.putExtra(Intent.EXTRA_EMAIL, emailData.email)
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, emailData.themeOfMessage)
         shareIntent.putExtra(Intent.EXTRA_TEXT, emailData.message)
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(shareIntent)
     }
 

@@ -11,7 +11,9 @@ import com.example.playlistmaker.domain.settings.SettingsRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
+
     // Player
+
     factory<MediaPlayerRepository> {
         MediaPlayerRepositoryImpl(get())
     }

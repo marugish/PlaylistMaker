@@ -31,18 +31,6 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
 
     companion object {
         const val REFRESH_TIMER_DELAY_MILLIS = 500L
-
-        /*fun factory(track: Track?): ViewModelProvider.Factory {
-            return viewModelFactory {
-                initializer {
-                    val mediaPlayerInteractor = Creator.provideMediaPlayerInteractor()
-                    PlayViewModel(
-                        track = track,
-                        mediaPlayerInteractor = mediaPlayerInteractor
-                    )
-                }
-            }
-        }*/
     }
 
     private fun updatePlayStatus(playStatus: PlayStatusState) {

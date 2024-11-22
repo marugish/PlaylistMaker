@@ -20,8 +20,6 @@ val viewModelModule = module {
         PlayViewModel(track, get())
     }
 
-    // trackId же где-то ещё передаётся, надо проверить
-
     // Search
     viewModel {
         SearchViewModel(get(), get())

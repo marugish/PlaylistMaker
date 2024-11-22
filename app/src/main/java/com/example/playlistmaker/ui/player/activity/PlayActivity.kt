@@ -22,18 +22,11 @@ import java.util.Date
 import java.util.Locale
 
 class PlayActivity : AppCompatActivity() {
-    //private lateinit var viewModel: PlayViewModel
-    /*private val track: Track? by lazy {
-        IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
-    }*/
 
     private val track: Track? by lazy {
         IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
     }
     private val viewModel: PlayViewModel by viewModel { parametersOf(track) }
-
-    //private lateinit var viewModel: PlayViewModel
-    //private lateinit var track: Track?
 
     private lateinit var binding: ActivityPlayBinding
 
@@ -52,15 +45,6 @@ class PlayActivity : AppCompatActivity() {
         // Для превью трека
         pauseImage = ContextCompat.getDrawable(this, R.drawable.pause_button)!!
         playImage = ContextCompat.getDrawable(this, R.drawable.play_button)!!
-
-        //val track = IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
-        //viewModel = ViewModelProvider(this, PlayViewModel.factory(track))[PlayViewModel::class.java]
-        /*viewModel = viewModel {
-            parametersOf(track)
-        }*/
-
-        //val track = IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
-        //viewModel = viewModel { parametersOf(track) }
 
         var isContentStateHandled = false
         viewModel.getScreenStateLiveData().observe(this) { screenState ->
