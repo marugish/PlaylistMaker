@@ -9,7 +9,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaLibraryActivity : ComponentActivity() {
     private val viewModel by viewModel<MediaLibraryViewModel>()
-    //private lateinit var viewModel: MediaLibraryViewModel
     private lateinit var binding: ActivityMediaLibraryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,6 +16,5 @@ class MediaLibraryActivity : ComponentActivity() {
         binding = ActivityMediaLibraryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //viewModel = ViewModelProvider(this)[MediaLibraryViewModel::class.java]
     }
 }

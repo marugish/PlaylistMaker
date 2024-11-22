@@ -6,6 +6,8 @@ import com.example.playlistmaker.di.dataModule
 import com.example.playlistmaker.di.interactorModule
 import com.example.playlistmaker.di.repositoryModule
 import com.example.playlistmaker.di.viewModelModule
+import com.example.playlistmaker.domain.settings.SettingsInteractor
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -14,16 +16,14 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        //Creator.init(this)
-
         startKoin {
             androidContext(this@App)
             modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
 
-        //val getSwitchThemeInteractor = Creator.provideSettingsInteractor()
-        //val theme = getSwitchThemeInteractor.getThemeSettings()
-        //switchTheme(theme.darkTheme)
+        val themeInteractor: SettingsInteractor by inject()
+        val theme = themeInteractor.getThemeSettings()
+        switchTheme(theme.darkTheme)
     }
 
     fun switchTheme(isDark: Boolean) {

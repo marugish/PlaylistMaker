@@ -105,18 +105,6 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor,
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        /*fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val interactorTracks = Creator.provideTracksInteractor()
-                val interactorSearchHistory = Creator.provideSearchHistoryInteractor()
-
-                SearchViewModel(
-                    tracksInteractor = interactorTracks,
-                    searchHistoryInteractor = interactorSearchHistory
-                )
-            }
-        }*/
     }
 
 }

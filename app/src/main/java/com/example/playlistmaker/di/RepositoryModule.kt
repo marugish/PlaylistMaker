@@ -13,7 +13,6 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     // Player
-
     factory<MediaPlayerRepository> {
         MediaPlayerRepositoryImpl(get())
     }
@@ -33,5 +32,4 @@ val repositoryModule = module {
         SettingsRepositoryImpl(get())
     }
 
-    // Sharing -
 }

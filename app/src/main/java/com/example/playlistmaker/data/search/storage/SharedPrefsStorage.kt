@@ -11,8 +11,6 @@ private const val DEFAULT_SWITCH_THEME = false
 private const val SEARCH_KEY = "key_for_search"
 
 class SharedPrefsStorage(private val sharedPrefs: SharedPreferences, private val gson: Gson): Storage {
-    //private val sharedPrefs = sharedPreferences
-    //private val gson: Gson = Gson()
 
     override fun save(darkTheme: Boolean): Boolean {
         sharedPrefs.edit {

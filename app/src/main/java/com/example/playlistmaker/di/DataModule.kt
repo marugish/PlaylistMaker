@@ -14,7 +14,6 @@ import com.example.playlistmaker.data.sharing.StringProvider
 import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
 import com.example.playlistmaker.data.sharing.impl.StringProviderImpl
 import com.google.gson.Gson
-import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -30,16 +29,7 @@ val dataModule = module {
         MediaPlayer(get())
     }
 
-
-
-
-
-
-    // Пока не уверена с single и factory везде!!!!!!!!!!
-
     // Search
-
-
     // Network
     single<ItunesApi> {
         Retrofit.Builder()
@@ -52,7 +42,6 @@ val dataModule = module {
     single<NetworkClient> {
         RetrofitNetworkClient(get(), androidContext())
     }
-
 
     // Storage
     single {
@@ -70,15 +59,13 @@ val dataModule = module {
         TracksMapper
     }
 
-
-
     // Sharing
     single<ExternalNavigator> {
-        ExternalNavigatorImpl(androidApplication())//androidContext())
+        ExternalNavigatorImpl(androidContext())
     }
 
     single<StringProvider> {
-        StringProviderImpl(androidApplication())//androidContext())
+        StringProviderImpl(androidContext())
     }
 
 }

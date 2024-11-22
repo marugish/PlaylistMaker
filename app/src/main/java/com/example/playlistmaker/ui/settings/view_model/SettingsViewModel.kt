@@ -50,17 +50,4 @@ class SettingsViewModel(private val settingsInteractor: SettingsInteractor,
         sharingInteractor.shareApp()
     }
 
-    /*companion object {
-        fun getViewModelFactory(context: Context): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val interactorSettings = Creator.provideSettingsInteractor()
-                val interactorSharing = Creator.provideSharingInteractor(context)
-
-                SettingsViewModel(
-                    settingsInteractor = interactorSettings,
-                    sharingInteractor = interactorSharing
-                )
-            }
-        }
-    }*/
 }

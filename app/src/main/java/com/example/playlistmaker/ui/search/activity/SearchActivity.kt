@@ -23,7 +23,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    //private lateinit var viewModel: SearchViewModel
     private val viewModel by viewModel<SearchViewModel>()
 
     // Обычный поиск
@@ -69,9 +68,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Инициализация ViewModel
-        //viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
 
         // Обычный поиск
         binding.trackRecycleView.layoutManager = LinearLayoutManager(this)
