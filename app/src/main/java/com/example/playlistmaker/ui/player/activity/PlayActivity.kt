@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -16,12 +15,26 @@ import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.ui.player.view_model.PlayViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class PlayActivity : AppCompatActivity() {
-    private lateinit var viewModel: PlayViewModel
+    //private lateinit var viewModel: PlayViewModel
+    /*private val track: Track? by lazy {
+        IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
+    }*/
+
+    private val track: Track? by lazy {
+        IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
+    }
+    private val viewModel: PlayViewModel by viewModel { parametersOf(track) }
+
+    //private lateinit var viewModel: PlayViewModel
+    //private lateinit var track: Track?
+
     private lateinit var binding: ActivityPlayBinding
 
     private lateinit var pauseImage: Drawable
@@ -40,8 +53,14 @@ class PlayActivity : AppCompatActivity() {
         pauseImage = ContextCompat.getDrawable(this, R.drawable.pause_button)!!
         playImage = ContextCompat.getDrawable(this, R.drawable.play_button)!!
 
-        val track = IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
-        viewModel = ViewModelProvider(this, PlayViewModel.factory(track))[PlayViewModel::class.java]
+        //val track = IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
+        //viewModel = ViewModelProvider(this, PlayViewModel.factory(track))[PlayViewModel::class.java]
+        /*viewModel = viewModel {
+            parametersOf(track)
+        }*/
+
+        //val track = IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
+        //viewModel = viewModel { parametersOf(track) }
 
         var isContentStateHandled = false
         viewModel.getScreenStateLiveData().observe(this) { screenState ->
@@ -90,7 +109,7 @@ class PlayActivity : AppCompatActivity() {
 
         binding.playButton.setOnClickListener {
             if (track != null) {
-                viewModel.playbackControl(track.previewUrl)
+                viewModel.playbackControl(track!!.previewUrl)
             }
         }
     }

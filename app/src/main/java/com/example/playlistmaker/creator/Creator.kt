@@ -2,32 +2,6 @@ package com.example.playlistmaker.creator
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.playlistmaker.data.player.impl.MediaPlayer
-import com.example.playlistmaker.data.player.impl.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.data.search.impl.TracksRepositoryImpl
-import com.example.playlistmaker.data.search.mapper.TracksMapper
-import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
-import com.example.playlistmaker.data.search.storage.SharedPrefsStorage
-import com.example.playlistmaker.data.search.storage.StorageRepositoryImpl
-import com.example.playlistmaker.domain.settings.SettingsRepository
-import com.example.playlistmaker.data.settings.SettingsRepositoryImpl
-import com.example.playlistmaker.data.sharing.ExternalNavigator
-import com.example.playlistmaker.data.sharing.StringProvider
-import com.example.playlistmaker.data.sharing.impl.ExternalNavigatorImpl
-import com.example.playlistmaker.data.sharing.impl.StringProviderImpl
-import com.example.playlistmaker.domain.player.MediaPlayerInteractor
-import com.example.playlistmaker.domain.player.MediaPlayerRepository
-import com.example.playlistmaker.domain.player.impl.MediaPlayerInteractorImpl
-import com.example.playlistmaker.domain.search.SearchHistoryInteractor
-import com.example.playlistmaker.domain.search.StorageRepository
-import com.example.playlistmaker.domain.search.TracksInteractor
-import com.example.playlistmaker.domain.search.TracksRepository
-import com.example.playlistmaker.domain.search.impl.SearchHistoryInteractorImpl
-import com.example.playlistmaker.domain.search.impl.TracksInteractorImpl
-import com.example.playlistmaker.domain.settings.SettingsInteractor
-import com.example.playlistmaker.domain.settings.impl.SettingsInteractorImpl
-import com.example.playlistmaker.domain.sharing.SharingInteractor
-import com.example.playlistmaker.domain.sharing.impl.SharingInteractorImpl
 
 
 object Creator {
@@ -39,16 +13,16 @@ object Creator {
         appContext = context
     }
 
-    private fun getTracksRepository(): TracksRepository {
+    /*private fun getTracksRepository(): TracksRepository {
         return TracksRepositoryImpl(
             networkClient = RetrofitNetworkClient(appContext),
             trackMapper = TracksMapper
         )
-    }
+    }*/
 
-    fun provideTracksInteractor(): TracksInteractor {
+    /*fun provideTracksInteractor(): TracksInteractor {
         return TracksInteractorImpl(getTracksRepository())
-    }
+    }*/
 
     private fun provideSharedPreferences(context: Context): SharedPreferences {
         if (!Creator::sharedPreferences.isInitialized) {
@@ -57,40 +31,38 @@ object Creator {
         return sharedPreferences
     }
 
-    private fun getStorageRepository(): StorageRepository {
+    /*private fun getStorageRepository(): StorageRepository {
         return StorageRepositoryImpl(
             storage = SharedPrefsStorage(provideSharedPreferences(appContext)),
             trackMapper = TracksMapper
         )
-    }
-
-
+    }*/
 
     // История поиска
-    fun provideSearchHistoryInteractor(): SearchHistoryInteractor {
+    /*fun provideSearchHistoryInteractor(): SearchHistoryInteractor {
         return SearchHistoryInteractorImpl(getStorageRepository())
-    }
+    }*/
 
     // Медиаплеер
-    private fun getMediaPlayerRepository(): MediaPlayerRepository {
+    /*private fun getMediaPlayerRepository(): MediaPlayerRepository {
         return MediaPlayerRepositoryImpl(MediaPlayer())
     }
 
     fun provideMediaPlayerInteractor(): MediaPlayerInteractor {
         return MediaPlayerInteractorImpl(getMediaPlayerRepository())
-    }
+    }*/
 
     // Новая тёмная тема
-    private fun getSettingsRepository(): SettingsRepository {
+    /*private fun getSettingsRepository(): SettingsRepository {
         return SettingsRepositoryImpl(storage = SharedPrefsStorage(provideSharedPreferences(appContext)))
     }
 
     fun provideSettingsInteractor(): SettingsInteractor {
         return SettingsInteractorImpl(getSettingsRepository())
-    }
+    }*/
 
     // Sharing
-    private fun getExternalNavigator(context: Context): ExternalNavigator {
+   /*private fun getExternalNavigator(context: Context): ExternalNavigator {
         return ExternalNavigatorImpl(context = context)
     }
     private fun getStringProvider(context: Context): StringProvider {
@@ -102,7 +74,10 @@ object Creator {
             getExternalNavigator(context = context),
             getStringProvider(context = context)
         )
-    }
+    }*/
+
+
+
 
     // Тёмная тема - старая реализация
     /*fun provideSwitchThemeInteractor(): SwitchThemeInteractor {

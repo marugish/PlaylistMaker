@@ -7,7 +7,7 @@ import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.data.search.dto.NetworkResponse
 import com.example.playlistmaker.data.search.dto.TracksSearchRequest
 
-class RetrofitNetworkClient(private val context: Context): NetworkClient {
+class RetrofitNetworkClient(private val itunesApiService: ItunesApi, private val context: Context): NetworkClient {
 
     override fun doRequest(dto: Any): NetworkResponse {
         return try {
@@ -15,7 +15,7 @@ class RetrofitNetworkClient(private val context: Context): NetworkClient {
                 NetworkResponse(-1)
             }
             if (dto is TracksSearchRequest) {
-                val resp = RetrofitItunesClient.itunesService.searchTrack(dto.request).execute()
+                val resp = itunesApiService.searchTrack(dto.request).execute()//RetrofitItunesClient.itunesService.searchTrack(dto.request).execute()
                 val body = resp.body() ?: NetworkResponse()
                 body.apply { resultCode = resp.code() }
             } else {
