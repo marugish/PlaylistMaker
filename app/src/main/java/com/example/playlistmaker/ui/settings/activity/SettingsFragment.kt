@@ -1,33 +1,36 @@
 package com.example.playlistmaker.ui.settings.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.App
-import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import com.example.playlistmaker.databinding.FragmentSettingsBinding
 import com.example.playlistmaker.ui.settings.state.ThemeState
 import com.example.playlistmaker.ui.settings.view_model.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySettingsBinding
+class SettingsFragment: Fragment() {
+    private lateinit var binding: FragmentSettingsBinding
     private val viewModel by viewModel<SettingsViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // Для тёмной темы
-        viewModel.observeThemeState().observe(this) {
+        viewModel.observeThemeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
         binding.switchTheme.setOnCheckedChangeListener { _, checked ->
             viewModel.updateSwitchTheme(theme = checked)
-        }
-
-        binding.toolbarSettings.setNavigationOnClickListener {
-            finish()
         }
 
         binding.share.setOnClickListener {
@@ -41,7 +44,6 @@ class SettingsActivity : AppCompatActivity() {
         binding.userAgreement.setOnClickListener {
             viewModel.userAgreement()
         }
-
     }
 
     private fun render(themeState: ThemeState) {
@@ -53,6 +55,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun stateSwitch(state: Boolean) {
         binding.switchTheme.isChecked = state
-        (applicationContext as App).switchTheme(state)
+        (requireActivity().applicationContext as App).switchTheme(state)
     }
+
 }
