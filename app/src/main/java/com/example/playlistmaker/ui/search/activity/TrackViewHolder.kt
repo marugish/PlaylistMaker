@@ -1,6 +1,7 @@
 package com.example.playlistmaker.ui.search.activity
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -23,6 +24,8 @@ class TrackViewHolder(private val parentView: View) : RecyclerView.ViewHolder(pa
         val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
         artistName.text = model.artistName
         duration.text = formattedTime
+
+        Log.d("duration", "${model.artistName} + $formattedTime")
 
         Glide.with(parentView.context)
             .load(model.artworkUrl100)
