@@ -5,5 +5,5 @@
         android:color="@color/blue_background"/>
     <item
         android:state_checked="false"
-        android:color="@color/text_and_icon_color" />
+        android:color="?attr/textColor" />
 </selector>

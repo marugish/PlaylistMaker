@@ -45,7 +45,7 @@
             android:paddingStart="10dp"
             android:imeOptions="actionDone"
             android:singleLine="true"
-            android:textCursorDrawable="@color/blue_background"        />
+            android:textCursorDrawable="@drawable/cursor" />
 
         <ImageView
             android:id="@+id/search_clear_button"
