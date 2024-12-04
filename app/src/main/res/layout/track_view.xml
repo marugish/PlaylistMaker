@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/settings_frame_layout_size"
     android:orientation="horizontal"
@@ -23,14 +24,53 @@
             style="@style/RegularTextStyle"
             android:textSize="@dimen/default_text_size"
             android:textColor="?attr/nameTrackText"
-            android:text="@string/track_name" />
+            android:text="@string/track_name"
+            android:ellipsize="end"
+            android:maxLines="1"/>
 
-        <TextView
-            android:id="@+id/artist_name_text"
-            style="@style/RegularTextStyle"
-            android:textSize="@dimen/track_name_size"
-            android:textColor="?attr/artistText"
-            android:text="@string/track_artist_and_duration" />
+
+
+
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/artist_name_text"
+                style="@style/RegularTextStyle"
+                android:textColor="?attr/artistText"
+                android:textSize="@dimen/track_name_size"
+                android:text="@string/artist_name"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/dot"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constrainedWidth="true"/>
+
+            <ImageView
+                android:id="@+id/dot"
+                android:src="@drawable/dot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/artist_name_text"
+                app:layout_constraintEnd_toStartOf="@+id/durationTrack"
+                app:layout_constraintStart_toEndOf="@+id/artist_name_text" />
+
+            <TextView
+                android:id="@+id/durationTrack"
+                style="@style/RegularTextStyle"
+                android:textColor="?attr/artistText"
+                android:textSize="@dimen/track_name_size"
+                android:text="@string/duration"
+                app:layout_constraintBottom_toBottomOf="@+id/dot"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/dot" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
 
     <ImageView
