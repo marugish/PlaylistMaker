@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorSecondary"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.example.playlistmaker.ui.mediaLibrary.activity.MediaLibraryFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarMediaLibrary"
@@ -14,10 +15,7 @@
         android:layout_gravity="start"
         app:title="@string/media_library"
         style="@style/HeadingTextStyle"
-        app:titleTextColor="?attr/textColor"
-        app:navigationIcon="@drawable/arrow_back"
-        app:iconPadding="@dimen/icon_padding"
-        app:buttonGravity="center_vertical" />
+        app:titleTextColor="?attr/textColor"/>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
