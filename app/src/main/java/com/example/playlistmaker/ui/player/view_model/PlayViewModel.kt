@@ -1,8 +1,5 @@
 package com.example.playlistmaker.ui.player.view_model
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,12 +9,9 @@ import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.util.PlayerStates
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor: MediaPlayerInteractor): ViewModel() {
 

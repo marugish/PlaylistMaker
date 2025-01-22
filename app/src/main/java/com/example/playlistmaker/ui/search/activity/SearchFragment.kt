@@ -3,13 +3,10 @@ package com.example.playlistmaker.ui.search.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
@@ -22,6 +19,9 @@ import com.example.playlistmaker.ui.search.view_model.SearchViewModel
 import com.example.playlistmaker.util.SearchError
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchFragment: Fragment()  {
     companion object {
@@ -53,7 +53,7 @@ class SearchFragment: Fragment()  {
 
     private var isClickAllowed = true
 
-    private val handler = Handler(Looper.getMainLooper())
+    //private val handler = Handler(Looper.getMainLooper())
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -160,7 +160,11 @@ class SearchFragment: Fragment()  {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+            //handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
     }
