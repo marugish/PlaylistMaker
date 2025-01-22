@@ -28,22 +28,6 @@ class RetrofitNetworkClient(private val itunesApiService: ItunesApi, private val
                 NetworkResponse(500)
             }
         }
-        /*return try {
-                if (!isConnected()) {
-                    NetworkResponse(-1)
-                }
-                if (dto is TracksSearchRequest) {
-                    val resp = itunesApiService.searchTrack(dto.request).execute()//RetrofitItunesClient.itunesService.searchTrack(dto.request).execute()
-                    val body = resp.body() ?: NetworkResponse()
-                    body.apply { resultCode = resp.code() }
-                } else {
-                    NetworkResponse(400)
-                }
-            } catch (ex: Exception) {
-                NetworkResponse(400)
-            }*/
-
-
     }
 
     private fun isConnected(): Boolean {

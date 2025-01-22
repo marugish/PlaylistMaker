@@ -5,9 +5,5 @@ import com.example.playlistmaker.domain.search.model.Track
 import kotlinx.coroutines.flow.Flow
 
 interface TracksInteractor {
-    fun searchTracks(expression: String) : Flow<Pair<List<Track>?, SearchError?>>//, consumer: TracksConsumer)
-
-    //fun interface TracksConsumer {
-        //fun consume(foundTracks: List<Track>?, errorMessage: SearchError?)
-    //}
+    fun searchTracks(expression: String) : Flow<Pair<List<Track>?, SearchError?>>
 }

@@ -53,13 +53,10 @@ class SearchFragment: Fragment()  {
 
     private var isClickAllowed = true
 
-    //private val handler = Handler(Looper.getMainLooper())
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_TEXT, searchQuery)
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
@@ -123,10 +120,14 @@ class SearchFragment: Fragment()  {
                 binding.searchClearButton.visibility = clearButtonVisibility(s)
                 searchQuery = s.toString()
                 viewModel.searchDebounce(changedText = s?.toString() ?: "")
-                if (binding.searchEditText.hasFocus() && s?.isEmpty() == true) {
-                    val historyState = viewModel.observeHistoryState().value
-                    if (historyState is HistoryState.Content){
-                        showHistory(historyState.tracks)
+                if (binding.searchEditText.hasFocus()  ) {
+                    if (s?.isEmpty() == true) {
+                        val historyState = viewModel.observeHistoryState().value
+                        if (historyState is HistoryState.Content) {
+                            showHistory(historyState.tracks)
+                        }
+                    } else {
+                        historyVisibility(View.GONE)
                     }
                 }
             }
@@ -164,7 +165,6 @@ class SearchFragment: Fragment()  {
                 delay(CLICK_DEBOUNCE_DELAY)
                 isClickAllowed = true
             }
-            //handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
     }
@@ -247,7 +247,5 @@ class SearchFragment: Fragment()  {
     private fun showEmpty(emptyMessage: SearchError) {
         showError(emptyMessage)
     }
-
-
 
 }
