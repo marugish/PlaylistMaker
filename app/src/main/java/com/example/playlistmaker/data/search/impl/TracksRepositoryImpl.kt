@@ -8,26 +8,28 @@ import com.example.playlistmaker.data.search.mapper.TracksMapper
 import com.example.playlistmaker.domain.search.TracksRepository
 import com.example.playlistmaker.util.Resource
 import com.example.playlistmaker.domain.search.model.Track
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
     private val trackMapper: TracksMapper
 ) : TracksRepository {
-    override fun searchTracks(expression: String): Resource<List<Track>> {
+    override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
-        return when (response.resultCode) {
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error(SearchError.NETWORK_ERROR)
+                emit(Resource.Error(SearchError.NETWORK_ERROR))
             }
             200 -> {
                 if ((response as TracksSearchResponse).results.isEmpty()) {
-                    Resource.Error(SearchError.NO_RESULTS)
+                    emit(Resource.Error(SearchError.NO_RESULTS))
                 } else {
-                    Resource.Success(response.results.map(trackMapper::mapToDomain))
+                    emit(Resource.Success(response.results.map(trackMapper::mapToDomain)))
                 }
             }
             else -> {
-                Resource.Error(SearchError.NETWORK_ERROR)
+                emit(Resource.Error(SearchError.NETWORK_ERROR))
             }
         }
     }

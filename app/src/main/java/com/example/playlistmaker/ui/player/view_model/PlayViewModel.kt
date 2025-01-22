@@ -1,22 +1,25 @@
 package com.example.playlistmaker.ui.player.view_model
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.util.PlayerStates
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor: MediaPlayerInteractor): ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<TrackScreenState>(TrackScreenState.Loading)
 
-    private var mainThreadHandler= Handler(Looper.getMainLooper())
-    private var updateTimerTask: Runnable? = createUpdateTimerTask()
+    private var timerJob: Job? = null
+    //private var mainThreadHandler= Handler(Looper.getMainLooper())
+    //private var updateTimerTask: Runnable? = createUpdateTimerTask()
 
     init {
         if (track == null) {
@@ -50,7 +53,8 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
 
     override fun onCleared() {
         releasePlayer()
-        updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
+
+        //updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
     }
 
     fun playbackControl(trackUrl: String) {
@@ -75,20 +79,21 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
     fun pausePlayer() {
         mediaPlayerInteractor.pause()
         updatePlayStatus(PlayStatusState.Pause)
-
-        updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
+        //updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
+        timerJob?.cancel()
     }
 
     private fun startPlayer() {
         mediaPlayerInteractor.play()
         updatePlayStatus(PlayStatusState.Start)
-
-        updateTimerTask?.let { mainThreadHandler.post(it) }
+        startTimer()
+        //updateTimerTask?.let { mainThreadHandler.post(it) }
     }
 
     private fun resetToZeroPlayer() {
         updatePlayStatus(PlayStatusState.ToZero)
-        updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
+        timerJob?.cancel()
+        //updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
     }
 
     private fun completedPlayer() {
@@ -96,7 +101,24 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
         resetToZeroPlayer()
     }
 
-    private fun createUpdateTimerTask(): Runnable {
+
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (true) {
+                mediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
+                    if (state == PlayerStates.PLAYING) {
+                        //Log.i("mytest", "time = $position")
+                        updatePlayStatus(PlayStatusState.PlayState(time = position))
+                    } else if (state == PlayerStates.COMPLETED) {
+                        completedPlayer()
+                    }
+                }
+                delay(REFRESH_TIMER_DELAY_MILLIS)
+            }
+        }
+    }
+
+    /*private fun createUpdateTimerTask(): Runnable {
         return Runnable {
             mediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
                 if (state == PlayerStates.PLAYING) {
@@ -109,7 +131,7 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
                 }
             }
         }
-    }
+    }*/
 
     fun releasePlayer() {
         mediaPlayerInteractor.release()
