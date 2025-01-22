@@ -61,7 +61,15 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor,
         if (request.isNotEmpty()) {
             renderState(TracksState.Loading)
 
-            tracksInteractor.searchTracks(expression = request)
+            viewModelScope.launch {
+                tracksInteractor
+                    .searchTracks(expression = request)
+                    .collect { pair ->
+                        processResult(pair.first, pair.second)
+                    }
+            }
+
+            /*tracksInteractor.searchTracks(expression = request)
             { foundTracks, errorMessage ->
                 val tracks = mutableListOf<Track>()
                 if (foundTracks != null) {
@@ -82,6 +90,28 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor,
                         renderState(TracksState.Content(tracks = tracks))
                     }
                 }
+            }*/
+        }
+    }
+
+    private fun processResult(foundTracks: List<Track>?, errorMessage: SearchError?) {
+        val tracks = mutableListOf<Track>()
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks)
+        }
+        when {
+            errorMessage != null -> {
+                when (errorMessage) {
+                    SearchError.NO_RESULTS -> {
+                        renderState(TracksState.Empty(message = errorMessage))
+                    }
+                    SearchError.NETWORK_ERROR -> {
+                        renderState(TracksState.Error(errorMessage = errorMessage))
+                    }
+                }
+            }
+            else -> {
+                renderState(TracksState.Content(tracks = tracks))
             }
         }
     }
@@ -115,7 +145,7 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor,
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
+        //private val SEARCH_REQUEST_TOKEN = Any()
     }
 
 }
