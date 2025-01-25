@@ -1,5 +1,6 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.data.db.TrackDbConvertor
 import com.example.playlistmaker.data.player.impl.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.data.search.impl.TracksRepositoryImpl
 import com.example.playlistmaker.data.search.storage.StorageRepositoryImpl
@@ -30,6 +31,11 @@ val repositoryModule = module {
     // Settings
     single<SettingsRepository> {
         SettingsRepositoryImpl(get())
+    }
+
+    // Database Converter
+    factory {
+        TrackDbConvertor()
     }
 
 }

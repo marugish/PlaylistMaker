@@ -18,8 +18,6 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
     private val screenStateLiveData = MutableLiveData<TrackScreenState>(TrackScreenState.Loading)
 
     private var timerJob: Job? = null
-    //private var mainThreadHandler= Handler(Looper.getMainLooper())
-    //private var updateTimerTask: Runnable? = createUpdateTimerTask()
 
     init {
         if (track == null) {
@@ -53,8 +51,6 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
 
     override fun onCleared() {
         releasePlayer()
-
-        //updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
     }
 
     fun playbackControl(trackUrl: String) {
@@ -79,7 +75,6 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
     fun pausePlayer() {
         mediaPlayerInteractor.pause()
         updatePlayStatus(PlayStatusState.Pause)
-        //updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
         timerJob?.cancel()
     }
 
@@ -87,13 +82,11 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
         mediaPlayerInteractor.play()
         updatePlayStatus(PlayStatusState.Start)
         startTimer()
-        //updateTimerTask?.let { mainThreadHandler.post(it) }
     }
 
     private fun resetToZeroPlayer() {
         updatePlayStatus(PlayStatusState.ToZero)
         timerJob?.cancel()
-        //updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
     }
 
     private fun completedPlayer() {
@@ -107,7 +100,6 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
             while (true) {
                 mediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
                     if (state == PlayerStates.PLAYING) {
-                        //Log.i("mytest", "time = $position")
                         updatePlayStatus(PlayStatusState.PlayState(time = position))
                     } else if (state == PlayerStates.COMPLETED) {
                         completedPlayer()
@@ -117,21 +109,6 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
             }
         }
     }
-
-    /*private fun createUpdateTimerTask(): Runnable {
-        return Runnable {
-            mediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
-                if (state == PlayerStates.PLAYING) {
-                    updatePlayStatus(PlayStatusState.PlayState(time = position))
-                    updateTimerTask?.let {
-                        mainThreadHandler.postDelayed(it, REFRESH_TIMER_DELAY_MILLIS)
-                    }
-                } else if (state == PlayerStates.COMPLETED) {
-                    completedPlayer()
-                }
-            }
-        }
-    }*/
 
     fun releasePlayer() {
         mediaPlayerInteractor.release()
