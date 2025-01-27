@@ -2,7 +2,8 @@ package com.example.playlistmaker.data.search.dto
 
 import java.io.Serializable
 
-data class TrackDto(val trackName: String,
+data class TrackDto(val trackId: Long,
+                    val trackName: String,
                     val artistName: String,
                     val trackTimeMillis: String,
                     val artworkUrl100: String,

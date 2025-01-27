@@ -2,6 +2,7 @@ package com.example.playlistmaker.domain.player.impl
 
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerRepository
+import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.util.PlayerStates
 
 class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository):
@@ -28,6 +29,10 @@ class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository):
 
     override fun changeState(state: PlayerStates) {
         repository.changeState(state)
+    }
+
+    override suspend fun insertFavoriteTrack(track: Track) {
+        repository.insertFavoriteTrack(track)
     }
 
 }

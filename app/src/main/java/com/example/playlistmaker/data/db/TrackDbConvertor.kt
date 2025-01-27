@@ -1,12 +1,13 @@
 package com.example.playlistmaker.data.db
 
+import com.example.playlistmaker.data.db.entity.TrackEntity
 import com.example.playlistmaker.data.search.dto.TrackDto
 import com.example.playlistmaker.domain.search.model.Track
 
 class TrackDbConvertor {
     fun map(track: TrackDto): TrackEntity {
         return TrackEntity(
-            track.id,
+            track.trackId,
             track.trackName,
             track.artistName,
             track.trackTimeMillis,
@@ -21,6 +22,7 @@ class TrackDbConvertor {
 
     fun map(track: TrackEntity): Track {
         return Track(
+            track.trackId,
             track.trackName,
             track.artistName,
             track.trackTimeMillis,

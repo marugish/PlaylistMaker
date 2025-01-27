@@ -1,5 +1,6 @@
 package com.example.playlistmaker.domain.player
 
+import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.util.PlayerStates
 
 interface MediaPlayerInteractor {
@@ -13,4 +14,6 @@ interface MediaPlayerInteractor {
     fun interface MediaPlayerConsumer {
         fun consumeCurrentStateAndPosition(position: Int, state: PlayerStates)
     }
+
+    suspend fun insertFavoriteTrack(track: Track)
 }

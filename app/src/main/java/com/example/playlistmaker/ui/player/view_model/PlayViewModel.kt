@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.FavoriteInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.mediaLibrary.state.FavoriteState
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.util.PlayerStates
@@ -13,7 +15,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor: MediaPlayerInteractor): ViewModel() {
+class PlayViewModel(private val track: Track?,
+                    private val mediaPlayerInteractor: MediaPlayerInteractor,
+                    private val favoriteInteractor: FavoriteInteractor
+): ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<TrackScreenState>(TrackScreenState.Loading)
 
@@ -24,6 +29,7 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
             screenStateLiveData.postValue(TrackScreenState.Empty)
         } else {
             screenStateLiveData.postValue(TrackScreenState.Content(track, PlayStatusState.ToZero))
+            likeTrack()
             prepareMediaPlayer(track.previewUrl)
         }
     }
@@ -51,6 +57,53 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
 
     override fun onCleared() {
         releasePlayer()
+    }
+
+    // переименовать!
+    fun likeTrack() {
+        // необходимо проверить статус трека: в избранных он или нет
+        viewModelScope.launch {
+            favoriteInteractor.getIdFavoriteTracks().collect { trackIds ->
+                processResult(trackIds)
+            }
+        }
+        // ....
+    // необходимо проверить лайкаю или снимаю лайк
+        // ...
+
+        // момент, что только лайкаю трек, что он не был в списке Избранных
+
+    }
+
+    // добавление трека в Избранное
+    fun addTrackToFavorite() {
+        viewModelScope.launch {
+            if (track != null) {
+                mediaPlayerInteractor.insertFavoriteTrack(track)
+            }
+        }
+    }
+
+    // удаление трека из Избранного
+    fun deleteTrackFromFavorite() {
+
+    }
+
+    private fun processResult(trackIds: List<Long>) {
+        if (track != null) {
+            // поиск трека по ID в списке ID
+            val isTrackContains: Boolean = trackIds.contains(track.trackId)
+            if (isTrackContains) {
+                renderState(TrackScreenState.Favorite(true)) //есть в списке
+            } else {
+                renderState(TrackScreenState.Favorite(false)) // нет в списке
+            }
+        }
+
+
+
+
+
     }
 
     fun playbackControl(trackUrl: String) {
@@ -94,7 +147,6 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
         resetToZeroPlayer()
     }
 
-
     private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (true) {
@@ -115,4 +167,7 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
         resetToZeroPlayer()
     }
 
+    private fun renderState(state: TrackScreenState) {
+        screenStateLiveData.postValue(state)
+    }
 }
