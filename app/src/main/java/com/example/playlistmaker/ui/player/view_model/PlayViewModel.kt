@@ -86,7 +86,11 @@ class PlayViewModel(private val track: Track?,
 
     // удаление трека из Избранного
     fun deleteTrackFromFavorite() {
-
+        viewModelScope.launch {
+            if (track != null) {
+                mediaPlayerInteractor.deleteFavoriteTrack(track)
+            }
+        }
     }
 
     private fun processResult(trackIds: List<Long>) {

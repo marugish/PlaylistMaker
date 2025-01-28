@@ -43,12 +43,15 @@ class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayerInterface,
     }
 
     // Insert Favorite Track
-    // но мне нужно сохранять только один трек)))
     override suspend fun insertFavoriteTrack(track: Track) {
-        val trackEntities = trackDbConvertor.map(TracksMapper.mapToStorage(track))
-        appDatabase.trackDao().insertFavoriteTrack(trackEntities)
+        val trackEntity = trackDbConvertor.map(TracksMapper.mapToStorage(track))
+        appDatabase.trackDao().insertFavoriteTrack(trackEntity)
     }
 
-
+    // Delete Favorite Track
+    override suspend fun deleteFavoriteTrack(track: Track) {
+        val trackEntity = trackDbConvertor.map(TracksMapper.mapToStorage(track))
+        appDatabase.trackDao().deleteFavoriteTrack(trackEntity)
+    }
 
 }

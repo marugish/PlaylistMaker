@@ -84,13 +84,6 @@ class FavoritesFragment: Fragment() {
         favoritesViewModel.fillData()  // Загружаем данные при каждом возобновлении фрагмента
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.i("test_favorite", "destroy")
-        favoriteAdapter = null
-        binding.favoriteTrackRecycleView.adapter = null
-    }
-
     private fun showLoading() {
         binding.apply {
             favoriteTrackRecycleView.visibility = View.GONE

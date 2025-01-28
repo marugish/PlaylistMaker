@@ -15,4 +15,5 @@ interface MediaPlayerRepository {
 
     // пока не уверена
     suspend fun insertFavoriteTrack(track: Track)
+    suspend fun deleteFavoriteTrack(track: Track)
 }

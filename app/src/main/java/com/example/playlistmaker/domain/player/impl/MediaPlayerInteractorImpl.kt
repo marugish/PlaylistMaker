@@ -35,4 +35,8 @@ class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository):
         repository.insertFavoriteTrack(track)
     }
 
+    override suspend fun deleteFavoriteTrack(track: Track) {
+        repository.deleteFavoriteTrack(track)
+    }
+
 }

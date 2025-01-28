@@ -118,7 +118,7 @@ class PlayActivity : AppCompatActivity() {
             if (isFavorite) {
                 viewModel.addTrackToFavorite()
             } else {
-
+                viewModel.deleteTrackFromFavorite()
             }
 
             // ...

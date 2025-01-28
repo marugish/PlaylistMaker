@@ -16,4 +16,5 @@ interface MediaPlayerInteractor {
     }
 
     suspend fun insertFavoriteTrack(track: Track)
+    suspend fun deleteFavoriteTrack(track: Track)
 }
