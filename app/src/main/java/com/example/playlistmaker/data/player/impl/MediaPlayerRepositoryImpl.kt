@@ -1,18 +1,14 @@
 package com.example.playlistmaker.data.player.impl
 
 import com.example.playlistmaker.data.db.AppDatabase
-import com.example.playlistmaker.data.db.TrackDbConvertor
+import com.example.playlistmaker.data.db.converter.TrackDbConvertor
 import com.example.playlistmaker.data.player.MediaPlayerInterface
-import com.example.playlistmaker.data.search.dto.TrackDto
 import com.example.playlistmaker.data.search.mapper.TracksMapper
 import com.example.playlistmaker.domain.player.MediaPlayerRepository
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.util.PlayerStates
 
-class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayerInterface,
-                                private val appDatabase: AppDatabase,
-                                private val trackDbConvertor: TrackDbConvertor
-): MediaPlayerRepository {
+class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayerInterface): MediaPlayerRepository {
 
     override fun prepare(url: String) {
         mediaPlayer.prepare(url)
@@ -40,18 +36,6 @@ class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayerInterface,
 
     override fun changeState(state: PlayerStates) {
         mediaPlayer.changeState(state)
-    }
-
-    // Insert Favorite Track
-    override suspend fun insertFavoriteTrack(track: Track) {
-        val trackEntity = trackDbConvertor.map(TracksMapper.mapToStorage(track))
-        appDatabase.trackDao().insertFavoriteTrack(trackEntity)
-    }
-
-    // Delete Favorite Track
-    override suspend fun deleteFavoriteTrack(track: Track) {
-        val trackEntity = trackDbConvertor.map(TracksMapper.mapToStorage(track))
-        appDatabase.trackDao().deleteFavoriteTrack(trackEntity)
     }
 
 }

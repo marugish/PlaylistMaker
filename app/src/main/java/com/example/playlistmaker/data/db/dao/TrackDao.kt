@@ -16,12 +16,9 @@ interface TrackDao {
     @Delete(entity = TrackEntity::class)
     suspend fun deleteFavoriteTrack(track: TrackEntity)
 
-    @Query("SELECT * FROM track_table")
+    @Query("SELECT * FROM track_table ORDER BY timestamp DESC")
     suspend fun getFavoriteTracks(): List<TrackEntity>
 
-    // по-другому необходимо сделать метод
-    // а что вернёт данный метод, будто просто лист идентификаторов
-    // пока не уверена в возвращаемом значении
     @Query("SELECT trackId FROM track_table")
     suspend fun getIdFavoriteTracks(): List<Long>
 }

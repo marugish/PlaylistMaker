@@ -5,8 +5,7 @@ import com.example.playlistmaker.domain.player.MediaPlayerRepository
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.util.PlayerStates
 
-class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository):
-    MediaPlayerInteractor {
+class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository): MediaPlayerInteractor {
     override fun prepare(url: String) {
         repository.prepare(url)
     }
@@ -29,14 +28,6 @@ class MediaPlayerInteractorImpl(private val repository: MediaPlayerRepository):
 
     override fun changeState(state: PlayerStates) {
         repository.changeState(state)
-    }
-
-    override suspend fun insertFavoriteTrack(track: Track) {
-        repository.insertFavoriteTrack(track)
-    }
-
-    override suspend fun deleteFavoriteTrack(track: Track) {
-        repository.deleteFavoriteTrack(track)
     }
 
 }

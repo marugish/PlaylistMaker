@@ -51,7 +51,7 @@ class PlayActivity : AppCompatActivity() {
         pauseImage = ContextCompat.getDrawable(this, R.drawable.pause_button)!!
         playImage = ContextCompat.getDrawable(this, R.drawable.play_button)!!
 
-        // New для Favorite
+        // Для Favorite
         activeFavoriteImage = ContextCompat.getDrawable(this, R.drawable.active_favorite)!!
         inactiveFavoriteImage = ContextCompat.getDrawable(this, R.drawable.inactive_favorite)!!
 
@@ -93,16 +93,16 @@ class PlayActivity : AppCompatActivity() {
                         }
                     }
                 }
-                // new
-                is TrackScreenState.Favorite -> {
-                    showFavoriteStatus(inFavorite = screenState.isFavorite)
-                    isFavorite = screenState.isFavorite
-                }
                 is TrackScreenState.Empty -> {
                     finish()
                     Toast.makeText(applicationContext, getString(R.string.load_error), Toast.LENGTH_LONG).show()
                 }
             }
+        }
+
+        viewModel.favorite.observe(this) {
+            showFavoriteStatus(inFavorite = it)
+            isFavorite = it
         }
 
         binding.playButton.setOnClickListener {
@@ -114,16 +114,11 @@ class PlayActivity : AppCompatActivity() {
         binding.likeButton.setOnClickListener {
             isFavorite = !isFavorite
             showFavoriteStatus(inFavorite = isFavorite)
-            // в зависимости от статуса: добавить/удалить трек в Избранном
-            if (isFavorite) {
+            if (isFavorite) { // добавили трек
                 viewModel.addTrackToFavorite()
-            } else {
+            } else { // удалили трек
                 viewModel.deleteTrackFromFavorite()
             }
-
-            // ...
-            // есть ли трек в Избранном
-            //viewModel.likeTrack()
         }
 
     }
@@ -153,7 +148,6 @@ class PlayActivity : AppCompatActivity() {
         binding.countryText.text = track.country
     }
 
-    // New
     private fun showFavoriteStatus(inFavorite: Boolean) {
         if (inFavorite) {
             binding.likeButton.setImageDrawable(activeFavoriteImage)

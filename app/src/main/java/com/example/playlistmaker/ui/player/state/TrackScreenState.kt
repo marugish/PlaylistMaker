@@ -5,7 +5,6 @@ import com.example.playlistmaker.domain.search.model.Track
 sealed interface TrackScreenState {
     data object Loading : TrackScreenState
     data class Content(val track: Track, val playStatus: PlayStatusState) : TrackScreenState
-    data class Favorite(val isFavorite: Boolean): TrackScreenState
     data object Empty : TrackScreenState
 }
 

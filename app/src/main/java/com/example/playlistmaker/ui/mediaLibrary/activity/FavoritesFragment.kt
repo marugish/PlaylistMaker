@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoritesBinding
@@ -14,14 +15,16 @@ import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.mediaLibrary.state.FavoriteState
 import com.example.playlistmaker.ui.mediaLibrary.view_model.FavoritesViewModel
 import com.example.playlistmaker.ui.player.activity.PlayActivity
-import com.example.playlistmaker.ui.search.activity.SearchFragment
 import com.example.playlistmaker.ui.search.activity.TrackAdapter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class FavoritesFragment: Fragment() {
     companion object {
         private const val FAVORITES = "favorite_tracks"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
 
         fun newInstance(favorites: String) = FavoritesFragment().apply {
             arguments = Bundle().apply {
@@ -38,13 +41,27 @@ class FavoritesFragment: Fragment() {
 
     private var favoriteAdapter: TrackAdapter? = TrackAdapter { track -> showTrackPlayer(track) }
 
+    private var isClickAllowed = true
+
     private fun showTrackPlayer(track: Track) {
-        /*if (clickDebounce()) {
+        if (clickDebounce()) {
             val intent = Intent(requireContext(), PlayActivity::class.java)
             intent.putExtra("track", track)
             startActivity(intent)
-            viewModel.saveSearchHistory(track)
-        }*/
+            favoritesViewModel.saveSearchHistory(track)
+        }
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
     }
 
     override fun onCreateView(
@@ -59,8 +76,6 @@ class FavoritesFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.i("test_favorite", "OnViewCreated")
-
         binding.favoriteTrackRecycleView.layoutManager = LinearLayoutManager(requireContext())
         binding.favoriteTrackRecycleView.adapter = favoriteAdapter
 
@@ -70,7 +85,6 @@ class FavoritesFragment: Fragment() {
             when(it) {
                 is FavoriteState.Loading -> showLoading()
                 is FavoriteState.Content ->  {
-                    Log.i("test_favorite", "контент")
                     showFavorites(it.tracks)
                 }
                 is FavoriteState.Empty -> showEmptyList()
@@ -80,8 +94,7 @@ class FavoritesFragment: Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.i("test_favorite", "возобновление")
-        favoritesViewModel.fillData()  // Загружаем данные при каждом возобновлении фрагмента
+        favoritesViewModel.fillData()
     }
 
     private fun showLoading() {
@@ -109,16 +122,9 @@ class FavoritesFragment: Fragment() {
             placeholderImage.visibility = View.GONE
             placeholderMessage.visibility = View.GONE
             progressBar.visibility = View.GONE
-
-            // отобразить список плейлистов (реализация позже)
-            // ...
-
-
             favoriteTrackRecycleView.visibility = View.VISIBLE
-            Log.i("test_favorite", "$tracks")
-
-            //favoriteAdapter?.notifyDataSetChanged()
+            favoriteAdapter?.setItems(tracks)
         }
-        favoriteAdapter?.setItems(tracks)
+
     }
 }

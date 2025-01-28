@@ -14,7 +14,4 @@ interface MediaPlayerInteractor {
     fun interface MediaPlayerConsumer {
         fun consumeCurrentStateAndPosition(position: Int, state: PlayerStates)
     }
-
-    suspend fun insertFavoriteTrack(track: Track)
-    suspend fun deleteFavoriteTrack(track: Track)
 }

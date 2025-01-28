@@ -4,10 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.domain.FavoriteInteractor
+import com.example.playlistmaker.domain.db.FavoriteInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.search.model.Track
-import com.example.playlistmaker.ui.mediaLibrary.state.FavoriteState
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.util.PlayerStates
@@ -21,6 +20,7 @@ class PlayViewModel(private val track: Track?,
 ): ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<TrackScreenState>(TrackScreenState.Loading)
+    val favorite = MutableLiveData(false)
 
     private var timerJob: Job? = null
 
@@ -59,27 +59,19 @@ class PlayViewModel(private val track: Track?,
         releasePlayer()
     }
 
-    // переименовать!
-    fun likeTrack() {
-        // необходимо проверить статус трека: в избранных он или нет
+    private fun likeTrack() {
         viewModelScope.launch {
             favoriteInteractor.getIdFavoriteTracks().collect { trackIds ->
                 processResult(trackIds)
             }
         }
-        // ....
-    // необходимо проверить лайкаю или снимаю лайк
-        // ...
-
-        // момент, что только лайкаю трек, что он не был в списке Избранных
-
     }
 
     // добавление трека в Избранное
     fun addTrackToFavorite() {
         viewModelScope.launch {
             if (track != null) {
-                mediaPlayerInteractor.insertFavoriteTrack(track)
+                favoriteInteractor.insertFavoriteTrack(track)
             }
         }
     }
@@ -88,7 +80,7 @@ class PlayViewModel(private val track: Track?,
     fun deleteTrackFromFavorite() {
         viewModelScope.launch {
             if (track != null) {
-                mediaPlayerInteractor.deleteFavoriteTrack(track)
+                favoriteInteractor.deleteFavoriteTrack(track)
             }
         }
     }
@@ -98,16 +90,11 @@ class PlayViewModel(private val track: Track?,
             // поиск трека по ID в списке ID
             val isTrackContains: Boolean = trackIds.contains(track.trackId)
             if (isTrackContains) {
-                renderState(TrackScreenState.Favorite(true)) //есть в списке
+                favorite.postValue(true)
             } else {
-                renderState(TrackScreenState.Favorite(false)) // нет в списке
+                favorite.postValue(false)
             }
         }
-
-
-
-
-
     }
 
     fun playbackControl(trackUrl: String) {

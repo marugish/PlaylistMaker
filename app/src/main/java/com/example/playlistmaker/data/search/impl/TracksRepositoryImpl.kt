@@ -1,5 +1,7 @@
 package com.example.playlistmaker.data.search.impl
 
+import com.example.playlistmaker.data.db.AppDatabase
+import com.example.playlistmaker.data.db.converter.TrackDbConvertor
 import com.example.playlistmaker.data.search.NetworkClient
 import com.example.playlistmaker.util.SearchError
 import com.example.playlistmaker.data.search.dto.TracksSearchRequest
@@ -9,6 +11,7 @@ import com.example.playlistmaker.domain.search.TracksRepository
 import com.example.playlistmaker.util.Resource
 import com.example.playlistmaker.domain.search.model.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 
 class TracksRepositoryImpl(
@@ -25,7 +28,8 @@ class TracksRepositoryImpl(
                 if ((response as TracksSearchResponse).results.isEmpty()) {
                     emit(Resource.Error(SearchError.NO_RESULTS))
                 } else {
-                    emit(Resource.Success(response.results.map(trackMapper::mapToDomain)))
+                    val data = response.results.map(trackMapper::mapToDomain)
+                    emit(Resource.Success(data))
                 }
             }
             else -> {
