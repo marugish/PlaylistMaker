@@ -1,7 +1,11 @@
 package com.example.playlistmaker.data.player.impl
 
+import com.example.playlistmaker.data.db.AppDatabase
+import com.example.playlistmaker.data.db.converter.TrackDbConvertor
 import com.example.playlistmaker.data.player.MediaPlayerInterface
+import com.example.playlistmaker.data.search.mapper.TracksMapper
 import com.example.playlistmaker.domain.player.MediaPlayerRepository
+import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.util.PlayerStates
 
 class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayerInterface): MediaPlayerRepository {
@@ -33,4 +37,5 @@ class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayerInterface): 
     override fun changeState(state: PlayerStates) {
         mediaPlayer.changeState(state)
     }
+
 }

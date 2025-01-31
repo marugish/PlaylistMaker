@@ -2,6 +2,7 @@ package com.example.playlistmaker.ui.player.activity
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -32,6 +33,10 @@ class PlayActivity : AppCompatActivity() {
 
     private lateinit var pauseImage: Drawable
     private lateinit var playImage: Drawable
+    private lateinit var activeFavoriteImage: Drawable
+    private lateinit var inactiveFavoriteImage: Drawable
+
+    private var isFavorite = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +50,10 @@ class PlayActivity : AppCompatActivity() {
         // Для превью трека
         pauseImage = ContextCompat.getDrawable(this, R.drawable.pause_button)!!
         playImage = ContextCompat.getDrawable(this, R.drawable.play_button)!!
+
+        // Для Favorite
+        activeFavoriteImage = ContextCompat.getDrawable(this, R.drawable.active_favorite)!!
+        inactiveFavoriteImage = ContextCompat.getDrawable(this, R.drawable.inactive_favorite)!!
 
         var isContentStateHandled = false
         viewModel.getScreenStateLiveData().observe(this) { screenState ->
@@ -91,11 +100,27 @@ class PlayActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.favorite.observe(this) {
+            showFavoriteStatus(inFavorite = it)
+            isFavorite = it
+        }
+
         binding.playButton.setOnClickListener {
             if (track != null) {
                 viewModel.playbackControl(track!!.previewUrl)
             }
         }
+
+        binding.likeButton.setOnClickListener {
+            isFavorite = !isFavorite
+            showFavoriteStatus(inFavorite = isFavorite)
+            if (isFavorite) { // добавили трек
+                viewModel.addTrackToFavorite()
+            } else { // удалили трек
+                viewModel.deleteTrackFromFavorite()
+            }
+        }
+
     }
 
     private fun showLoading(loading: Boolean) {
@@ -121,6 +146,14 @@ class PlayActivity : AppCompatActivity() {
         binding.yearEditText.text = year
         binding.genreEditText.text = track.primaryGenreName
         binding.countryText.text = track.country
+    }
+
+    private fun showFavoriteStatus(inFavorite: Boolean) {
+        if (inFavorite) {
+            binding.likeButton.setImageDrawable(activeFavoriteImage)
+        } else {
+            binding.likeButton.setImageDrawable(inactiveFavoriteImage)
+        }
     }
 
     override fun onPause() {

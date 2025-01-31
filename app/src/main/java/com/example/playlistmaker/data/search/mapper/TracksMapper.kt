@@ -7,6 +7,7 @@ import com.example.playlistmaker.domain.search.model.Track
 object TracksMapper {
     fun mapToDomain(tracksDto: TrackDto): Track {
         return Track(
+            trackId = tracksDto.trackId,
             trackName = tracksDto.trackName,
             artistName = tracksDto.artistName,
             trackTimeMillis = tracksDto.trackTimeMillis,
@@ -21,6 +22,7 @@ object TracksMapper {
 
     fun mapToStorage(tracks: Track): TrackDto {
         return TrackDto(
+            trackId = tracks.trackId,
             trackName = tracks.trackName,
             artistName = tracks.artistName,
             trackTimeMillis = tracks.trackTimeMillis,

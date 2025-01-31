@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.db.FavoriteInteractor
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.player.state.PlayStatusState
@@ -13,19 +14,22 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor: MediaPlayerInteractor): ViewModel() {
+class PlayViewModel(private val track: Track?,
+                    private val mediaPlayerInteractor: MediaPlayerInteractor,
+                    private val favoriteInteractor: FavoriteInteractor
+): ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<TrackScreenState>(TrackScreenState.Loading)
+    val favorite = MutableLiveData(false)
 
     private var timerJob: Job? = null
-    //private var mainThreadHandler= Handler(Looper.getMainLooper())
-    //private var updateTimerTask: Runnable? = createUpdateTimerTask()
 
     init {
         if (track == null) {
             screenStateLiveData.postValue(TrackScreenState.Empty)
         } else {
             screenStateLiveData.postValue(TrackScreenState.Content(track, PlayStatusState.ToZero))
+            likeTrack()
             prepareMediaPlayer(track.previewUrl)
         }
     }
@@ -53,8 +57,44 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
 
     override fun onCleared() {
         releasePlayer()
+    }
 
-        //updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
+    private fun likeTrack() {
+        viewModelScope.launch {
+            favoriteInteractor.getIdFavoriteTracks().collect { trackIds ->
+                processResult(trackIds)
+            }
+        }
+    }
+
+    // добавление трека в Избранное
+    fun addTrackToFavorite() {
+        viewModelScope.launch {
+            if (track != null) {
+                favoriteInteractor.insertFavoriteTrack(track)
+            }
+        }
+    }
+
+    // удаление трека из Избранного
+    fun deleteTrackFromFavorite() {
+        viewModelScope.launch {
+            if (track != null) {
+                favoriteInteractor.deleteFavoriteTrack(track)
+            }
+        }
+    }
+
+    private fun processResult(trackIds: List<Long>) {
+        if (track != null) {
+            // поиск трека по ID в списке ID
+            val isTrackContains: Boolean = trackIds.contains(track.trackId)
+            if (isTrackContains) {
+                favorite.postValue(true)
+            } else {
+                favorite.postValue(false)
+            }
+        }
     }
 
     fun playbackControl(trackUrl: String) {
@@ -79,7 +119,6 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
     fun pausePlayer() {
         mediaPlayerInteractor.pause()
         updatePlayStatus(PlayStatusState.Pause)
-        //updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
         timerJob?.cancel()
     }
 
@@ -87,13 +126,11 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
         mediaPlayerInteractor.play()
         updatePlayStatus(PlayStatusState.Start)
         startTimer()
-        //updateTimerTask?.let { mainThreadHandler.post(it) }
     }
 
     private fun resetToZeroPlayer() {
         updatePlayStatus(PlayStatusState.ToZero)
         timerJob?.cancel()
-        //updateTimerTask?.let { mainThreadHandler.removeCallbacks(it) }
     }
 
     private fun completedPlayer() {
@@ -101,13 +138,11 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
         resetToZeroPlayer()
     }
 
-
     private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (true) {
                 mediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
                     if (state == PlayerStates.PLAYING) {
-                        //Log.i("mytest", "time = $position")
                         updatePlayStatus(PlayStatusState.PlayState(time = position))
                     } else if (state == PlayerStates.COMPLETED) {
                         completedPlayer()
@@ -118,24 +153,12 @@ class PlayViewModel(private val track: Track?, private val mediaPlayerInteractor
         }
     }
 
-    /*private fun createUpdateTimerTask(): Runnable {
-        return Runnable {
-            mediaPlayerInteractor.getCurrentStateAndPosition { position, state ->
-                if (state == PlayerStates.PLAYING) {
-                    updatePlayStatus(PlayStatusState.PlayState(time = position))
-                    updateTimerTask?.let {
-                        mainThreadHandler.postDelayed(it, REFRESH_TIMER_DELAY_MILLIS)
-                    }
-                } else if (state == PlayerStates.COMPLETED) {
-                    completedPlayer()
-                }
-            }
-        }
-    }*/
-
     fun releasePlayer() {
         mediaPlayerInteractor.release()
         resetToZeroPlayer()
     }
 
+    private fun renderState(state: TrackScreenState) {
+        screenStateLiveData.postValue(state)
+    }
 }
