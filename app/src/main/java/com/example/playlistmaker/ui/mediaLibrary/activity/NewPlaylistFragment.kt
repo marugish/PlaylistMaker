@@ -8,6 +8,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.example.playlistmaker.ui.RootActivity
 import com.example.playlistmaker.ui.search.state.HistoryState
 
 class NewPlaylistFragment : Fragment() {
@@ -22,15 +23,18 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarNewPlaylist.setOnClickListener {
-            findNavController().navigateUp()
-        }
+        //binding.toolbarNewPlaylist.setOnClickListener {
+          //  findNavController().navigateUp()
 
-        binding.newPlaylistName.addTextChangedListener(
+            // вероятнее всего не тут необходимо делать, не работает системная кнопка назад
+            //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
+        //}
+
+            /*binding.newPlaylistName.addTextChangedListener(
             /*afterTextChanged = { s, _, _, _ ->
                 s.toString()
             }*/
-        )
+        )*/
 
     }
 }

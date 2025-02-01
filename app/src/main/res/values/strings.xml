@@ -38,5 +38,6 @@
     <string name="new_playlist_name">Название*</string>
     <string name="new_playlist_description">Описание</string>
     <string name="create">Создать</string>
+    <string name="addphoto">addPhoto</string>
 
 </resources>

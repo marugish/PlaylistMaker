@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.example.playlistmaker.ui.RootActivity
 import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistState
 import com.example.playlistmaker.ui.mediaLibrary.view_model.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -43,6 +44,7 @@ class PlaylistsFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.newPlaylistButton.setOnClickListener {
+            (activity as RootActivity).hideOrShowBottomNavigationView(View.GONE)
             findNavController().navigate(R.id.action_mediaLibraryFragment_to_newPlaylistFragment)
         }
 
