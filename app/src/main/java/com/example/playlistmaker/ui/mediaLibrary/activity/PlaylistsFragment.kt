@@ -6,11 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.ui.RootActivity
 import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistState
 import com.example.playlistmaker.ui.mediaLibrary.view_model.PlaylistsViewModel
+import com.example.playlistmaker.ui.search.activity.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -31,6 +34,10 @@ class PlaylistsFragment: Fragment() {
 
     private lateinit var binding: FragmentPlaylistsBinding
 
+    private val adapter = PlaylistAdapter { playlist ->
+        //showTrackPlayer(track)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,6 +49,9 @@ class PlaylistsFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.playlistsRecycleView.layoutManager = GridLayoutManager(requireContext(),  2)
+        binding.playlistsRecycleView.adapter = adapter
 
         binding.newPlaylistButton.setOnClickListener {
             (activity as RootActivity).hideOrShowBottomNavigationView(View.GONE)
@@ -69,7 +79,7 @@ class PlaylistsFragment: Fragment() {
         }
     }
 
-    private fun showPlaylists(){//playlists: Playlists) {
+    private fun showPlaylists(){//playlists: List<Playlist>) {
         binding.apply {
             newPlaylistButton.visibility = View.GONE
             placeholderImage.visibility = View.GONE

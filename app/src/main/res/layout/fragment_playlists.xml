@@ -1,47 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="?attr/colorSecondary"
+    tools:context="com.example.playlistmaker.ui.mediaLibrary.activity.PlaylistsFragment">
 
-    <Button
-        android:id="@+id/newPlaylistButton"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/update_button_height"
-        android:backgroundTint="?attr/textColor"
-        android:text="@string/new_playlist"
-        android:layout_marginTop="@dimen/margin_bottom_heading_layout"
-        android:layout_gravity="center_horizontal"
-        app:cornerRadius="@dimen/corner_radius_update_button"
-        android:textSize="@dimen/default_text_size"
-        android:textColor="?attr/colorSecondary"
-        android:fontFamily="@font/ys_display_medium"
-        android:textFontWeight="500"
-        android:textAllCaps="false"
-        android:insetBottom="0dp"
-        android:insetTop="0dp"
-        android:visibility="gone"/>
-
-    <ImageView
-        android:id="@+id/placeholder_image"
-        android:layout_width="@dimen/not_found_or_network_image_placeholder"
-        android:layout_height="@dimen/not_found_or_network_image_placeholder"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="46dp"/>
-
-    <TextView
-        android:id="@+id/placeholderMessage"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlists_recycle_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_bottom_heading_layout"
-        android:layout_marginTop="@dimen/default_margin"
-        android:textAlignment="center"
-        android:textSize="@dimen/placeholder_text_size"
-        android:textColor="?attr/textColor"
-        android:fontFamily="@font/ys_display_medium"
-        android:textFontWeight="400"/>
+        android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <Button
+            android:id="@+id/newPlaylistButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/update_button_height"
+            android:backgroundTint="?attr/textColor"
+            android:text="@string/new_playlist"
+            android:layout_marginTop="@dimen/margin_bottom_heading_layout"
+            android:layout_gravity="center_horizontal"
+            app:cornerRadius="@dimen/corner_radius_update_button"
+            android:textSize="@dimen/default_text_size"
+            android:textColor="?attr/colorSecondary"
+            android:fontFamily="@font/ys_display_medium"
+            android:textFontWeight="500"
+            android:textAllCaps="false"
+            android:insetBottom="0dp"
+            android:insetTop="0dp"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/placeholder_image"
+            android:layout_width="@dimen/not_found_or_network_image_placeholder"
+            android:layout_height="@dimen/not_found_or_network_image_placeholder"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="46dp"/>
+
+        <TextView
+            android:id="@+id/placeholderMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_bottom_heading_layout"
+            android:layout_marginTop="@dimen/default_margin"
+            android:textAlignment="center"
+            android:textSize="@dimen/placeholder_text_size"
+            android:textColor="?attr/textColor"
+            android:fontFamily="@font/ys_display_medium"
+            android:textFontWeight="400"/>
+    </LinearLayout>
+</FrameLayout>
