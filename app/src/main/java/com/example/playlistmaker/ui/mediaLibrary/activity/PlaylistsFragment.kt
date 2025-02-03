@@ -11,6 +11,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.ui.RootActivity
+import com.example.playlistmaker.ui.mediaLibrary.state.FavoriteState
 import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistState
 import com.example.playlistmaker.ui.mediaLibrary.view_model.PlaylistsViewModel
 import com.example.playlistmaker.ui.search.activity.TrackAdapter
@@ -58,12 +59,15 @@ class PlaylistsFragment: Fragment() {
             findNavController().navigate(R.id.action_mediaLibraryFragment_to_newPlaylistFragment)
         }
 
+        playlistsViewModel.getPlaylists()
+
         playlistsViewModel.observeState().observe(viewLifecycleOwner) {
             when(it) {
-                is PlaylistState.Content -> showPlaylists()//it.playlists)
+                is PlaylistState.Content -> showPlaylists(it.playlists)
                 is PlaylistState.Empty -> showEmptyList()
             }
         }
+
     }
 
     private fun showEmptyList() {
@@ -75,17 +79,20 @@ class PlaylistsFragment: Fragment() {
             binding.placeholderImage.setImageResource(R.drawable.not_found_placeholder)
 
             // убрать список плейлистов (реализация позже)
-            // ...
+            playlistsRecycleView.visibility = View.GONE
         }
     }
 
-    private fun showPlaylists(){//playlists: List<Playlist>) {
+    private fun showPlaylists(playlists: List<Playlist>) {
         binding.apply {
-            newPlaylistButton.visibility = View.GONE
+            newPlaylistButton.visibility = View.VISIBLE
             placeholderImage.visibility = View.GONE
             placeholderMessage.visibility = View.GONE
-            // отобразить список плейлистов (реализация позже)
-            // ...
+
+            // NEW
+            // отобразить список плейлистов
+            playlistsRecycleView.visibility = View.VISIBLE
+            adapter.setItems(playlists)
 
         }
 

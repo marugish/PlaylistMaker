@@ -3,6 +3,7 @@ package com.example.playlistmaker.ui.player.activity
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,6 +17,7 @@ import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.ui.player.view_model.PlayViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -42,6 +44,48 @@ class PlayActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+
+        // NEW - возможно, что частично необходимо реализацию переносить в PlayViewModel
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        // возобновляем воспроизведение
+                        // ...
+                        binding.overlay.visibility = View.GONE
+
+                    }
+                    else -> {
+
+                        binding.overlay.visibility = View.VISIBLE
+                        // правильное отображение списка плейлистов!!!!!!!
+
+
+
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
+
+        // NEW
+        binding.plusButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        }
+
+        binding.newPlaylistButton.setOnClickListener {
+            // необходимо открыть)))
+            // .....
+        }
+
+        //////////
 
         binding.toolbarPlay.setNavigationOnClickListener {
             finish()
