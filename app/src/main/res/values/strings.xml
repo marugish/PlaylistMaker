@@ -40,5 +40,7 @@
     <string name="create">Создать</string>
     <string name="addphoto">addPhoto</string>
     <string name="addToPlaylist">Добавить в плейлист</string>
+    <string name="playlistimage">playlistImage</string>
+    <string name="playlist_name">Название плейлиста</string>
 
 </resources>

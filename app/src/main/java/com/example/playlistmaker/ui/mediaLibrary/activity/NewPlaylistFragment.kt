@@ -1,13 +1,7 @@
 package com.example.playlistmaker.ui.mediaLibrary.activity
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,18 +12,14 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.ui.RootActivity
 import com.example.playlistmaker.ui.mediaLibrary.view_model.NewPlaylistViewModel
-import com.example.playlistmaker.ui.search.view_model.SearchViewModel
+import com.example.playlistmaker.util.customToast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -146,8 +136,10 @@ class NewPlaylistFragment : Fragment() {
             viewModel.insertPlaylistToDb(newPlaylist = newPlaylist)
 
             findNavController().navigateUp()
+            (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE) // ????????????
 
-            customToast("Плейлист ${newPlaylist.playlistName} создан")   // Добавление Toast
+
+            customToast(requireContext(), layoutInflater,"Плейлист ${newPlaylist.playlistName} создан")   // Добавление Toast
             Log.i("newPlaylist", "$newPlaylist")
 
 
@@ -156,7 +148,7 @@ class NewPlaylistFragment : Fragment() {
     }
 
 
-    private fun customToast(myText: String) {
+    /*private fun customToast(myText: String) {
         //val toast = Toast.makeText(context, "Correto!", Toast.LENGTH_SHORT)
 
         //val toastMessage = toast.view!!.findViewById<View>(android.R.id.message) as TextView
@@ -178,5 +170,5 @@ class NewPlaylistFragment : Fragment() {
         toast.setView(layout)
         toast.show()
 
-    }
+    }*/
 }

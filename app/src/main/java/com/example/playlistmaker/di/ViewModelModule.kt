@@ -24,7 +24,7 @@ val viewModelModule = module {
 
     // Player
     viewModel { (track: Track?) ->
-        PlayViewModel(track, get(), get())
+        PlayViewModel(track, get(), get(), get())
     }
 
     // Search

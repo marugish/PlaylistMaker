@@ -6,17 +6,23 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayBinding
+import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.mediaLibrary.activity.PlaylistAdapter
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.ui.player.view_model.PlayViewModel
+import com.example.playlistmaker.util.customToast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -33,19 +39,35 @@ class PlayActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayBinding
 
+    private lateinit var tapPlaylist: String
+
+    private val adapter = AddToPlaylistAdapter { playlist ->
+        //Log.i("myPlaylist", "{${playlist.playlistName}}")
+        tapPlaylist = playlist.playlistName
+        playlist.id?.let { viewModel.findTrackInPlaylist(it) }
+    }
+
     private lateinit var pauseImage: Drawable
     private lateinit var playImage: Drawable
     private lateinit var activeFavoriteImage: Drawable
     private lateinit var inactiveFavoriteImage: Drawable
 
     private var isFavorite = false
+    private var getPlaylists: List<Playlist> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Список плейлистов
+        binding.playlistsRecycleView.layoutManager = LinearLayoutManager(this)
+        binding.playlistsRecycleView.adapter = adapter
 
+        viewModel.playlists.observe(this) {
+            getPlaylists = it
+            Log.i("myPlaylists", "$getPlaylists")
+        }
 
         // NEW - возможно, что частично необходимо реализацию переносить в PlayViewModel
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
@@ -62,10 +84,12 @@ class PlayActivity : AppCompatActivity() {
 
                     }
                     else -> {
-
                         binding.overlay.visibility = View.VISIBLE
                         // правильное отображение списка плейлистов!!!!!!!
-
+                        // ...
+                        viewModel.getPlaylists()
+                        binding.playlistsRecycleView.visibility = View.VISIBLE
+                        adapter.setItems(getPlaylists)
 
 
                     }
@@ -74,6 +98,22 @@ class PlayActivity : AppCompatActivity() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
+
+        viewModel.trackInPlaylist.observe(this) {
+            if (it == true) {
+                // Toast
+                customToast(applicationContext, layoutInflater,
+                    "Трек уже добавлен в плейлист '$tapPlaylist'")
+            } else {
+                // Toast
+                customToast(applicationContext, layoutInflater,
+                    "Добавлено в плейлист '$tapPlaylist'")
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
+
+
+
 
         // NEW
         binding.plusButton.setOnClickListener {
@@ -86,6 +126,8 @@ class PlayActivity : AppCompatActivity() {
         }
 
         //////////
+
+
 
         binding.toolbarPlay.setNavigationOnClickListener {
             finish()

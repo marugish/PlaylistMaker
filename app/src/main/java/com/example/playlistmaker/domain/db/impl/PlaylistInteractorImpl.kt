@@ -15,4 +15,16 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
     override fun getPlaylists(): Flow<List<Playlist>> {
         return playlistRepository.getPlaylists()
     }
+
+    override suspend fun updatePlaylistInfoTracks(id: Long, trackIds: String, count: Int) {
+        playlistRepository.updatePlaylistInfoTracks(id, trackIds, count)
+    }
+
+    override suspend fun insertTrackInPlaylist(track: Track) {
+        playlistRepository.insertTrackInPlaylist(track)
+    }
+
+    /*override fun tracksInPlaylist(id: Long): Flow<List<Long>> {
+        return playlistRepository.tracksInPlaylist(id)
+    }*/
 }
