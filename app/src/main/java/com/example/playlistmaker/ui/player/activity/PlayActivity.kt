@@ -10,6 +10,7 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -18,6 +19,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayBinding
 import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.mediaLibrary.activity.NewPlaylistFragment
 import com.example.playlistmaker.ui.mediaLibrary.activity.PlaylistAdapter
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
@@ -121,8 +123,14 @@ class PlayActivity : AppCompatActivity() {
         }
 
         binding.newPlaylistButton.setOnClickListener {
-            // необходимо открыть)))
-            // .....
+            /*val createPlaylistFragment = NewPlaylistFragment()
+
+            supportFragmentManager.commit {
+                replace(R.id.fragment_container, createPlaylistFragment)
+                addToBackStack("create playlist") // Optional: Add to back stack
+            }*/
+
+            // что будет с воспроизведением?
         }
 
         //////////

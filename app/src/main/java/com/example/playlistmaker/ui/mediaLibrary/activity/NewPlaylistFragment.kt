@@ -13,6 +13,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.domain.db.model.Playlist
@@ -69,25 +72,15 @@ class NewPlaylistFragment : Fragment() {
 
                 //binding.addPhoto.setImageURI(uri)
 
-
-                /*Glide.with(this)
+                Glide.with(this)
                     .load(uri)
-                    //.override(312, 312)
-                    //.transform(CenterCrop())
-                    //.circleCrop()
-                    //.fitCenter()
                     .centerCrop()
-                    //.centerInside()
-                    .transform(RoundedCorners(8))
+                    .transform(RoundedCorners(8)) // края не закругляются
                     .placeholder(R.drawable.add_photo)
-                    .into(binding.addPhoto)*/
+                    .into(binding.addPhoto)
 
-                /*Glide.with(parentView.context)
-                    .load(model.artworkUrl100)
-                    .centerCrop()
-                    .transform(RoundedCorners(4)) // 2 совсем незаметно
-                    .placeholder(R.drawable.placeholder)
-                    .into(trackImage)*/
+                // сохранение фотографии в хранилище
+                // ...
 
                 //saveImageToPrivateStorage(uri)
             } else {
