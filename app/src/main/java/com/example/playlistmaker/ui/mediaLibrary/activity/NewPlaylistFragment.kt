@@ -1,6 +1,10 @@
 package com.example.playlistmaker.ui.mediaLibrary.activity
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +28,9 @@ import com.example.playlistmaker.ui.mediaLibrary.view_model.NewPlaylistViewModel
 import com.example.playlistmaker.util.customToast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
+import java.io.FileOutputStream
+import kotlin.random.Random
 
 
 class NewPlaylistFragment : Fragment() {
@@ -35,6 +42,7 @@ class NewPlaylistFragment : Fragment() {
 
     // Необходимо создать экземпляр класса как раз, чтобы его передать
     private var newPlaylist: Playlist = Playlist()
+    private var photoUri: Uri? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -79,10 +87,12 @@ class NewPlaylistFragment : Fragment() {
                     .placeholder(R.drawable.add_photo)
                     .into(binding.addPhoto)
 
+                photoUri = uri
                 // сохранение фотографии в хранилище
                 // ...
 
                 //saveImageToPrivateStorage(uri)
+
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
@@ -124,20 +134,53 @@ class NewPlaylistFragment : Fragment() {
             // создаём плейлист, сохраняем изменения и выходим
             // save()
             // конкретно тут добавляем картинку в хранилище, добавляем плейлист в БД
-
+            photoUri?.let { it ->
+                val randomNumber = Random.nextInt(10000)
+                saveImageToPrivateStorage(it, "${newPlaylist.playlistName}_$randomNumber")
+            }
             // необходимо добавить плейлист в БД
             viewModel.insertPlaylistToDb(newPlaylist = newPlaylist)
 
-            findNavController().navigateUp()
-            (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE) // ????????????
+            // переношу в другое место
+            //findNavController().navigateUp()
+            //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE) // ????????????
 
 
-            customToast(requireContext(), layoutInflater,"Плейлист ${newPlaylist.playlistName} создан")   // Добавление Toast
-            Log.i("newPlaylist", "$newPlaylist")
+            //customToast(requireContext(), layoutInflater,"Плейлист ${newPlaylist.playlistName} создан")   // Добавление Toast
+            //Log.i("newPlaylist", "$newPlaylist")
 
 
         }
 
+        viewModel.idPlaylist.observe(viewLifecycleOwner) {
+            if (it != -1L) {
+                Log.i("myPlaylist", "$it")
+                findNavController().navigateUp()
+                (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
+                customToast(requireContext(), layoutInflater,"Плейлист ${newPlaylist.playlistName} создан")   // Добавление Toast
+                // сохранение фотографии в хранилище
+                //photoUri?.let { it1 -> saveImageToPrivateStorage(it1, "${newPlaylist.playlistName}_$it") }
+            }
+        }
+
+    }
+
+    private fun saveImageToPrivateStorage(uri: Uri, photoName: String) {
+        val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "PlaylistMaker")
+        if (!filePath.exists()) {
+            filePath.mkdirs() // создаем каталог, если он не создан
+        }
+        newPlaylist = newPlaylist.copy(photoUrl = "$filePath/$photoName.jpg")
+        //создаём экземпляр класса File, который указывает на файл внутри каталога
+        val file = File(filePath, "$photoName.jpg")
+        // создаём входящий поток байтов из выбранной картинки
+        val inputStream = requireActivity().contentResolver.openInputStream(uri)
+        // создаём исходящий поток байтов в созданный выше файл
+        val outputStream = FileOutputStream(file)
+        // записываем картинку с помощью BitmapFactory
+        BitmapFactory
+            .decodeStream(inputStream)
+            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
     }
 
 

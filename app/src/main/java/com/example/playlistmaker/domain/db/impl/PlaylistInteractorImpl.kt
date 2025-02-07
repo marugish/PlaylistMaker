@@ -8,8 +8,8 @@ import com.example.playlistmaker.domain.search.model.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository): PlaylistInteractor {
-    override suspend fun insertNewPlaylist(playlist: Playlist) {
-        playlistRepository.insertNewPlaylist(playlist)
+    override fun insertNewPlaylist(playlist: Playlist): Flow<Long> {
+        return playlistRepository.insertNewPlaylist(playlist)
     }
 
     override fun getPlaylists(): Flow<List<Playlist>> {

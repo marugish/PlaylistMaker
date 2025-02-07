@@ -13,7 +13,7 @@ import com.example.playlistmaker.data.db.entity.TrackInPlaylistEntity
 interface PlaylistDao {
     // Необходимо подумать над Replace
     @Insert(entity = PlaylistEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNewPlaylist(playlist: PlaylistEntity)
+    suspend fun insertNewPlaylist(playlist: PlaylistEntity): Long
 
     // Необходимо подумать над сортировкой и протестировать её
     @Query("SELECT * FROM playlist_table ORDER BY playlistId DESC")

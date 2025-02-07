@@ -8,18 +8,16 @@ import com.example.playlistmaker.data.search.mapper.TracksMapper
 import com.example.playlistmaker.domain.db.PlaylistRepository
 import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.domain.search.model.Track
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
-                             private val playlistDbConvertor: PlaylistDbConvertor,
-                             private val gson: Gson
+                             private val playlistDbConvertor: PlaylistDbConvertor
 ): PlaylistRepository {
     // Insert New Playlist
-    override suspend fun insertNewPlaylist(playlist: Playlist) {
+    override fun insertNewPlaylist(playlist: Playlist): Flow<Long> = flow {
         val playlistEntity = playlistDbConvertor.map(playlist)
-        appDatabase.playlistDao().insertNewPlaylist(playlistEntity)
+        emit(appDatabase.playlistDao().insertNewPlaylist(playlistEntity))
     }
 
     // Get Playlists

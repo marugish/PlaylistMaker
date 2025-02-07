@@ -54,6 +54,6 @@ val repositoryModule = module {
 
     // New Playlist
     single<PlaylistRepository> {
-        PlaylistRepositoryImpl(get(), get(), get())
+        PlaylistRepositoryImpl(get(), get())
     }
 }
