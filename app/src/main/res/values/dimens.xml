@@ -29,4 +29,6 @@
     <dimen name="progress_bar_margin">140dp</dimen>
     <dimen name="switch_width">35dp</dimen>
     <dimen name="switch_height">18dp</dimen>
+    <dimen name="margin_bottom">32dp</dimen>
+    <dimen name="button_height">44dp</dimen>
 </resources>

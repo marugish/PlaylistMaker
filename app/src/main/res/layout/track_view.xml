@@ -28,11 +28,6 @@
             android:ellipsize="end"
             android:maxLines="1"/>
 
-
-
-
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent">

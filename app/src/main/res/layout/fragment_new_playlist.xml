@@ -24,56 +24,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <ImageButton
-        android:id="@+id/addPhoto"
-        android:layout_width="312dp"
-        android:layout_height="312dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/toolbar_new_playlist"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="26dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp">
 
-        android:src="@drawable/add_photo"
-        android:background="@drawable/add_photo_rectangle"
-        android:contentDescription="@string/likebutton" />
-
-
+        <ImageButton
+            android:id="@+id/add_photo"
+            android:layout_width="312dp"
+            android:layout_height="312dp"
+            android:contentDescription="@string/addphoto"
+            android:background="@drawable/add_photo_rectangle"
+            android:scaleType="centerCrop" />
+    </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/createNewPlaylist"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
-
+        android:layout_height="@dimen/button_height"
         android:layout_marginHorizontal="@dimen/default_margin"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-
-        android:layout_marginTop="@dimen/margin_bottom_heading_layout"
-
-        android:enabled="false"
-
-        android:text="@string/create"
-        android:textSize="@dimen/default_text_size"
-        android:textColor="?attr/colorPrimaryVariant"
-        android:fontFamily="@font/ys_display_medium"
-        android:textFontWeight="500"
-        android:textAllCaps="false"
+        android:layout_marginBottom="@dimen/margin_bottom"
         android:background="@drawable/button_tap_selector"
-
-        />
+        android:enabled="false"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="@string/create"
+        android:textAllCaps="false"
+        android:textColor="?attr/colorPrimaryVariant"
+        android:textFontWeight="500"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newPlaylistDescriptionLayout"
+        app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/newPlaylistNameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/addPhoto"
+        app:layout_constraintTop_toBottomOf="@id/card_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/default_margin"
-        android:layout_marginHorizontal="@dimen/default_margin"
-        >
+        android:layout_marginTop="32dp"
+        android:layout_marginHorizontal="@dimen/default_margin">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/newPlaylistName"
@@ -82,6 +81,9 @@
             android:hint="@string/new_playlist_name"
             android:textColorHint="?attr/textColor"
             android:textColor="?attr/textColor"
+            android:textSize="16sp"
+            android:fontFamily="@font/ys_display_regular"
+            android:textFontWeight="400"
             android:inputType="text"
             android:lines="1"
             android:maxLength="40"
@@ -106,6 +108,9 @@
             android:hint="@string/new_playlist_description"
             android:textColorHint="?attr/textColor"
             android:textColor="?attr/textColor"
+            android:textSize="16sp"
+            android:fontFamily="@font/ys_display_regular"
+            android:textFontWeight="400"
             android:inputType="text"
             android:lines="1"
             android:maxLength="40"

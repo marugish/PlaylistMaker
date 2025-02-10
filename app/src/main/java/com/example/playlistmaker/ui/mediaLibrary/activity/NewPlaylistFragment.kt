@@ -56,34 +56,25 @@ class NewPlaylistFragment : Fragment() {
         confirmDialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Завершить создание плейлиста?")
             .setMessage("Все несохраненные данные будут потеряны")
-            .setNeutralButton("Отмена") { dialog, which ->
+            .setNeutralButton("Отмена") { _, _ ->
                 // ничего не делаем
-            }.setPositiveButton("Завершить") { dialog, which ->
+            }.setPositiveButton("Завершить") { _, _ ->
                 findNavController().navigateUp()
-                //customToast("название плейлиста")
                 (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE) // ????????????
             }
 
         binding.toolbarNewPlaylist.setOnClickListener {
-            // необходимо проверить данные, были ли они заполнены
-            // ...
-
-            confirmDialog.show()
-
-
+            checkEnteredInfo()
         }
 
         // Регистрируем событие, которое вызывает Photo picker
         val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
 
-
-                //binding.addPhoto.setImageURI(uri)
-
                 Glide.with(this)
                     .load(uri)
-                    .centerCrop()
-                    .transform(RoundedCorners(8)) // края не закругляются
+                    //.centerCrop()
+                    //.transform(RoundedCorners(8)) // края не закругляются
                     .placeholder(R.drawable.add_photo)
                     .into(binding.addPhoto)
 
@@ -116,16 +107,10 @@ class NewPlaylistFragment : Fragment() {
             }
         )
 
-
-
-
-
-        // добавление слушателя для обработки нажатия на кнопку Back
+        // Кнопка Back
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // необходимо проверить данные, были ли они заполнены
-                // ...
-                confirmDialog.show()
+                checkEnteredInfo()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
@@ -157,12 +142,23 @@ class NewPlaylistFragment : Fragment() {
                 Log.i("myPlaylist", "$it")
                 findNavController().navigateUp()
                 (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
-                customToast(requireContext(), layoutInflater,"Плейлист ${newPlaylist.playlistName} создан")   // Добавление Toast
+                customToast(requireContext(), layoutInflater,"Плейлист '${newPlaylist.playlistName}' создан")   // Добавление Toast
                 // сохранение фотографии в хранилище
                 //photoUri?.let { it1 -> saveImageToPrivateStorage(it1, "${newPlaylist.playlistName}_$it") }
             }
         }
+    }
 
+    // Необходимо проверить данные, были ли они заполнены
+    private fun checkEnteredInfo() {
+        if (newPlaylist.playlistName.isNotEmpty() ||
+            newPlaylist.playlistDescription?.isNotEmpty() == true ||
+            photoUri != null) {
+            confirmDialog.show()
+        } else {
+            findNavController().navigateUp()
+            (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE) // ????????????
+        }
     }
 
     private fun saveImageToPrivateStorage(uri: Uri, photoName: String) {
@@ -177,7 +173,6 @@ class NewPlaylistFragment : Fragment() {
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
         // создаём исходящий поток байтов в созданный выше файл
         val outputStream = FileOutputStream(file)
-        // записываем картинку с помощью BitmapFactory
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)

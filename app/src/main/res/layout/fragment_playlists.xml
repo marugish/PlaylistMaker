@@ -34,7 +34,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playlists_recycle_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="8dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"

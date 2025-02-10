@@ -86,7 +86,7 @@ class PlayViewModel(private val track: Track?,
                 // Gson
                 val jsonList = Gson().toJson(list)
                 playlistInteractor.updatePlaylistInfoTracks(
-                    foundPlaylist.id!!, jsonList, foundPlaylist.trackCount++)
+                    foundPlaylist.id!!, jsonList, foundPlaylist.trackCount + 1)
                 playlistInteractor.insertTrackInPlaylist(track)
             }
 

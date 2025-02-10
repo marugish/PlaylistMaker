@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.domain.db.model.Playlist
@@ -52,6 +53,7 @@ class PlaylistsFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.playlistsRecycleView.layoutManager = GridLayoutManager(requireContext(),  2)
+
         binding.playlistsRecycleView.adapter = adapter
 
         binding.newPlaylistButton.setOnClickListener {
