@@ -23,7 +23,6 @@
         <!-- Switch color. -->
         <item name="switchThumbTint">@color/icon_color</item>
         <item name="switchTrackTint">@color/edit_text_color</item>
-
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />

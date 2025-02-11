@@ -59,8 +59,9 @@ class NewPlaylistFragment : Fragment() {
             .setNeutralButton("Отмена") { _, _ ->
                 // ничего не делаем
             }.setPositiveButton("Завершить") { _, _ ->
-                findNavController().navigateUp()
-                (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE) // ????????????
+                findNavController().navigateUp()//popBackStack()
+                //requireActivity().supportFragmentManager.popBackStack()
+                //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
             }
 
         binding.toolbarNewPlaylist.setOnClickListener {
@@ -140,8 +141,9 @@ class NewPlaylistFragment : Fragment() {
         viewModel.idPlaylist.observe(viewLifecycleOwner) {
             if (it != -1L) {
                 Log.i("myPlaylist", "$it")
-                findNavController().navigateUp()
-                (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
+                findNavController().navigateUp()//popBackStack()
+                //requireActivity().supportFragmentManager.popBackStack()
+                //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
                 customToast(requireContext(), layoutInflater,"Плейлист '${newPlaylist.playlistName}' создан")   // Добавление Toast
                 // сохранение фотографии в хранилище
                 //photoUri?.let { it1 -> saveImageToPrivateStorage(it1, "${newPlaylist.playlistName}_$it") }
@@ -156,8 +158,11 @@ class NewPlaylistFragment : Fragment() {
             photoUri != null) {
             confirmDialog.show()
         } else {
-            findNavController().navigateUp()
-            (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE) // ????????????
+            findNavController().navigateUp()//popBackStack()
+
+            //requireActivity().supportFragmentManager.popBackStack()
+
+            //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
         }
     }
 

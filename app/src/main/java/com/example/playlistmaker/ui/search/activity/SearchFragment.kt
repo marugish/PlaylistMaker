@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.search.model.Track
-import com.example.playlistmaker.ui.player.activity.PlayActivity
 import com.example.playlistmaker.ui.search.state.HistoryState
 import com.example.playlistmaker.ui.search.state.TracksState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
@@ -20,6 +19,8 @@ import com.example.playlistmaker.util.SearchError
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.ui.RootActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -27,7 +28,6 @@ class SearchFragment: Fragment()  {
     companion object {
         private const val EDIT_TEXT = "EDIT_TEXT"
         private const val SEARCH_QUERY = ""
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
     private lateinit var binding: FragmentSearchBinding
@@ -41,17 +41,17 @@ class SearchFragment: Fragment()  {
     private val searchAdapter = TrackAdapter { track -> showTrackPlayer(track) }
 
     private fun showTrackPlayer(track: Track) {
-        if (clickDebounce()) {
-            val intent = Intent(requireContext(), PlayActivity::class.java)
-            intent.putExtra("track", track)
-            startActivity(intent)
+        if (viewModel.clickDebounce()) {
+            val bundle = Bundle()
+            bundle.putSerializable("track", track)
+            findNavController().navigate(R.id.playFragment, bundle)
+            (activity as RootActivity).hideOrShowBottomNavigationView(View.GONE)
+
             viewModel.saveSearchHistory(track)
         }
     }
 
     private var searchQuery: String = SEARCH_QUERY
-
-    private var isClickAllowed = true
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -65,6 +65,8 @@ class SearchFragment: Fragment()  {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
 
         savedInstanceState?.let {
             searchQuery = it.getString(EDIT_TEXT).toString()
@@ -157,7 +159,7 @@ class SearchFragment: Fragment()  {
         }
     }
 
-    private fun clickDebounce() : Boolean {
+    /*private fun clickDebounce() : Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -167,7 +169,7 @@ class SearchFragment: Fragment()  {
             }
         }
         return current
-    }
+    }*/
 
     private fun render(state: TracksState) {
         when (state) {

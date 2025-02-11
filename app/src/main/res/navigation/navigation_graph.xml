@@ -9,7 +9,11 @@
         android:id="@+id/searchFragment"
         android:name="com.example.playlistmaker.ui.search.activity.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_playFragment"
+            app:destination="@id/playFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.ui.settings.activity.SettingsFragment"
@@ -23,10 +27,22 @@
         <action
             android:id="@+id/action_mediaLibraryFragment_to_newPlaylistFragment"
             app:destination="@id/newPlaylistFragment" />
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_playFragment"
+            app:destination="@id/playFragment" />
     </fragment>
     <fragment
         android:id="@+id/newPlaylistFragment"
         android:name="com.example.playlistmaker.ui.mediaLibrary.activity.NewPlaylistFragment"
         android:label="fragment_new_playlist"
         tools:layout="@layout/fragment_new_playlist" />
+    <fragment
+        android:id="@+id/playFragment"
+        android:name="com.example.playlistmaker.ui.player.activity.PlayFragment"
+        android:label="fragment_play"
+        tools:layout="@layout/fragment_play" >
+        <action
+            android:id="@+id/action_playFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+    </fragment>
 </navigation>

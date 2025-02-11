@@ -8,13 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoritesBinding
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.RootActivity
 import com.example.playlistmaker.ui.mediaLibrary.state.FavoriteState
 import com.example.playlistmaker.ui.mediaLibrary.view_model.FavoritesViewModel
-import com.example.playlistmaker.ui.player.activity.PlayActivity
 import com.example.playlistmaker.ui.search.activity.TrackAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,7 +25,6 @@ import org.koin.core.parameter.parametersOf
 class FavoritesFragment: Fragment() {
     companion object {
         private const val FAVORITES = "favorite_tracks"
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
 
         fun newInstance(favorites: String) = FavoritesFragment().apply {
             arguments = Bundle().apply {
@@ -41,27 +41,15 @@ class FavoritesFragment: Fragment() {
 
     private var favoriteAdapter: TrackAdapter? = TrackAdapter { track -> showTrackPlayer(track) }
 
-    private var isClickAllowed = true
-
     private fun showTrackPlayer(track: Track) {
-        if (clickDebounce()) {
-            val intent = Intent(requireContext(), PlayActivity::class.java)
-            intent.putExtra("track", track)
-            startActivity(intent)
+        if (favoritesViewModel.clickDebounce()) {
+            val bundle = Bundle()
+            bundle.putSerializable("track", track)
+            findNavController().navigate(R.id.playFragment, bundle)
+            (activity as RootActivity).hideOrShowBottomNavigationView(View.GONE)
+
             favoritesViewModel.saveSearchHistory(track)
         }
-    }
-
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
-        }
-        return current
     }
 
     override fun onCreateView(

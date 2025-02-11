@@ -9,6 +9,7 @@ import com.example.playlistmaker.domain.db.FavoriteInteractor
 import com.example.playlistmaker.domain.search.SearchHistoryInteractor
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.mediaLibrary.state.FavoriteState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
@@ -20,6 +21,24 @@ class FavoritesViewModel(
 
     init {
         fillData()
+    }
+
+    private var isClickAllowed = true
+
+    fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
     fun fillData() {

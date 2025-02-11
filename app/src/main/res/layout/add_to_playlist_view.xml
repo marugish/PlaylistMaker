@@ -14,7 +14,8 @@
         android:layout_marginStart="@dimen/track_margin_borders"
         android:layout_marginEnd="@dimen/track_margin_between"
         app:cardCornerRadius="2dp"
-        app:cardElevation="0dp">
+        app:cardElevation="0dp"
+        android:backgroundTint="?attr/colorSecondary">
 
         <ImageView
             android:id="@+id/playlist_image"

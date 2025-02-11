@@ -33,7 +33,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="26dp"
         app:cardCornerRadius="8dp"
-        app:cardElevation="0dp">
+        app:cardElevation="0dp"
+        android:backgroundTint="?attr/colorSecondary">
 
         <ImageButton
             android:id="@+id/add_photo"
@@ -88,7 +89,10 @@
             android:lines="1"
             android:maxLength="40"
             android:imeOptions="actionDone"
-            android:textCursorDrawable="@drawable/cursor"/>
+            android:textCursorDrawable="@drawable/cursor"
+
+
+            />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
