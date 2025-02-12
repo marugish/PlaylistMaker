@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.mediaLibrary.activity
 
+import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -9,21 +10,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.domain.db.model.Playlist
-import com.example.playlistmaker.ui.RootActivity
 import com.example.playlistmaker.ui.mediaLibrary.view_model.NewPlaylistViewModel
 import com.example.playlistmaker.util.customToast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -44,8 +41,24 @@ class NewPlaylistFragment : Fragment() {
     private var newPlaylist: Playlist = Playlist()
     private var photoUri: Uri? = null
 
+    private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { resultMap ->
+            val readPermissionGranted = resultMap[Manifest.permission.READ_EXTERNAL_STORAGE]
+            val writePermissionGranted = resultMap[Manifest.permission.WRITE_EXTERNAL_STORAGE]
+            if (readPermissionGranted != null && readPermissionGranted &&
+                writePermissionGranted != null && writePermissionGranted) {
+                // Пользователь дал разрешение
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            } else {
+                // Пользователь отказал
+                customToast(requireContext(), layoutInflater, "Пользователь отказал в доступе")
+            }
+        }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -53,14 +66,13 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        confirmDialog = MaterialAlertDialogBuilder(requireContext())
+        confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialogStyle)
             .setTitle("Завершить создание плейлиста?")
             .setMessage("Все несохраненные данные будут потеряны")
             .setNeutralButton("Отмена") { _, _ ->
                 // ничего не делаем
             }.setPositiveButton("Завершить") { _, _ ->
-                findNavController().navigateUp()//popBackStack()
-                //requireActivity().supportFragmentManager.popBackStack()
+                findNavController().popBackStack()
                 //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
             }
 
@@ -69,13 +81,10 @@ class NewPlaylistFragment : Fragment() {
         }
 
         // Регистрируем событие, которое вызывает Photo picker
-        val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-
                 Glide.with(this)
                     .load(uri)
-                    //.centerCrop()
-                    //.transform(RoundedCorners(8)) // края не закругляются
                     .placeholder(R.drawable.add_photo)
                     .into(binding.addPhoto)
 
@@ -91,8 +100,9 @@ class NewPlaylistFragment : Fragment() {
         }
 
         binding.addPhoto.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        }
+            requestPermissionLauncher.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            }
 
         binding.newPlaylistName.addTextChangedListener(
             afterTextChanged = { s ->
@@ -141,8 +151,7 @@ class NewPlaylistFragment : Fragment() {
         viewModel.idPlaylist.observe(viewLifecycleOwner) {
             if (it != -1L) {
                 Log.i("myPlaylist", "$it")
-                findNavController().navigateUp()//popBackStack()
-                //requireActivity().supportFragmentManager.popBackStack()
+                findNavController().popBackStack()//navigateUp()
                 //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
                 customToast(requireContext(), layoutInflater,"Плейлист '${newPlaylist.playlistName}' создан")   // Добавление Toast
                 // сохранение фотографии в хранилище
@@ -158,9 +167,8 @@ class NewPlaylistFragment : Fragment() {
             photoUri != null) {
             confirmDialog.show()
         } else {
-            findNavController().navigateUp()//popBackStack()
+            findNavController().popBackStack()
 
-            //requireActivity().supportFragmentManager.popBackStack()
 
             //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
         }
@@ -169,7 +177,7 @@ class NewPlaylistFragment : Fragment() {
     private fun saveImageToPrivateStorage(uri: Uri, photoName: String) {
         val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "PlaylistMaker")
         if (!filePath.exists()) {
-            filePath.mkdirs() // создаем каталог, если он не создан
+            filePath.mkdirs()
         }
         newPlaylist = newPlaylist.copy(photoUrl = "$filePath/$photoName.jpg")
         //создаём экземпляр класса File, который указывает на файл внутри каталога
@@ -183,28 +191,4 @@ class NewPlaylistFragment : Fragment() {
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
     }
 
-
-    /*private fun customToast(myText: String) {
-        //val toast = Toast.makeText(context, "Correto!", Toast.LENGTH_SHORT)
-
-        //val toastMessage = toast.view!!.findViewById<View>(android.R.id.message) as TextView
-        //toastMessage.setTextColor(Color.RED)
-        //toast.show()
-
-        val inflater = layoutInflater
-        val layout: View = inflater.inflate(
-            R.layout.new_playlist_toast,
-            null//(activity as RootActivity).findViewById<ViewGroup>(R.id.toast_layout_root)
-        )
-
-        val text = layout.findViewById<View>(R.id.text) as TextView
-        text.text = myText
-
-        val toast = Toast(requireContext())
-        //toast.setGravity(Gravity.BOTTOM, 0, 0)
-        toast.duration = Toast.LENGTH_LONG
-        toast.setView(layout)
-        toast.show()
-
-    }*/
 }

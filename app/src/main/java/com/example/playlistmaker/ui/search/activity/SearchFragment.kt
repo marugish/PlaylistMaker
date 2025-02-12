@@ -3,6 +3,7 @@ package com.example.playlistmaker.ui.search.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,8 +110,13 @@ class SearchFragment: Fragment()  {
         }
 
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && binding.searchEditText.text.isEmpty()) {
-                viewModel.getHistorySearch()
+            if (hasFocus) {
+                if (binding.searchEditText.text.isEmpty()) {
+                    viewModel.getHistorySearch()
+                    historyVisibility(View.VISIBLE)
+                } else {
+                    historyVisibility(View.GONE)
+                }
             } else {
                 historyVisibility(View.GONE)
                 binding.trackRecycleView.visibility = View.VISIBLE
@@ -122,7 +128,7 @@ class SearchFragment: Fragment()  {
                 binding.searchClearButton.visibility = clearButtonVisibility(s)
                 searchQuery = s.toString()
                 viewModel.searchDebounce(changedText = s?.toString() ?: "")
-                if (binding.searchEditText.hasFocus()  ) {
+                if (binding.searchEditText.hasFocus()) {
                     if (s?.isEmpty() == true) {
                         val historyState = viewModel.observeHistoryState().value
                         if (historyState is HistoryState.Content) {
@@ -134,6 +140,19 @@ class SearchFragment: Fragment()  {
                 }
             }
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (binding.searchEditText.hasFocus() && binding.searchEditText.text.isEmpty()) {
+            viewModel.getHistorySearch()
+        } else {
+            historyVisibility(View.GONE)
+            if (binding.searchEditText.text.isNotEmpty()) {
+                viewModel.searchDebounce(binding.searchEditText.text.toString())
+                binding.trackRecycleView.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun showHistory(historyTracks: List<Track>) {
@@ -158,18 +177,6 @@ class SearchFragment: Fragment()  {
             View.VISIBLE
         }
     }
-
-    /*private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
-        }
-        return current
-    }*/
 
     private fun render(state: TracksState) {
         when (state) {
@@ -216,7 +223,6 @@ class SearchFragment: Fragment()  {
 
     private fun showContent(tracks: List<Track>) {
         binding.trackRecycleView.visibility = View.VISIBLE
-
         placeholderVisibility(View.GONE)
         binding.updateButton.visibility = View.GONE
         binding.progressBar.visibility = View.GONE

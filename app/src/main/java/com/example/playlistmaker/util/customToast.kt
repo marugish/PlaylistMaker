@@ -8,11 +8,6 @@ import android.widget.Toast
 import com.example.playlistmaker.R
 
 fun customToast(context: Context, layoutInflater: LayoutInflater, myText: String) {
-    //val toast = Toast.makeText(context, "Correto!", Toast.LENGTH_SHORT)
-
-    //val toastMessage = toast.view!!.findViewById<View>(android.R.id.message) as TextView
-    //toastMessage.setTextColor(Color.RED)
-    //toast.show()
 
     val inflater = layoutInflater
     val layout: View = inflater.inflate(

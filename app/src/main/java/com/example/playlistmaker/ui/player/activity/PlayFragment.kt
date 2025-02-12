@@ -129,19 +129,11 @@ class PlayFragment: Fragment() {
 
         binding.newPlaylistButton.setOnClickListener {
             findNavController().navigate(R.id.action_playFragment_to_newPlaylistFragment)
-            //val intent = Intent(this, RootActivity::class.java)
-            //intent.putExtra("navigateToNewPlaylist", true)
-            //startActivity(intent)
-            // что будет с воспроизведением?
         }
-
-        //////////
-
-
 
         binding.toolbarPlay.setNavigationOnClickListener {
             //finish()
-            findNavController().navigateUp()
+            findNavController().popBackStack()
         }
 
         // Для превью трека
@@ -191,7 +183,7 @@ class PlayFragment: Fragment() {
                     }
                 }
                 is TrackScreenState.Empty -> {
-                    findNavController().popBackStack()//navigateUp()//finish()
+                    findNavController().popBackStack()
                     Toast.makeText(requireContext(), getString(R.string.load_error), Toast.LENGTH_LONG).show()
                 }
             }
