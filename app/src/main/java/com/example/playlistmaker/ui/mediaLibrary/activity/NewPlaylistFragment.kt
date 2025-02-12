@@ -37,7 +37,6 @@ class NewPlaylistFragment : Fragment() {
 
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
-    // Необходимо создать экземпляр класса как раз, чтобы его передать
     private var newPlaylist: Playlist = Playlist()
     private var photoUri: Uri? = null
 
@@ -73,7 +72,6 @@ class NewPlaylistFragment : Fragment() {
                 // ничего не делаем
             }.setPositiveButton("Завершить") { _, _ ->
                 findNavController().popBackStack()
-                //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
             }
 
         binding.toolbarNewPlaylist.setOnClickListener {
@@ -89,11 +87,6 @@ class NewPlaylistFragment : Fragment() {
                     .into(binding.addPhoto)
 
                 photoUri = uri
-                // сохранение фотографии в хранилище
-                // ...
-
-                //saveImageToPrivateStorage(uri)
-
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
@@ -102,7 +95,7 @@ class NewPlaylistFragment : Fragment() {
         binding.addPhoto.setOnClickListener {
             requestPermissionLauncher.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE))
-            }
+        }
 
         binding.newPlaylistName.addTextChangedListener(
             afterTextChanged = { s ->
@@ -127,35 +120,20 @@ class NewPlaylistFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
         binding.createNewPlaylist.setOnClickListener {
-            // создаём плейлист, сохраняем изменения и выходим
-            // save()
-            // конкретно тут добавляем картинку в хранилище, добавляем плейлист в БД
+            // добавляем картинку в хранилище
             photoUri?.let { it ->
                 val randomNumber = Random.nextInt(10000)
                 saveImageToPrivateStorage(it, "${newPlaylist.playlistName}_$randomNumber")
             }
-            // необходимо добавить плейлист в БД
-            viewModel.insertPlaylistToDb(newPlaylist = newPlaylist)
-
-            // переношу в другое место
-            //findNavController().navigateUp()
-            //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE) // ????????????
-
-
-            //customToast(requireContext(), layoutInflater,"Плейлист ${newPlaylist.playlistName} создан")   // Добавление Toast
-            //Log.i("newPlaylist", "$newPlaylist")
-
-
+            // добавляем плейлист в БД
+            viewModel.insertPlaylistToDb(newPlaylist = newPlaylist) // на результат добавления подписываемся
         }
 
+        // Результат добавления плейлиста
         viewModel.idPlaylist.observe(viewLifecycleOwner) {
             if (it != -1L) {
-                Log.i("myPlaylist", "$it")
-                findNavController().popBackStack()//navigateUp()
-                //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
-                customToast(requireContext(), layoutInflater,"Плейлист '${newPlaylist.playlistName}' создан")   // Добавление Toast
-                // сохранение фотографии в хранилище
-                //photoUri?.let { it1 -> saveImageToPrivateStorage(it1, "${newPlaylist.playlistName}_$it") }
+                findNavController().popBackStack()
+                customToast(requireContext(), layoutInflater,"Плейлист '${newPlaylist.playlistName}' создан")
             }
         }
     }
@@ -168,9 +146,6 @@ class NewPlaylistFragment : Fragment() {
             confirmDialog.show()
         } else {
             findNavController().popBackStack()
-
-
-            //(activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
         }
     }
 
@@ -180,11 +155,8 @@ class NewPlaylistFragment : Fragment() {
             filePath.mkdirs()
         }
         newPlaylist = newPlaylist.copy(photoUrl = "$filePath/$photoName.jpg")
-        //создаём экземпляр класса File, который указывает на файл внутри каталога
         val file = File(filePath, "$photoName.jpg")
-        // создаём входящий поток байтов из выбранной картинки
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
-        // создаём исходящий поток байтов в созданный выше файл
         val outputStream = FileOutputStream(file)
         BitmapFactory
             .decodeStream(inputStream)

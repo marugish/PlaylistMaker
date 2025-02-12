@@ -27,11 +27,8 @@ class PlaylistViewHolder(private val parentView: View): RecyclerView.ViewHolder(
 
         Glide.with(parentView.context)
             .load(playlist.photoUrl)
-            //.centerCrop()
-            //.transform(RoundedCorners(8))
             .placeholder(R.drawable.placeholder)
             .into(playlistPhoto)
-
 
         trackCount.text = getTrackCountMessage(playlist.trackCount)
     }

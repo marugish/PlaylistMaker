@@ -37,7 +37,7 @@ class PlaylistsFragment: Fragment() {
     private lateinit var binding: FragmentPlaylistsBinding
 
     private val adapter = PlaylistAdapter { playlist ->
-        //showTrackPlayer(track)
+        //...
     }
 
     override fun onCreateView(
@@ -80,7 +80,7 @@ class PlaylistsFragment: Fragment() {
             binding.placeholderMessage.text = getString(R.string.nothing_found)
             binding.placeholderImage.setImageResource(R.drawable.not_found_placeholder)
 
-            // убрать список плейлистов (реализация позже)
+            // убрать список плейлистов
             playlistsRecycleView.visibility = View.GONE
         }
     }
@@ -91,7 +91,6 @@ class PlaylistsFragment: Fragment() {
             placeholderImage.visibility = View.GONE
             placeholderMessage.visibility = View.GONE
 
-            // NEW
             // отобразить список плейлистов
             playlistsRecycleView.visibility = View.VISIBLE
             adapter.setItems(playlists)

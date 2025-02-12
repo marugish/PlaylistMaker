@@ -19,19 +19,8 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlist_table ORDER BY playlistId DESC")
     suspend fun getPlaylists(): List<PlaylistEntity>
 
-    /*@Query("SELECT trackIds FROM playlist_table WHERE playlistId = :id")
-    suspend fun tracksInPlaylist(id: Long): String?*/
-
     // Добавление трека в плейлист и обновление количества добавленных треков
     @Query("UPDATE playlist_table SET trackIds = :trackIds, trackCount = :count WHERE playlistId = :id")
     suspend fun updatePlaylistTrackIdsAndCount(id: Long, trackIds: String, count: Int)
-
-
-
-   /* @Transaction
-    suspend fun insertAndUpdateTrackInPlaylist(id: Long, trackIds: String, count: Int, track: TrackInPlaylistEntity) {
-        updatePlaylistTrackIdsAndCount(id, trackIds, count)
-        insertTrackInPlaylist(track)
-    }*/
 
 }

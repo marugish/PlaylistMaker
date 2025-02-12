@@ -1,6 +1,5 @@
 package com.example.playlistmaker.domain.db.impl
 
-import com.example.playlistmaker.domain.db.FavoriteRepository
 import com.example.playlistmaker.domain.db.PlaylistInteractor
 import com.example.playlistmaker.domain.db.PlaylistRepository
 import com.example.playlistmaker.domain.db.model.Playlist
@@ -24,7 +23,4 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
         playlistRepository.insertTrackInPlaylist(track)
     }
 
-    /*override fun tracksInPlaylist(id: Long): Flow<List<Long>> {
-        return playlistRepository.tracksInPlaylist(id)
-    }*/
 }

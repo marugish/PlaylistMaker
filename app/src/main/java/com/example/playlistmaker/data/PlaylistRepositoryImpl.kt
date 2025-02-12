@@ -36,19 +36,6 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
         appDatabase.trackInPlaylistDao().insertTrackInPlaylist(trackInPlaylistEntity)
     }
 
-    // NEW - лишняя работа
-    /*override fun tracksInPlaylist(id: Long): Flow<List<Long>> = flow {
-        val json = appDatabase.playlistDao().tracksInPlaylist(id)
-        if (json != null) {
-            emit(gson.fromJson(json, Array<Long>::class.java).toList())
-        } else {
-            emit(emptyList())
-        }
-    }*/
-
-
-
-
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }

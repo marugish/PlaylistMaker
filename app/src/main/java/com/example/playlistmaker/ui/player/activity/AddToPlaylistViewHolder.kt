@@ -29,8 +29,6 @@ class AddToPlaylistViewHolder(private val parentView: View): RecyclerView.ViewHo
 
         Glide.with(parentView.context)
             .load(playlist.photoUrl)
-            //.centerCrop()
-            //.transform(RoundedCorners(8))
             .placeholder(R.drawable.placeholder)
             .into(playlistPhoto)
 

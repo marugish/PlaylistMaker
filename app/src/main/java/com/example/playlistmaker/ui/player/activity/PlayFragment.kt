@@ -1,27 +1,22 @@
 package com.example.playlistmaker.ui.player.activity
 
-import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.databinding.FragmentPlayBinding
 import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.RootActivity
-import com.example.playlistmaker.ui.mediaLibrary.activity.NewPlaylistFragment
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.ui.player.view_model.PlayViewModel
@@ -46,7 +41,6 @@ class PlayFragment: Fragment() {
     private lateinit var tapPlaylist: String
 
     private val adapter = AddToPlaylistAdapter { playlist ->
-        //Log.i("myPlaylist", "{${playlist.playlistName}}")
         tapPlaylist = playlist.playlistName
         playlist.id?.let { viewModel.findTrackInPlaylist(it) }
     }
@@ -76,10 +70,8 @@ class PlayFragment: Fragment() {
 
         viewModel.playlists.observe(viewLifecycleOwner) {
             getPlaylists = it
-            //Log.i("myPlaylists", "$getPlaylists")
         }
 
-        // NEW - возможно, что частично необходимо реализацию переносить в PlayViewModel
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -88,20 +80,13 @@ class PlayFragment: Fragment() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        // возобновляем воспроизведение
-                        // ...
                         binding.overlay.visibility = View.GONE
-
                     }
                     else -> {
                         binding.overlay.visibility = View.VISIBLE
-                        // правильное отображение списка плейлистов!!!!!!!
-                        // ...
                         viewModel.getPlaylists()
                         binding.playlistsRecycleView.visibility = View.VISIBLE
                         adapter.setItems(getPlaylists)
-
-
                     }
                 }
             }
@@ -111,18 +96,15 @@ class PlayFragment: Fragment() {
 
         viewModel.trackInPlaylist.observe(viewLifecycleOwner) {
             if (it == true) {
-                // Toast
                 customToast(requireContext(), layoutInflater,
                     "Трек уже добавлен в плейлист '$tapPlaylist'")
             } else {
-                // Toast
                 customToast(requireContext(), layoutInflater,
                     "Добавлено в плейлист '$tapPlaylist'")
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
 
-        // NEW
         binding.plusButton.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
@@ -132,8 +114,8 @@ class PlayFragment: Fragment() {
         }
 
         binding.toolbarPlay.setNavigationOnClickListener {
-            //finish()
             findNavController().popBackStack()
+            (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
         }
 
         // Для превью трека

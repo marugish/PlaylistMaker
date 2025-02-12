@@ -1,17 +1,14 @@
 package com.example.playlistmaker.ui.player.view_model
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.di.viewModelModule
 import com.example.playlistmaker.domain.db.FavoriteInteractor
 import com.example.playlistmaker.domain.db.PlaylistInteractor
 import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.search.model.Track
-import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistState
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.util.PlayerStates
@@ -112,21 +109,6 @@ class PlayViewModel(private val track: Track?,
                     addTrack(foundPlaylist, tracks)
                 }
             }
-            /* if (json.isEmpty()) {
-                 // добавление трека из 2х функций
-                 addTrack(foundPlaylist,track)
-                 trackInPlaylist.postValue(false)
-             } else {
-                 //val tracks = Gson().fromJson(json, Array<Long>::class.java).toList()
-                 // поиск нужного трека
-                 if (tracks.contains(track?.trackId)) {
-                     trackInPlaylist.postValue(true)
-                 } else {
-                     // добавление трека из 2х функций
-                     addTrack(foundPlaylist, track)
-                     trackInPlaylist.postValue(false)
-                 }
-             }*/
         }
     }
 
@@ -138,20 +120,10 @@ class PlayViewModel(private val track: Track?,
         }
     }
 
-    private fun processResultTracks(getTracksInPlaylist: List<Long>) {
-        if (getTracksInPlaylist.isEmpty()) {
-            trackInPlaylist.postValue(false)
-        } else {
-            // ищём в списке нужный идентификатор трека
-            trackInPlaylist.postValue(getTracksInPlaylist.contains(track?.trackId))
-        }
-    }
-
     private fun processResultPlaylists(getPlaylists: List<Playlist>) {
         if (getPlaylists.isEmpty()) {
             playlists.postValue(emptyList())
         } else {
-            Log.i("myPlaylist", "$getPlaylists")
             playlists.postValue(getPlaylists)
         }
     }
