@@ -19,7 +19,7 @@ fun customToast(context: Context, layoutInflater: LayoutInflater, myText: String
     text.text = myText
 
     val toast = Toast(context)
-    toast.duration = Toast.LENGTH_LONG
+    toast.duration = Toast.LENGTH_SHORT
     toast.setView(layout)
     toast.show()
 

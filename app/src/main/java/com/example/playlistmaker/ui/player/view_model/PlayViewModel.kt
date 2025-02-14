@@ -1,5 +1,6 @@
 package com.example.playlistmaker.ui.player.view_model
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,7 @@ import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.util.PlayerStates
+import com.example.playlistmaker.util.SingleLiveEvent
 import com.google.gson.Gson
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -26,7 +28,7 @@ class PlayViewModel(private val track: Track?,
     private val screenStateLiveData = MutableLiveData<TrackScreenState>(TrackScreenState.Loading)
     val favorite = MutableLiveData(false)
     val playlists = MutableLiveData<List<Playlist>>(emptyList())
-    val trackInPlaylist = MutableLiveData<Boolean>()
+    val trackInPlaylist = SingleLiveEvent<Boolean>()
 
     private var timerJob: Job? = null
 

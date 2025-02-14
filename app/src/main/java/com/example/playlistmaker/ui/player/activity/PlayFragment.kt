@@ -2,6 +2,7 @@ package com.example.playlistmaker.ui.player.activity
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -95,7 +96,7 @@ class PlayFragment: Fragment() {
         })
 
         viewModel.trackInPlaylist.observe(viewLifecycleOwner) {
-            if (it == true) {
+            if (it) {
                 customToast(requireContext(), layoutInflater,
                     "Трек уже добавлен в плейлист '$tapPlaylist'")
             } else {

@@ -42,20 +42,6 @@ class NewPlaylistFragment : Fragment() {
 
     private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { resultMap ->
-            val readPermissionGranted = resultMap[Manifest.permission.READ_EXTERNAL_STORAGE]
-            val writePermissionGranted = resultMap[Manifest.permission.WRITE_EXTERNAL_STORAGE]
-            if (readPermissionGranted != null && readPermissionGranted &&
-                writePermissionGranted != null && writePermissionGranted) {
-                // Пользователь дал разрешение
-                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            } else {
-                // Пользователь отказал
-                customToast(requireContext(), layoutInflater, "Пользователь отказал в доступе")
-            }
-        }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
@@ -93,8 +79,7 @@ class NewPlaylistFragment : Fragment() {
         }
 
         binding.addPhoto.setOnClickListener {
-            requestPermissionLauncher.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
         binding.newPlaylistName.addTextChangedListener(
