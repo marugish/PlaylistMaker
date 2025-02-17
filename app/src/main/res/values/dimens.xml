@@ -16,6 +16,7 @@
     <dimen name="settings_frame_layout_size">64dp</dimen>
     <dimen name="toolbar_layout_size">56dp</dimen>
     <dimen name="edit_text_height">36dp</dimen>
+    <dimen name="edit_text_playlist_height">56dp</dimen>
     <dimen name="track_margin_borders">12dp</dimen>
     <dimen name="track_margin_between">8dp</dimen>
     <dimen name="track_image_size">45dp</dimen>
@@ -28,4 +29,6 @@
     <dimen name="progress_bar_margin">140dp</dimen>
     <dimen name="switch_width">35dp</dimen>
     <dimen name="switch_height">18dp</dimen>
+    <dimen name="margin_bottom">32dp</dimen>
+    <dimen name="button_height">44dp</dimen>
 </resources>

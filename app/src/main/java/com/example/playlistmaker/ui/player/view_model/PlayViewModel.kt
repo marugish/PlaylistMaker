@@ -1,26 +1,34 @@
 package com.example.playlistmaker.ui.player.view_model
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.db.FavoriteInteractor
+import com.example.playlistmaker.domain.db.PlaylistInteractor
+import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.domain.player.MediaPlayerInteractor
 import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.util.PlayerStates
+import com.example.playlistmaker.util.SingleLiveEvent
+import com.google.gson.Gson
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayViewModel(private val track: Track?,
                     private val mediaPlayerInteractor: MediaPlayerInteractor,
-                    private val favoriteInteractor: FavoriteInteractor
+                    private val favoriteInteractor: FavoriteInteractor,
+                    private val playlistInteractor: PlaylistInteractor
 ): ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<TrackScreenState>(TrackScreenState.Loading)
     val favorite = MutableLiveData(false)
+    val playlists = MutableLiveData<List<Playlist>>(emptyList())
+    val trackInPlaylist = SingleLiveEvent<Boolean>()
 
     private var timerJob: Job? = null
 
@@ -64,6 +72,61 @@ class PlayViewModel(private val track: Track?,
             favoriteInteractor.getIdFavoriteTracks().collect { trackIds ->
                 processResult(trackIds)
             }
+        }
+    }
+
+    private fun addTrack(foundPlaylist: Playlist, tracks: List<Long>) {
+        viewModelScope.launch {
+            if (track != null)
+            {
+                // добавляем трек в лист
+                val list: MutableList<Long> = tracks.toMutableList()
+                list.add(0, track.trackId)
+                // Gson
+                val jsonList = Gson().toJson(list)
+                playlistInteractor.updatePlaylistInfoTracks(
+                    foundPlaylist.id!!, jsonList, foundPlaylist.trackCount + 1)
+                playlistInteractor.insertTrackInPlaylist(track)
+            }
+
+        }
+    }
+
+    fun findTrackInPlaylist(idPlaylist: Long) {
+        val foundPlaylist = playlists.value?.find { it.id == idPlaylist }
+        if (foundPlaylist != null) {
+            val json = foundPlaylist.trackIds
+            if (json.isEmpty()) {
+                trackInPlaylist.postValue(false)
+                // добавление трека из 2х функций
+                addTrack(foundPlaylist, emptyList())
+            } else {
+                val tracks = Gson().fromJson(json, Array<Long>::class.java).toList()
+                // поиск нужного трека
+                if (tracks.contains(track?.trackId)) {
+                    trackInPlaylist.postValue(true)
+                } else {
+                    trackInPlaylist.postValue(false)
+                    // добавление трека из 2х функций
+                    addTrack(foundPlaylist, tracks)
+                }
+            }
+        }
+    }
+
+    fun getPlaylists() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect { playlists ->
+                processResultPlaylists(playlists)
+            }
+        }
+    }
+
+    private fun processResultPlaylists(getPlaylists: List<Playlist>) {
+        if (getPlaylists.isEmpty()) {
+            playlists.postValue(emptyList())
+        } else {
+            playlists.postValue(getPlaylists)
         }
     }
 

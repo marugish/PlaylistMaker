@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediaLibraryBinding
+import com.example.playlistmaker.ui.RootActivity
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MediaLibraryFragment: Fragment() {
@@ -25,6 +26,8 @@ class MediaLibraryFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
 
         binding.viewPager.adapter = MediaLibraryViewPagerAdapter(
             fragmentManager = childFragmentManager,

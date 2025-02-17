@@ -35,5 +35,13 @@
     <string name="new_playlist">Новый плейлист</string>
     <string name="favorites">Избранные треки</string>
     <string name="playlists">Плейлисты</string>
-
+    <string name="new_playlist_name">Название*</string>
+    <string name="new_playlist_description">Описание</string>
+    <string name="create">Создать</string>
+    <string name="addphoto">addPhoto</string>
+    <string name="addToPlaylist">Добавить в плейлист</string>
+    <string name="playlistimage">playlistImage</string>
+    <string name="playlist_name">Название плейлиста</string>
+    <string name="trackimage">TrackImage</string>
 </resources>
+

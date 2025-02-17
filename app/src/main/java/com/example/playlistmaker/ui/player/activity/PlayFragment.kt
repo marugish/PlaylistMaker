@@ -3,33 +3,48 @@ package com.example.playlistmaker.ui.player.activity
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityPlayBinding
+import com.example.playlistmaker.databinding.FragmentPlayBinding
+import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.domain.search.model.Track
+import com.example.playlistmaker.ui.RootActivity
 import com.example.playlistmaker.ui.player.state.PlayStatusState
 import com.example.playlistmaker.ui.player.state.TrackScreenState
 import com.example.playlistmaker.ui.player.view_model.PlayViewModel
+import com.example.playlistmaker.util.customToast
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.navigation.fragment.findNavController
 
-class PlayActivity : AppCompatActivity() {
+class PlayFragment: Fragment() {
 
     private val track: Track? by lazy {
-        IntentCompat.getSerializableExtra(intent, "track", Track::class.java)
+        arguments?.getSerializable("track") as? Track
     }
     private val viewModel: PlayViewModel by viewModel { parametersOf(track) }
 
-    private lateinit var binding: ActivityPlayBinding
+    private lateinit var binding: FragmentPlayBinding
+
+    private lateinit var tapPlaylist: String
+
+    private val adapter = AddToPlaylistAdapter { playlist ->
+        tapPlaylist = playlist.playlistName
+        playlist.id?.let { viewModel.findTrackInPlaylist(it) }
+    }
 
     private lateinit var pauseImage: Drawable
     private lateinit var playImage: Drawable
@@ -37,26 +52,83 @@ class PlayActivity : AppCompatActivity() {
     private lateinit var inactiveFavoriteImage: Drawable
 
     private var isFavorite = false
+    private var getPlaylists: List<Playlist> = emptyList()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityPlayBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentPlayBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Список плейлистов
+        binding.playlistsRecycleView.layoutManager = LinearLayoutManager(requireContext())
+        binding.playlistsRecycleView.adapter = adapter
+
+        viewModel.playlists.observe(viewLifecycleOwner) {
+            getPlaylists = it
+        }
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.visibility = View.GONE
+                    }
+                    else -> {
+                        binding.overlay.visibility = View.VISIBLE
+                        viewModel.getPlaylists()
+                        binding.playlistsRecycleView.visibility = View.VISIBLE
+                        adapter.setItems(getPlaylists)
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
+
+        viewModel.trackInPlaylist.observe(viewLifecycleOwner) {
+            if (it) {
+                customToast(requireContext(), layoutInflater,
+                    "Трек уже добавлен в плейлист '$tapPlaylist'")
+            } else {
+                customToast(requireContext(), layoutInflater,
+                    "Добавлено в плейлист '$tapPlaylist'")
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
+
+        binding.plusButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        }
+
+        binding.newPlaylistButton.setOnClickListener {
+            findNavController().navigate(R.id.action_playFragment_to_newPlaylistFragment)
+        }
 
         binding.toolbarPlay.setNavigationOnClickListener {
-            finish()
+            findNavController().popBackStack()
+            (activity as RootActivity).hideOrShowBottomNavigationView(View.VISIBLE)
         }
 
         // Для превью трека
-        pauseImage = ContextCompat.getDrawable(this, R.drawable.pause_button)!!
-        playImage = ContextCompat.getDrawable(this, R.drawable.play_button)!!
+        pauseImage = ContextCompat.getDrawable(requireContext(), R.drawable.pause_button)!!
+        playImage = ContextCompat.getDrawable(requireContext(), R.drawable.play_button)!!
 
         // Для Favorite
-        activeFavoriteImage = ContextCompat.getDrawable(this, R.drawable.active_favorite)!!
-        inactiveFavoriteImage = ContextCompat.getDrawable(this, R.drawable.inactive_favorite)!!
+        activeFavoriteImage = ContextCompat.getDrawable(requireContext(), R.drawable.active_favorite)!!
+        inactiveFavoriteImage = ContextCompat.getDrawable(requireContext(), R.drawable.inactive_favorite)!!
 
         var isContentStateHandled = false
-        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+        viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
                 is TrackScreenState.Loading -> {
                     showLoading(loading = true)
@@ -78,7 +150,7 @@ class PlayActivity : AppCompatActivity() {
                         is PlayStatusState.Error -> {
                             binding.playButton.isEnabled = false
                             binding.playButton.alpha = 0.5f
-                            Toast.makeText(applicationContext, getString(R.string.no_preview_track), Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(), getString(R.string.no_preview_track), Toast.LENGTH_LONG).show()
                         }
                         is PlayStatusState.Start -> {
                             binding.playButton.setImageDrawable(pauseImage)
@@ -94,13 +166,13 @@ class PlayActivity : AppCompatActivity() {
                     }
                 }
                 is TrackScreenState.Empty -> {
-                    finish()
-                    Toast.makeText(applicationContext, getString(R.string.load_error), Toast.LENGTH_LONG).show()
+                    findNavController().popBackStack()
+                    Toast.makeText(requireContext(), getString(R.string.load_error), Toast.LENGTH_LONG).show()
                 }
             }
         }
 
-        viewModel.favorite.observe(this) {
+        viewModel.favorite.observe(viewLifecycleOwner) {
             showFavoriteStatus(inFavorite = it)
             isFavorite = it
         }

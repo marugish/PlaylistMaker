@@ -91,4 +91,9 @@
         <item name="layout_constraintStart_toStartOf">@id/leftBorder_header</item>
     </style>
 
+    <style name="CustomDialogStyle" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="backgroundColor">?attr/colorSecondary</item>
+        <item name="colorPrimary">@color/blue_background</item>
+    </style>
+
 </resources>
