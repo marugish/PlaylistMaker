@@ -23,4 +23,8 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
         playlistRepository.insertTrackInPlaylist(track)
     }
 
+    override fun getPlaylistById(id: Long): Flow<Playlist> {
+        return playlistRepository.getPlaylistById(id)
+    }
+
 }

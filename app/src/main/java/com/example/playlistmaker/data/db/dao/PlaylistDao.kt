@@ -23,4 +23,7 @@ interface PlaylistDao {
     @Query("UPDATE playlist_table SET trackIds = :trackIds, trackCount = :count WHERE playlistId = :id")
     suspend fun updatePlaylistTrackIdsAndCount(id: Long, trackIds: String, count: Int)
 
+    // Получение плейлиста по идентификатору
+    @Query("SELECT * FROM playlist_table WHERE playlistId = :id")
+    suspend fun getPlaylistById(id: Long): PlaylistEntity
 }

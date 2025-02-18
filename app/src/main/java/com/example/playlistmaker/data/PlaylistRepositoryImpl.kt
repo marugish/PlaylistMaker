@@ -3,8 +3,6 @@ package com.example.playlistmaker.data
 import com.example.playlistmaker.data.db.AppDatabase
 import com.example.playlistmaker.data.db.converter.PlaylistDbConvertor
 import com.example.playlistmaker.data.db.entity.PlaylistEntity
-import com.example.playlistmaker.data.db.entity.TrackEntity
-import com.example.playlistmaker.data.search.mapper.TracksMapper
 import com.example.playlistmaker.domain.db.PlaylistRepository
 import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.domain.search.model.Track
@@ -23,7 +21,7 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
     // Get Playlists
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
         val playlists = appDatabase.playlistDao().getPlaylists()
-        emit(convertFromPlaylistEntity(playlists))
+        emit(convertFromPlaylistEntityList(playlists))
     }
 
     // Save track in Playlist
@@ -36,7 +34,16 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
         appDatabase.trackInPlaylistDao().insertTrackInPlaylist(trackInPlaylistEntity)
     }
 
-    private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
+    override fun getPlaylistById(id: Long): Flow<Playlist> = flow {
+        val playlist = appDatabase.playlistDao().getPlaylistById(id)
+        emit(convertFromPlaylistEntity(playlist))
+    }
+
+    private fun convertFromPlaylistEntity(playlist: PlaylistEntity): Playlist {
+        return playlistDbConvertor.map(playlist)
+    }
+
+    private fun convertFromPlaylistEntityList(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }
 }

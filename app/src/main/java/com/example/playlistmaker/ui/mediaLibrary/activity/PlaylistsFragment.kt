@@ -7,15 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.ui.RootActivity
-import com.example.playlistmaker.ui.mediaLibrary.state.FavoriteState
-import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistState
+import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistsState
 import com.example.playlistmaker.ui.mediaLibrary.view_model.PlaylistsViewModel
-import com.example.playlistmaker.ui.search.activity.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -37,7 +34,10 @@ class PlaylistsFragment: Fragment() {
     private lateinit var binding: FragmentPlaylistsBinding
 
     private val adapter = PlaylistAdapter { playlist ->
-        //...
+        val bundle = Bundle()
+        playlist.id?.let { bundle.putLong("playlist", it) }
+        findNavController().navigate(R.id.playlistFragment, bundle)
+        (activity as RootActivity).hideOrShowBottomNavigationView(View.GONE)
     }
 
     override fun onCreateView(
@@ -65,8 +65,8 @@ class PlaylistsFragment: Fragment() {
 
         playlistsViewModel.observeState().observe(viewLifecycleOwner) {
             when(it) {
-                is PlaylistState.Content -> showPlaylists(it.playlists)
-                is PlaylistState.Empty -> showEmptyList()
+                is PlaylistsState.Content -> showPlaylists(it.playlists)
+                is PlaylistsState.Empty -> showEmptyList()
             }
         }
 
@@ -96,6 +96,5 @@ class PlaylistsFragment: Fragment() {
             adapter.setItems(playlists)
 
         }
-
     }
 }
