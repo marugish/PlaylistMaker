@@ -10,4 +10,5 @@ interface PlaylistInteractor {
     suspend fun updatePlaylistInfoTracks(id: Long, trackIds: String, count: Int)
     suspend fun insertTrackInPlaylist(track: Track)
     fun getPlaylistById(id: Long): Flow<Playlist>
+    fun getTracksInPlaylist(trackIds: List<Long>): Flow<List<Track>>
 }
