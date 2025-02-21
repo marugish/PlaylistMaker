@@ -36,10 +36,10 @@ class SearchFragment: Fragment()  {
     private val viewModel by viewModel<SearchViewModel>()
 
     // Обычный поиск
-    private val adapter = TrackAdapter { track -> showTrackPlayer(track) }
+    private val adapter = TrackAdapter(clickListener = { track -> showTrackPlayer(track) })
 
     // История поиска
-    private val searchAdapter = TrackAdapter { track -> showTrackPlayer(track) }
+    private val searchAdapter = TrackAdapter(clickListener = { track -> showTrackPlayer(track) })
 
     private fun showTrackPlayer(track: Track) {
         if (viewModel.clickDebounce()) {

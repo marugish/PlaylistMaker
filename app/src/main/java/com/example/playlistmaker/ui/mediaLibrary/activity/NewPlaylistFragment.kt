@@ -30,7 +30,7 @@ import java.io.FileOutputStream
 import kotlin.random.Random
 
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
     private lateinit var binding: FragmentNewPlaylistBinding
 
     private val viewModel by viewModel<NewPlaylistViewModel>()

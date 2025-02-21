@@ -24,4 +24,10 @@ class StringProviderImpl(private val context: Context): StringProvider {
     override fun getTermsLink(): String {
         return context.getString(R.string.address)
     }
+
+    /*override fun getPlaylistMessage(tracks: List<Track>): String {
+        TODO("Not yet implemented")
+    }*/
+
+
 }

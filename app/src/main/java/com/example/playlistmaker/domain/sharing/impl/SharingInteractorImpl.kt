@@ -22,6 +22,10 @@ class SharingInteractorImpl(
         externalNavigator.openEmail(getSupportEmailData())
     }
 
+    /*override fun sharePlaylist() {
+        // возможно нужно получить строку
+    }*/
+
     private fun getSupportEmailData(): EmailData {
         return EmailData(
             stringProvider.getSupportEmail(),

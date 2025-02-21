@@ -7,7 +7,8 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.search.model.Track
 
 class TrackAdapter(private var tracks: List<Track> = emptyList(),
-                   private val clickListener: (Track) -> Unit
+                   private val clickListener: (Track) -> Unit,
+                private val longClickListener: ((Track) -> Boolean)? = null
 ): RecyclerView.Adapter<TrackViewHolder> () {
 
     fun setItems(items: List<Track>) {
@@ -26,6 +27,14 @@ class TrackAdapter(private var tracks: List<Track> = emptyList(),
             clickListener(tracks[position])
             notifyDataSetChanged()
         }
+        // Долгое нажатие
+        longClickListener?.let { longClick ->
+            holder.itemView.setOnLongClickListener {
+                longClick(tracks[position]) // Возвращаем результат longClick
+            }
+        }
+
+
     }
 
     override fun getItemCount(): Int {

@@ -39,7 +39,7 @@ class FavoritesFragment: Fragment() {
 
     private lateinit var binding: FragmentFavoritesBinding
 
-    private var favoriteAdapter: TrackAdapter? = TrackAdapter { track -> showTrackPlayer(track) }
+    private var favoriteAdapter: TrackAdapter? = TrackAdapter(clickListener = { track -> showTrackPlayer(track) })
 
     private fun showTrackPlayer(track: Track) {
         if (favoritesViewModel.clickDebounce()) {

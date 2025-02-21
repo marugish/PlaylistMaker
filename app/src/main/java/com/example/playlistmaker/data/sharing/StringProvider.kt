@@ -6,4 +6,5 @@ interface StringProvider {
     fun getSupportEmailSubject(): String
     fun getSupportEmailMessage(): String
     fun getTermsLink(): String
+    //fun getPlaylistMessage(tracks: List<Track>): String
 }

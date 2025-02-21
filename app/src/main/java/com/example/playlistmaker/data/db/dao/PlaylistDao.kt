@@ -19,7 +19,7 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlist_table ORDER BY playlistId DESC")
     suspend fun getPlaylists(): List<PlaylistEntity>
 
-    // Добавление трека в плейлист и обновление количества добавленных треков
+    // Добавление/удаление трека в/из плейлист(а) и обновление количества добавленных треков
     @Query("UPDATE playlist_table SET trackIds = :trackIds, trackCount = :count WHERE playlistId = :id")
     suspend fun updatePlaylistTrackIdsAndCount(id: Long, trackIds: String, count: Int)
 

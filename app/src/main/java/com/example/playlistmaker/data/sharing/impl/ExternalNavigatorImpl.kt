@@ -30,4 +30,8 @@ class ExternalNavigatorImpl(val context: Context): ExternalNavigator {
         openLink.data = Uri.parse(link)
         context.startActivity(openLink)
     }
+
+    /*override fun sharePlaylist(message: String) {
+        TODO("Not yet implemented")
+    }*/
 }
