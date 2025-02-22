@@ -26,4 +26,8 @@ interface PlaylistDao {
     // Получение плейлиста по идентификатору
     @Query("SELECT * FROM playlist_table WHERE playlistId = :id")
     suspend fun getPlaylistById(id: Long): PlaylistEntity
+
+    // Редактирование плейлиста
+    @Query("UPDATE playlist_table SET playlistName = :name, playlistDescription = :description, photoUrl = :photo WHERE playlistId = :id")
+    suspend fun updatePlaylistInfo(id: Long, name: String, description: String?, photo: String?)
 }

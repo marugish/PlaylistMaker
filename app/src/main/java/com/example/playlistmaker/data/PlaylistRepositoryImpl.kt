@@ -50,6 +50,10 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
         emit(convertFromTrackInPlaylistEntity(filteredTracks))
     }
 
+    override suspend fun updatePlaylistInfo(id: Long, name: String, description: String?, photo: String?) {
+        appDatabase.playlistDao().updatePlaylistInfo(id, name, description, photo)
+    }
+
     private fun convertFromTrackInPlaylistEntity(tracks: List<TrackInPlaylistEntity>): List<Track> {
         return tracks.map { track ->  trackInPlaylistConvertor.map(track) }
     }

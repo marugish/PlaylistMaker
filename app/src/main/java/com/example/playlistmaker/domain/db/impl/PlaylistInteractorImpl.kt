@@ -31,4 +31,8 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
         return playlistRepository.getTracksInPlaylist(trackIds)
     }
 
+    override suspend fun updatePlaylistInfo(id: Long, name: String, description: String?, photo: String?) {
+        playlistRepository.updatePlaylistInfo(id, name, description, photo)
+    }
+
 }

@@ -116,7 +116,10 @@ class PlaylistFragment: Fragment() {
 
                         binding.editPlaylist.setOnClickListener {
                             Log.i("myPlaylist", "editPlaylist")
-
+                            val bundle = Bundle()
+                            playlistId?.let { it1 -> bundle.putLong("playlist_id", it1) }
+                            findNavController().navigate(R.id.editPlaylistFragment, bundle)
+                            //(activity as RootActivity).hideOrShowBottomNavigationView(View.GONE)
                         }
 
                         binding.deletePlaylist.setOnClickListener {
