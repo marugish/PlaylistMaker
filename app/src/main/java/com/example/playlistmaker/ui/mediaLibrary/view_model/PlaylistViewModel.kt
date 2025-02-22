@@ -99,6 +99,10 @@ class PlaylistViewModel(private val id: Long?,
                 playlistInteractor.updatePlaylistInfoTracks(
                     foundPlaylist.value?.id!!, jsonList, foundPlaylist.value!!.trackCount - 1
                 )
+                // удалить запись из Intermediate table
+                playlistInteractor.deleteRecord(foundPlaylist.value?.id!!, trackId)
+                // удалить информацию о треке, если он больше нигде не присутствует
+                // ...
             }
         }
 
@@ -127,6 +131,16 @@ class PlaylistViewModel(private val id: Long?,
         // как будто бы надо ещё раз запросить информацию о плейлисте, чтобы была обновленная информация
         //sharingInteractor.sharePlaylist()
     }*/
+
+    fun deletePlaylist() {
+        viewModelScope.launch {
+            if (id != null) {
+                playlistInteractor.deletePlaylistById(id = id)
+                // необходимо также удалить всю информацию о плейлистах треках из 2х таблиц
+                // .......
+            }
+        }
+    }
 
     private fun renderState(state: PlaylistState) {
         playlistStateLiveData.postValue(state)

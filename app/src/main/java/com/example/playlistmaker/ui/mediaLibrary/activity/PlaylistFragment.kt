@@ -130,9 +130,8 @@ class PlaylistFragment: Fragment() {
                                     // ничего не делаем
                                     Log.i("myPlaylist", "NO")
                                 }.setPositiveButton("Да") { _, _ ->
-                                    //findNavController().popBackStack()
-                                    Log.i("myPlaylist", "Yes")
-                                    //viewModel.deleteTrackInPlaylist(track.trackId)
+                                    viewModel.deletePlaylist()
+                                    findNavController().popBackStack()
                                 }.show()
                         }
 

@@ -3,6 +3,7 @@ package com.example.playlistmaker.data
 import com.example.playlistmaker.data.db.AppDatabase
 import com.example.playlistmaker.data.db.converter.PlaylistDbConvertor
 import com.example.playlistmaker.data.db.converter.TrackInPlaylistConvertor
+import com.example.playlistmaker.data.db.entity.IntermediateEntity
 import com.example.playlistmaker.data.db.entity.PlaylistEntity
 import com.example.playlistmaker.data.db.entity.TrackInPlaylistEntity
 import com.example.playlistmaker.domain.db.PlaylistRepository
@@ -52,6 +53,20 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
 
     override suspend fun updatePlaylistInfo(id: Long, name: String, description: String?, photo: String?) {
         appDatabase.playlistDao().updatePlaylistInfo(id, name, description, photo)
+    }
+
+    override suspend fun deletePlaylistById(id: Long) {
+        appDatabase.playlistDao().deletePlaylistById(id)
+    }
+
+    override suspend fun insertRecord(idPlaylist: Long, idTrack: Long) {
+        val intermediateEntity = IntermediateEntity(playlistId = idPlaylist, trackId = idTrack)
+        appDatabase.intermediateDao().insertRecord(intermediateEntity)
+    }
+
+    override suspend fun deleteRecord(idPlaylist: Long, idTrack: Long) {
+        val intermediateEntity = IntermediateEntity(playlistId = idPlaylist, trackId = idTrack)
+        appDatabase.intermediateDao().deleteRecord(intermediateEntity)
     }
 
     private fun convertFromTrackInPlaylistEntity(tracks: List<TrackInPlaylistEntity>): List<Track> {

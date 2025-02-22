@@ -53,7 +53,6 @@ class PlaylistsFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.playlistsRecycleView.layoutManager = GridLayoutManager(requireContext(),  2)
-
         binding.playlistsRecycleView.adapter = adapter
 
         binding.newPlaylistButton.setOnClickListener {

@@ -30,4 +30,8 @@ interface PlaylistDao {
     // Редактирование плейлиста
     @Query("UPDATE playlist_table SET playlistName = :name, playlistDescription = :description, photoUrl = :photo WHERE playlistId = :id")
     suspend fun updatePlaylistInfo(id: Long, name: String, description: String?, photo: String?)
+
+    // Удаление плейлиста
+    @Query("DELETE FROM playlist_table WHERE playlistId = :id")
+    suspend fun deletePlaylistById(id: Long)
 }

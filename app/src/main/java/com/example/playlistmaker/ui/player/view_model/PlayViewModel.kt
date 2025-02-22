@@ -87,6 +87,9 @@ class PlayViewModel(private val track: Track?,
                 playlistInteractor.updatePlaylistInfoTracks(
                     foundPlaylist.id!!, jsonList, foundPlaylist.trackCount + 1)
                 playlistInteractor.insertTrackInPlaylist(track)
+
+                // добавить запись в промежуточную таблицу Intermediate Entity
+                playlistInteractor.insertRecord(foundPlaylist.id, track.trackId)
             }
 
         }
