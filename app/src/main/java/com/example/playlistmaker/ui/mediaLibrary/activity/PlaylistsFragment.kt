@@ -93,7 +93,6 @@ class PlaylistsFragment: Fragment() {
             // отобразить список плейлистов
             playlistsRecycleView.visibility = View.VISIBLE
             adapter.setItems(playlists)
-
         }
     }
 }

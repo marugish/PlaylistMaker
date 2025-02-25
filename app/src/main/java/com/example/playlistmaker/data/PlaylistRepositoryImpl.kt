@@ -59,6 +59,10 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
         appDatabase.playlistDao().deletePlaylistById(id)
     }
 
+    override suspend fun deleteTrackInfo(idTrack: Long) {
+        appDatabase.trackInPlaylistDao().deleteRecord(idTrack)
+    }
+
     override suspend fun insertRecord(idPlaylist: Long, idTrack: Long) {
         val intermediateEntity = IntermediateEntity(playlistId = idPlaylist, trackId = idTrack)
         appDatabase.intermediateDao().insertRecord(intermediateEntity)
@@ -67,6 +71,14 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
     override suspend fun deleteRecord(idPlaylist: Long, idTrack: Long) {
         val intermediateEntity = IntermediateEntity(playlistId = idPlaylist, trackId = idTrack)
         appDatabase.intermediateDao().deleteRecord(intermediateEntity)
+    }
+
+    override fun findTrack(idTrack: Long): Flow<Int> = flow {
+        emit(appDatabase.intermediateDao().findTrack(idTrack))
+    }
+
+    override suspend fun deleteRecordByPlaylistId(idPlaylist: Long) {
+        appDatabase.intermediateDao().deleteRecordByPlaylistId(idPlaylist)
     }
 
     private fun convertFromTrackInPlaylistEntity(tracks: List<TrackInPlaylistEntity>): List<Track> {

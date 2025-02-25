@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +21,9 @@ import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistState
 import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistsState
 import com.example.playlistmaker.ui.mediaLibrary.view_model.PlaylistViewModel
 import com.example.playlistmaker.ui.search.activity.TrackAdapter
+import com.example.playlistmaker.util.customToast
+import com.example.playlistmaker.util.getTrackCountMessage
+import com.example.playlistmaker.util.getTrackCountMinutes
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -56,7 +60,6 @@ class PlaylistFragment: Fragment() {
             .setMessage("Хотите удалить трек?")
             .setNegativeButton("Нет") { _, _ ->
                 // ничего не делаем
-                Log.i("myPlaylist", "NO")
             }.setPositiveButton("Да") { _, _ ->
                 //findNavController().popBackStack()
                 Log.i("myPlaylist", "Yes")
@@ -93,7 +96,13 @@ class PlaylistFragment: Fragment() {
         }
 
         binding.share.setOnClickListener {
-            //viewModel.sharePlaylist()
+            viewModel.sharePlaylist()
+        }
+
+        viewModel.share.observe(viewLifecycleOwner) {
+            if (it == false) {
+                customToast(requireContext(), layoutInflater, "В этом плейлисте нет списка треков, которым можно поделиться")
+            }
         }
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.threeDotBottomSheet).apply {
@@ -110,8 +119,7 @@ class PlaylistFragment: Fragment() {
                         binding.overlay.visibility = View.VISIBLE
 
                         binding.sharePlaylist.setOnClickListener {
-                            Log.i("myPlaylist", "sharePlaylist")
-
+                            viewModel.sharePlaylist()
                         }
 
                         binding.editPlaylist.setOnClickListener {
@@ -128,7 +136,6 @@ class PlaylistFragment: Fragment() {
                                 .setMessage("Хотите удалить плейлист?")
                                 .setNegativeButton("Нет") { _, _ ->
                                     // ничего не делаем
-                                    Log.i("myPlaylist", "NO")
                                 }.setPositiveButton("Да") { _, _ ->
                                     viewModel.deletePlaylist()
                                     findNavController().popBackStack()
@@ -146,47 +153,39 @@ class PlaylistFragment: Fragment() {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
 
+        setFragmentResultListener("requestKey") { _, bundle ->
+            val updatedPlaylist = bundle.getSerializable("updatedPlaylist") as? Playlist
+            viewModel.getPlaylistById()
+
+        }
+
     }
 
     private fun showEmptyList() {
         binding.apply {
-            playlistTextView.text = "Название плейлиста"
-            descriptionTextView.text = "Описание"
+            playlistTextView.text = requireContext().getString(R.string.playlist_name)
+            descriptionTextView.text = requireContext().getString(R.string.new_playlist_description)
             imageView.setImageResource(R.drawable.not_found_placeholder)
-
-
-
-            // убрать список плейлистов
-            //tracksRecycleView.visibility = View.GONE
-        }
-    }
-
-    private fun getTrackCountMinutes(minutes: Int): String {
-        return when {
-            minutes % 10 == 1 && minutes % 100 != 11 -> "$minutes минута"
-            minutes % 10 in 2..4 && (minutes % 100 !in 12..14) -> "$minutes минуты"
-            else -> "$minutes минут"
-        }
-    }
-
-    private fun getTrackCountMessage(trackCount: Int): String {
-        return when {
-            trackCount % 10 == 1 && trackCount % 100 != 11 -> "$trackCount трек"
-            trackCount % 10 in 2..4 && (trackCount % 100 !in 12..14) -> "$trackCount трека"
-            else -> "$trackCount треков"
+            tracksRecycleView.visibility = View.GONE
+            placeholderMessage.text = requireContext().getString(R.string.no_tracks_in_playlist)
+            placeholderMessage.visibility = View.VISIBLE
         }
     }
 
     private fun showPlaylist(playlist: Playlist, tracks: List<Track>?) {
         binding.apply {
             playlistTextView.text = playlist.playlistName
-            // Описание может быть пустым !!!!!!!!!
-            descriptionTextView.text = playlist.playlistDescription
+            if (playlist.playlistDescription.isNullOrEmpty()) {
+                descriptionTextView.visibility = View.GONE
+            } else {
+                descriptionTextView.text = playlist.playlistDescription
+            }
             Glide.with(requireContext())
                 .load(playlist.photoUrl)
                 .centerCrop()
                 .placeholder(R.drawable.placeholder)
                 .into(imageView)
+
             // вычисление Общей продолжительности всех треков
             if (tracks != null) {
                 val durationSumMillis = tracks.sumOf { it.trackTimeMillis.toLong() }
@@ -194,9 +193,8 @@ class PlaylistFragment: Fragment() {
                 durationPlaylist.text = getTrackCountMinutes(duration.toInt())
             }
 
-
             // three dot
-            binding.playlistNameText.text = playlist.playlistName
+            playlistNameText.text = playlist.playlistName
             Glide.with(requireContext())
                 .load(playlist.photoUrl)
                 .centerCrop()
@@ -209,17 +207,16 @@ class PlaylistFragment: Fragment() {
             trackCountPlaylist.text = count
             trackCount.text = count
 
-
-
-
-
             // отобразить список треков
-            tracksRecycleView.visibility = View.VISIBLE
-            if (tracks != null) {
+            if (tracks.isNullOrEmpty()) {
+                placeholderMessage.text = requireContext().getString(R.string.no_tracks_in_playlist)
+                placeholderMessage.visibility = View.VISIBLE
+                tracksRecycleView.visibility = View.GONE
+            } else {
+                tracksRecycleView.visibility = View.VISIBLE
+                placeholderMessage.visibility = View.GONE
                 tracksAdapter?.setItems(tracks)
             }
-
         }
-
     }
 }

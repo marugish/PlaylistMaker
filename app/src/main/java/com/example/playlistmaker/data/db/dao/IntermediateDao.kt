@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlistmaker.data.db.entity.IntermediateEntity
 import com.example.playlistmaker.data.db.entity.TrackInPlaylistEntity
+import com.example.playlistmaker.domain.db.model.Playlist
 
 @Dao
 interface IntermediateDao {
@@ -19,6 +20,9 @@ interface IntermediateDao {
     @Delete
     suspend fun deleteRecord(intermediate: IntermediateEntity)
 
-    //@Query("SELECT * FROM track_in_playlist_table ORDER BY trackId DESC")
-    //suspend fun findTrack(): List<TrackInPlaylistEntity>
+    @Query("DELETE FROM intermediate_table WHERE playlistId = :idPlaylist")
+    suspend fun deleteRecordByPlaylistId(idPlaylist: Long)
+
+    @Query("SELECT COUNT(*) FROM intermediate_table WHERE trackId = :idTrack")
+    suspend fun findTrack(idTrack: Long): Int
 }

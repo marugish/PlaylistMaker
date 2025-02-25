@@ -7,15 +7,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.db.PlaylistInteractor
 import com.example.playlistmaker.domain.db.model.Playlist
+import com.example.playlistmaker.domain.search.model.Track
 import com.example.playlistmaker.domain.sharing.SharingInteractor
 import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistState
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.processNextEventInCurrentThread
 
 class PlaylistViewModel(private val id: Long?,
                         private val playlistInteractor: PlaylistInteractor,
-                        //private val sharingInteractor: SharingInteractor
+                        private val sharingInteractor: SharingInteractor
 ): ViewModel() {
     // новый State надо задать
     private val playlistStateLiveData = MutableLiveData<PlaylistState>()
@@ -24,10 +27,11 @@ class PlaylistViewModel(private val id: Long?,
     private val foundPlaylist = MutableLiveData<Playlist?>()
     val playlist: LiveData<Playlist?> = foundPlaylist
 
-    val share = MutableLiveData(false)
+    val share = MutableLiveData<Boolean>()
 
     init {
         getPlaylistById()
+        //processResult()
     }
 
     companion object {
@@ -48,18 +52,15 @@ class PlaylistViewModel(private val id: Long?,
         return current
     }
 
-    private fun getPlaylistById() {
+
+    fun getPlaylistById() {
         viewModelScope.launch {
             if (id != null) {
                 playlistInteractor.getPlaylistById(id).collect {
                     playlist -> processResult(playlist)
-                //foundPlaylist.value= playlist //processResult(playlist)
                 }
-                //processResult(foundPlaylist.value)
             } else {
                 processResult(null)
-                //foundPlaylist.value = null
-                //processResult(foundPlaylist.value)//renderState(PlaylistState.Empty)
             }
         }
     }
@@ -73,9 +74,11 @@ class PlaylistViewModel(private val id: Long?,
                 renderState(PlaylistState.Content(playlist, null))
             } else {
                 val trackIds = Gson().fromJson(json, Array<Long>::class.java).toList()
+                Log.i("myPlaylist", "$trackIds")
                 viewModelScope.launch {
                     playlistInteractor.getTracksInPlaylist(trackIds).collect {
-                        tracksInfo -> renderState(PlaylistState.Content(playlist, tracksInfo))
+                        tracksInfo ->
+                        renderState(PlaylistState.Content(playlist, tracksInfo))
                     }
                 }
             }
@@ -85,7 +88,6 @@ class PlaylistViewModel(private val id: Long?,
     }
 
     fun deleteTrackInPlaylist(trackId: Long) {
-        //getPlaylistById() // обновляем плейлист
         if (foundPlaylist.value != null) {
             val json = foundPlaylist.value?.trackIds
             val tracks = Gson().fromJson(json, Array<Long>::class.java).toList()
@@ -102,23 +104,37 @@ class PlaylistViewModel(private val id: Long?,
                 // удалить запись из Intermediate table
                 playlistInteractor.deleteRecord(foundPlaylist.value?.id!!, trackId)
                 // удалить информацию о треке, если он больше нигде не присутствует
-                // ...
+                playlistInteractor.findTrack(trackId).collect { count ->
+                    if (count == 0) {
+                        // удаляем информацию о треке
+                        playlistInteractor.deleteTrackInfo(trackId)
+                    }
+                }
+                // Обновляем информацию в конце
+                getPlaylistById()
             }
         }
-
-        // в конце необходимо обновить информацию, как о плейлисте, так и в UI
-
-        getPlaylistById() // обновляем плейлист
     }
 
-    /*fun sharePlaylist() {
+    fun sharePlaylist() {
         viewModelScope.launch {
             if (id != null) {
                 playlistInteractor.getPlaylistById(id).collect {
                     playlist ->
                     run {
+                        var tracks = emptyList<Track>()
                         if (playlist.trackCount != 0) {
+                            val json = playlist.trackIds
 
+                            if (json.isNotEmpty()) {
+                                val trackIds = Gson().fromJson(json, Array<Long>::class.java).toList()
+
+                                playlistInteractor.getTracksInPlaylist(trackIds).collect { tracksInfo ->
+                                    tracks = tracksInfo
+                                }
+
+                            }
+                            sharingInteractor.sharePlaylist(playlist, tracks)
                             share.postValue(true)
                         } else {
                             share.postValue(false)
@@ -128,16 +144,28 @@ class PlaylistViewModel(private val id: Long?,
                 }
             }
         }
-        // как будто бы надо ещё раз запросить информацию о плейлисте, чтобы была обновленная информация
-        //sharingInteractor.sharePlaylist()
-    }*/
+
+    }
 
     fun deletePlaylist() {
         viewModelScope.launch {
             if (id != null) {
+                // Удаление самого плейлиста
                 playlistInteractor.deletePlaylistById(id = id)
-                // необходимо также удалить всю информацию о плейлистах треках из 2х таблиц
-                // .......
+                // сначала удаляем все треки с таблицы Intermediate
+                //playlistInteractor.deleteRecordByPlaylistId(id)
+                // Потом информацию о треках, если их больше нигде нет
+                /*val json = foundPlaylist.value?.trackIds
+                val trackIds = Gson().fromJson(json, Array<Long>::class.java).toList()
+                trackIds.forEach { trackId ->
+                    playlistInteractor.findTrack(trackId).collect { count ->
+                        if (count == 0) {
+                            // удаляем информацию о треке
+                            playlistInteractor.deleteTrackInfo(trackId)
+                        }
+                    }
+                }*/
+
             }
         }
     }

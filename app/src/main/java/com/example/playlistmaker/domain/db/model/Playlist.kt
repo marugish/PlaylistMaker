@@ -1,5 +1,8 @@
 package com.example.playlistmaker.domain.db.model
 
+import android.os.Parcelable
+import java.io.Serializable
+
 data class Playlist(
     val id: Long? = null,
     val playlistName: String = "",
@@ -7,4 +10,4 @@ data class Playlist(
     val photoUrl: String? = null,
     val trackIds: String = "",
     var trackCount: Int = 0
-)
+): Serializable

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.ui.mediaLibrary.view_model.EditPlaylistViewModel
@@ -69,6 +70,11 @@ class EditPlaylistFragment: NewPlaylistFragment() {
             }
             editViewModel.updatePlaylistInDb(newPlaylist = newPlaylist)
             // возвращаемся на предыдущий экран
+            // NEW
+            val result = Bundle().apply {
+                putSerializable("updatedPlaylist", newPlaylist)             }
+            setFragmentResult("requestKey", result)
+            // NEW
             findNavController().popBackStack()
         }
     }
