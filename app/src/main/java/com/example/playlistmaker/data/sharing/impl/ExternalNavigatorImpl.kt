@@ -37,6 +37,4 @@ class ExternalNavigatorImpl(val context: Context): ExternalNavigator {
         shareIntent.putExtra(Intent.EXTRA_TEXT, message)
         context.startActivity(Intent.createChooser(shareIntent, "Поделиться плейлистом").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
-
-
 }

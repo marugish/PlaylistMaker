@@ -5,6 +5,5 @@ import com.example.playlistmaker.domain.search.model.Track
 
 sealed interface PlaylistState {
     data class Content(val playlist: Playlist, val tracks: List<Track>?) : PlaylistState
-    // треки ...
     data object Empty : PlaylistState
 }

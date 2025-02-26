@@ -1,6 +1,5 @@
 package com.example.playlistmaker.domain.db.model
 
-import android.os.Parcelable
 import java.io.Serializable
 
 data class Playlist(

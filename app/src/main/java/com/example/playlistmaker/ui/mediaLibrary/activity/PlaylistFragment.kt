@@ -48,21 +48,15 @@ class PlaylistFragment: Fragment() {
             bundle.putSerializable("track", track)
             findNavController().navigate(R.id.playFragment, bundle)
             (activity as RootActivity).hideOrShowBottomNavigationView(View.GONE)
-
-            // !!!!!!!!!!!!!!!!!
-            //favoritesViewModel.saveSearchHistory(track)
         }
     }
 
     private fun deleteTrackInPlaylist(track: Track): Boolean {
-        Log.i("myPlaylist", "Long click to track")
         MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialogStyle)
             .setMessage("Хотите удалить трек?")
             .setNegativeButton("Нет") { _, _ ->
                 // ничего не делаем
             }.setPositiveButton("Да") { _, _ ->
-                //findNavController().popBackStack()
-                Log.i("myPlaylist", "Yes")
                 viewModel.deleteTrackInPlaylist(track.trackId)
             }.show()
         return true // обработали долгое нажатие
@@ -105,6 +99,12 @@ class PlaylistFragment: Fragment() {
             }
         }
 
+        viewModel.isDeleted.observe(viewLifecycleOwner) {
+            if (it == true) {
+                findNavController().popBackStack()
+            }
+        }
+
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.threeDotBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -123,25 +123,20 @@ class PlaylistFragment: Fragment() {
                         }
 
                         binding.editPlaylist.setOnClickListener {
-                            Log.i("myPlaylist", "editPlaylist")
                             val bundle = Bundle()
                             playlistId?.let { it1 -> bundle.putLong("playlist_id", it1) }
                             findNavController().navigate(R.id.editPlaylistFragment, bundle)
-                            //(activity as RootActivity).hideOrShowBottomNavigationView(View.GONE)
                         }
 
                         binding.deletePlaylist.setOnClickListener {
-                            Log.i("myPlaylist", "deletePlaylist")
                             MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialogStyle)
                                 .setMessage("Хотите удалить плейлист?")
                                 .setNegativeButton("Нет") { _, _ ->
                                     // ничего не делаем
                                 }.setPositiveButton("Да") { _, _ ->
                                     viewModel.deletePlaylist()
-                                    findNavController().popBackStack()
                                 }.show()
                         }
-
                     }
                 }
             }
@@ -156,7 +151,6 @@ class PlaylistFragment: Fragment() {
         setFragmentResultListener("requestKey") { _, bundle ->
             val updatedPlaylist = bundle.getSerializable("updatedPlaylist") as? Playlist
             viewModel.getPlaylistById()
-
         }
 
     }

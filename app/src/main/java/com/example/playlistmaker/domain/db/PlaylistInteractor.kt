@@ -14,7 +14,7 @@ interface PlaylistInteractor {
     suspend fun updatePlaylistInfo(id: Long, name: String, description: String?, photo: String?)
     suspend fun deletePlaylistById(id: Long)
     suspend fun deleteTrackInfo(idTrack: Long)
-
+    // Intermediate table
     suspend fun insertRecord(idPlaylist: Long, idTrack: Long)
     suspend fun deleteRecord(idPlaylist: Long, idTrack: Long)
     fun findTrack(idTrack: Long): Flow<Int>

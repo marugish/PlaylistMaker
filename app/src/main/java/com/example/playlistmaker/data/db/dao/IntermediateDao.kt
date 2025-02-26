@@ -14,9 +14,6 @@ interface IntermediateDao {
     @Insert(entity = IntermediateEntity::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertRecord(intermediate: IntermediateEntity)
 
-    /*@Query("DELETE FROM intermediate_table WHERE playlistId = :idPlaylist AND trackId = :idTrack")
-    suspend fun deleteRecord(idPlaylist: Long, idTrack: Long)*/
-
     @Delete
     suspend fun deleteRecord(intermediate: IntermediateEntity)
 

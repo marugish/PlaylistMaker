@@ -45,7 +45,4 @@ class EditPlaylistViewModel(private val playlistId: Long?,
         }
     }
 
-
-
-
 }

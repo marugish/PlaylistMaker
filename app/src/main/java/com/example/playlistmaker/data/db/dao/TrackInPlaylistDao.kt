@@ -15,7 +15,6 @@ interface TrackInPlaylistDao {
     @Insert(entity = TrackInPlaylistEntity::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTrackInPlaylist(track: TrackInPlaylistEntity)
 
-    // Нужна ли сортировка?
     @Query("SELECT * FROM track_in_playlist_table ORDER BY trackId DESC")
     suspend fun getTracks(): List<TrackInPlaylistEntity>
 

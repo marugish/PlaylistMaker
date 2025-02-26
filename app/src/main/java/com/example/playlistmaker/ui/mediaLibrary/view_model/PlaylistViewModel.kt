@@ -20,7 +20,7 @@ class PlaylistViewModel(private val id: Long?,
                         private val playlistInteractor: PlaylistInteractor,
                         private val sharingInteractor: SharingInteractor
 ): ViewModel() {
-    // новый State надо задать
+
     private val playlistStateLiveData = MutableLiveData<PlaylistState>()
     fun observeState(): LiveData<PlaylistState> = playlistStateLiveData
 
@@ -28,10 +28,10 @@ class PlaylistViewModel(private val id: Long?,
     val playlist: LiveData<Playlist?> = foundPlaylist
 
     val share = MutableLiveData<Boolean>()
+    val isDeleted = MutableLiveData<Boolean>()
 
     init {
         getPlaylistById()
-        //processResult()
     }
 
     companion object {
@@ -52,7 +52,6 @@ class PlaylistViewModel(private val id: Long?,
         return current
     }
 
-
     fun getPlaylistById() {
         viewModelScope.launch {
             if (id != null) {
@@ -67,18 +66,15 @@ class PlaylistViewModel(private val id: Long?,
 
     private fun processResult(playlist: Playlist?) {
         foundPlaylist.value= playlist
-        Log.i("myPlaylist", "refresh ${foundPlaylist.value}")
         if (playlist!= null) {
             val json = playlist.trackIds
             if (json.isEmpty()) {
                 renderState(PlaylistState.Content(playlist, null))
             } else {
                 val trackIds = Gson().fromJson(json, Array<Long>::class.java).toList()
-                Log.i("myPlaylist", "$trackIds")
                 viewModelScope.launch {
                     playlistInteractor.getTracksInPlaylist(trackIds).collect {
-                        tracksInfo ->
-                        renderState(PlaylistState.Content(playlist, tracksInfo))
+                        tracksInfo -> renderState(PlaylistState.Content(playlist, tracksInfo))
                     }
                 }
             }
@@ -150,22 +146,27 @@ class PlaylistViewModel(private val id: Long?,
     fun deletePlaylist() {
         viewModelScope.launch {
             if (id != null) {
-                // Удаление самого плейлиста
-                playlistInteractor.deletePlaylistById(id = id)
-                // сначала удаляем все треки с таблицы Intermediate
-                //playlistInteractor.deleteRecordByPlaylistId(id)
-                // Потом информацию о треках, если их больше нигде нет
-                /*val json = foundPlaylist.value?.trackIds
-                val trackIds = Gson().fromJson(json, Array<Long>::class.java).toList()
-                trackIds.forEach { trackId ->
-                    playlistInteractor.findTrack(trackId).collect { count ->
-                        if (count == 0) {
-                            // удаляем информацию о треке
-                            playlistInteractor.deleteTrackInfo(trackId)
+                try {
+                    // Удаление всех треков в таблице Intermediate
+                    playlistInteractor.deleteRecordByPlaylistId(id)
+                    // Удаление самого плейлиста
+                    playlistInteractor.deletePlaylistById(id = id)
+                    // Потом информацию о треках, если их больше нигде нет
+                    val json = foundPlaylist.value?.trackIds
+                    val trackIds = Gson().fromJson(json, Array<Long>::class.java).toList()
+                    trackIds.forEach { trackId ->
+                        playlistInteractor.findTrack(trackId).collect { count ->
+                            if (count == 0) {
+                                // удаляем информацию о треке
+                                playlistInteractor.deleteTrackInfo(trackId)
+                            }
                         }
                     }
-                }*/
-
+                    isDeleted.postValue(true)
+                } catch (e: Exception) {
+                    Log.e("myPlaylist", "Error occurred: ${e.message}")
+                    isDeleted.postValue(false)
+                }
             }
         }
     }

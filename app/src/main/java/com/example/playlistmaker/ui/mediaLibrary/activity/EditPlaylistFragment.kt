@@ -70,11 +70,9 @@ class EditPlaylistFragment: NewPlaylistFragment() {
             }
             editViewModel.updatePlaylistInDb(newPlaylist = newPlaylist)
             // возвращаемся на предыдущий экран
-            // NEW
             val result = Bundle().apply {
                 putSerializable("updatedPlaylist", newPlaylist)             }
             setFragmentResult("requestKey", result)
-            // NEW
             findNavController().popBackStack()
         }
     }

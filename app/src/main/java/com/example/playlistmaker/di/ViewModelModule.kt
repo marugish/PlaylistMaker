@@ -48,10 +48,8 @@ val viewModelModule = module {
         PlaylistViewModel(id, get(), get())
     }
 
-    // NEW
     viewModel { (playlistId: Long?) ->
         EditPlaylistViewModel(playlistId, get())
     }
-
 
 }

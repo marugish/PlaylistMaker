@@ -30,11 +30,9 @@ class TrackAdapter(private var tracks: List<Track> = emptyList(),
         // Долгое нажатие
         longClickListener?.let { longClick ->
             holder.itemView.setOnLongClickListener {
-                longClick(tracks[position]) // Возвращаем результат longClick
+                longClick(tracks[position])
             }
         }
-
-
     }
 
     override fun getItemCount(): Int {
