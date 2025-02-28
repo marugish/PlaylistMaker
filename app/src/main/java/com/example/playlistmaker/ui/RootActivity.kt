@@ -25,5 +25,6 @@ class RootActivity : AppCompatActivity() {
 
     fun hideOrShowBottomNavigationView(state: Int) {
         binding.bottomNavigationView.visibility = state
+        binding.divider.visibility = state
     }
 }

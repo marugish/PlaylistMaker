@@ -65,7 +65,7 @@ class PlaylistViewModel(private val id: Long?,
     }
 
     private fun processResult(playlist: Playlist?) {
-        foundPlaylist.value= playlist
+        foundPlaylist.value = playlist
         if (playlist!= null) {
             val json = playlist.trackIds
             if (json.isEmpty()) {
@@ -100,12 +100,7 @@ class PlaylistViewModel(private val id: Long?,
                 // удалить запись из Intermediate table
                 playlistInteractor.deleteRecord(foundPlaylist.value?.id!!, trackId)
                 // удалить информацию о треке, если он больше нигде не присутствует
-                playlistInteractor.findTrack(trackId).collect { count ->
-                    if (count == 0) {
-                        // удаляем информацию о треке
-                        playlistInteractor.deleteTrackInfo(trackId)
-                    }
-                }
+                playlistInteractor.deleteTrackInfoIfNotPresent(trackId)
                 // Обновляем информацию в конце
                 getPlaylistById()
             }
@@ -153,13 +148,10 @@ class PlaylistViewModel(private val id: Long?,
                     playlistInteractor.deletePlaylistById(id = id)
                     // Потом информацию о треках, если их больше нигде нет
                     val json = foundPlaylist.value?.trackIds
-                    val trackIds = Gson().fromJson(json, Array<Long>::class.java).toList()
-                    trackIds.forEach { trackId ->
-                        playlistInteractor.findTrack(trackId).collect { count ->
-                            if (count == 0) {
-                                // удаляем информацию о треке
-                                playlistInteractor.deleteTrackInfo(trackId)
-                            }
+                    if (!json.isNullOrEmpty()) {
+                        val trackIds = Gson().fromJson(json, Array<Long>::class.java).toList()
+                        trackIds.forEach { trackId ->
+                            playlistInteractor.deleteTrackInfoIfNotPresent(trackId)
                         }
                     }
                     isDeleted.postValue(true)

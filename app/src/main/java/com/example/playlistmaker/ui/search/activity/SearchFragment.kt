@@ -113,7 +113,6 @@ class SearchFragment: Fragment()  {
             if (hasFocus) {
                 if (binding.searchEditText.text.isEmpty()) {
                     viewModel.getHistorySearch()
-                    historyVisibility(View.VISIBLE)
                 } else {
                     historyVisibility(View.GONE)
                 }
@@ -204,6 +203,8 @@ class SearchFragment: Fragment()  {
         searchAdapter.setItems(historyTracks)
         if (historyTracks.isNotEmpty()) {
             historyVisibility(View.VISIBLE)
+        } else {
+            historyVisibility(View.GONE)
         }
         binding.trackRecycleView.visibility = View.GONE
     }

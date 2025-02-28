@@ -1,5 +1,6 @@
 package com.example.playlistmaker.data
 
+import android.util.Log
 import com.example.playlistmaker.data.db.AppDatabase
 import com.example.playlistmaker.data.db.converter.PlaylistDbConvertor
 import com.example.playlistmaker.data.db.converter.TrackInPlaylistConvertor
@@ -10,22 +11,24 @@ import com.example.playlistmaker.domain.db.PlaylistRepository
 import com.example.playlistmaker.domain.db.model.Playlist
 import com.example.playlistmaker.domain.search.model.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
                              private val playlistDbConvertor: PlaylistDbConvertor,
                              private val trackInPlaylistConvertor: TrackInPlaylistConvertor
 ): PlaylistRepository {
     // Insert New Playlist
-    override fun insertNewPlaylist(playlist: Playlist): Flow<Long> = flow {
+    override suspend fun insertNewPlaylist(playlist: Playlist): Long {
         val playlistEntity = playlistDbConvertor.map(playlist)
-        emit(appDatabase.playlistDao().insertNewPlaylist(playlistEntity))
+        return appDatabase.playlistDao().insertNewPlaylist(playlistEntity)
     }
 
     // Get Playlists
-    override fun getPlaylists(): Flow<List<Playlist>> = flow {
-        val playlists = appDatabase.playlistDao().getPlaylists()
-        emit(convertFromPlaylistEntityList(playlists))
+    override fun getPlaylists(): Flow<List<Playlist>> {
+        return appDatabase.playlistDao().getPlaylists()
+            .map { playlists -> convertFromPlaylistEntityList(playlists) }
     }
 
     // Save track in Playlist
@@ -39,16 +42,19 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
     }
 
     override fun getPlaylistById(id: Long): Flow<Playlist> = flow {
-        val playlist = appDatabase.playlistDao().getPlaylistById(id)
-        emit(convertFromPlaylistEntity(playlist))
+        val entity = appDatabase.playlistDao().getPlaylistById(id)
+        emit(convertFromPlaylistEntity(entity))
     }
 
-    override fun getTracksInPlaylist(trackIds: List<Long>): Flow<List<Track>> = flow {
-        // получили все треки из таблицы
-        val allTracks = appDatabase.trackInPlaylistDao().getTracks()
-        // выбрать только те треки, которые есть в списке trackIds
-        val filteredTracks = allTracks.filter { track -> trackIds.contains(track.trackId) }
-        emit(convertFromTrackInPlaylistEntity(filteredTracks))
+    override fun getTracksInPlaylist(trackIds: List<Long>): Flow<List<Track>> {
+        return appDatabase.trackInPlaylistDao().getTracks()
+            .map { allTracks ->
+                val filteredTracks = allTracks.filter { track -> trackIds.contains(track.trackId) }
+                val orderedTracks = trackIds.mapNotNull { trackId ->
+                    filteredTracks.find { track -> track.trackId == trackId }
+                }
+                convertFromTrackInPlaylistEntity(orderedTracks)
+            }
     }
 
     override suspend fun updatePlaylistInfo(id: Long, name: String, description: String?, photo: String?) {
@@ -57,10 +63,6 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
 
     override suspend fun deletePlaylistById(id: Long) {
         appDatabase.playlistDao().deletePlaylistById(id)
-    }
-
-    override suspend fun deleteTrackInfo(idTrack: Long) {
-        appDatabase.trackInPlaylistDao().deleteRecord(idTrack)
     }
 
     override suspend fun insertRecord(idPlaylist: Long, idTrack: Long) {
@@ -73,8 +75,11 @@ class PlaylistRepositoryImpl(private val appDatabase: AppDatabase,
         appDatabase.intermediateDao().deleteRecord(intermediateEntity)
     }
 
-    override fun findTrack(idTrack: Long): Flow<Int> = flow {
-        emit(appDatabase.intermediateDao().findTrack(idTrack))
+    override suspend fun deleteTrackInfoIfNotPresent(trackId: Long) {
+        val count = appDatabase.intermediateDao().findTrack(trackId).first() // Получаем первое значение
+        if (count == 0) {
+            appDatabase.trackInPlaylistDao().deleteRecord(trackId)
+        }
     }
 
     override suspend fun deleteRecordByPlaylistId(idPlaylist: Long) {

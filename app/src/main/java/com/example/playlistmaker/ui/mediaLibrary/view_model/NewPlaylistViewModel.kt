@@ -13,9 +13,8 @@ open class NewPlaylistViewModel(private val playlistInteractor: PlaylistInteract
     // добавление НОВОГО плейлиста
     fun insertPlaylistToDb(newPlaylist: Playlist) {
         viewModelScope.launch {
-            playlistInteractor.insertNewPlaylist(playlist = newPlaylist).collect { id ->
-                idPlaylist.postValue(id)
-            }
+            val id = playlistInteractor.insertNewPlaylist(playlist = newPlaylist)
+            idPlaylist.postValue(id)
         }
     }
 

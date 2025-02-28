@@ -8,6 +8,7 @@ import androidx.room.Query
 import com.example.playlistmaker.data.db.entity.IntermediateEntity
 import com.example.playlistmaker.data.db.entity.TrackInPlaylistEntity
 import com.example.playlistmaker.domain.db.model.Playlist
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IntermediateDao {
@@ -21,5 +22,5 @@ interface IntermediateDao {
     suspend fun deleteRecordByPlaylistId(idPlaylist: Long)
 
     @Query("SELECT COUNT(*) FROM intermediate_table WHERE trackId = :idTrack")
-    suspend fun findTrack(idTrack: Long): Int
+    fun findTrack(idTrack: Long): Flow<Int>
 }

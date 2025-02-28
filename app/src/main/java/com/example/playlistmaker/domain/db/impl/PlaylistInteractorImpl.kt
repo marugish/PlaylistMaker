@@ -7,7 +7,7 @@ import com.example.playlistmaker.domain.search.model.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository): PlaylistInteractor {
-    override fun insertNewPlaylist(playlist: Playlist): Flow<Long> {
+    override suspend fun insertNewPlaylist(playlist: Playlist): Long {
         return playlistRepository.insertNewPlaylist(playlist)
     }
 
@@ -39,10 +39,6 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
         playlistRepository.deletePlaylistById(id)
     }
 
-    override suspend fun deleteTrackInfo(idTrack: Long) {
-        playlistRepository.deleteTrackInfo(idTrack)
-    }
-
     override suspend fun insertRecord(idPlaylist: Long, idTrack: Long) {
         playlistRepository.insertRecord(idPlaylist, idTrack)
     }
@@ -51,8 +47,8 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
         playlistRepository.deleteRecord(idPlaylist, idTrack)
     }
 
-    override fun findTrack(idTrack: Long): Flow<Int> {
-        return playlistRepository.findTrack(idTrack)
+    override suspend fun deleteTrackInfoIfNotPresent(trackId: Long) {
+        playlistRepository.deleteTrackInfoIfNotPresent(trackId)
     }
 
     override suspend fun deleteRecordByPlaylistId(idPlaylist: Long) {

@@ -74,6 +74,8 @@ class PlaylistFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as RootActivity).hideOrShowBottomNavigationView(View.GONE)
+
         binding.tracksRecycleView.layoutManager = LinearLayoutManager(requireContext())
         binding.tracksRecycleView.adapter = tracksAdapter
 
