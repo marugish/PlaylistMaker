@@ -6,4 +6,5 @@ interface ExternalNavigator {
     fun shareLink(shareLink: String)
     fun openEmail(emailData: EmailData)
     fun openLink(link: String)
+    fun sharePlaylist(message: String)
 }

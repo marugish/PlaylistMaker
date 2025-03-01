@@ -36,10 +36,10 @@ class SearchFragment: Fragment()  {
     private val viewModel by viewModel<SearchViewModel>()
 
     // Обычный поиск
-    private val adapter = TrackAdapter { track -> showTrackPlayer(track) }
+    private val adapter = TrackAdapter(clickListener = { track -> showTrackPlayer(track) })
 
     // История поиска
-    private val searchAdapter = TrackAdapter { track -> showTrackPlayer(track) }
+    private val searchAdapter = TrackAdapter(clickListener = { track -> showTrackPlayer(track) })
 
     private fun showTrackPlayer(track: Track) {
         if (viewModel.clickDebounce()) {
@@ -113,7 +113,6 @@ class SearchFragment: Fragment()  {
             if (hasFocus) {
                 if (binding.searchEditText.text.isEmpty()) {
                     viewModel.getHistorySearch()
-                    historyVisibility(View.VISIBLE)
                 } else {
                     historyVisibility(View.GONE)
                 }
@@ -204,6 +203,8 @@ class SearchFragment: Fragment()  {
         searchAdapter.setItems(historyTracks)
         if (historyTracks.isNotEmpty()) {
             historyVisibility(View.VISIBLE)
+        } else {
+            historyVisibility(View.GONE)
         }
         binding.trackRecycleView.visibility = View.GONE
     }

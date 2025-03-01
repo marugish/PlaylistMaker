@@ -57,7 +57,7 @@ class PlayFragment: Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentPlayBinding.inflate(inflater, container, false)
         return binding.root
     }

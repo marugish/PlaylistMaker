@@ -30,15 +30,15 @@ import java.io.FileOutputStream
 import kotlin.random.Random
 
 
-class NewPlaylistFragment : Fragment() {
-    private lateinit var binding: FragmentNewPlaylistBinding
+open class NewPlaylistFragment : Fragment() {
+    lateinit var binding: FragmentNewPlaylistBinding
 
-    private val viewModel by viewModel<NewPlaylistViewModel>()
+    val viewModel by viewModel<NewPlaylistViewModel>()
 
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
-    private var newPlaylist: Playlist = Playlist()
-    private var photoUri: Uri? = null
+    protected var newPlaylist: Playlist = Playlist()
+    protected var photoUri: Uri? = null
 
     private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
 
@@ -134,7 +134,7 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri, photoName: String) {
+    protected fun saveImageToPrivateStorage(uri: Uri, photoName: String) {
         val filePath = File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "PlaylistMaker")
         if (!filePath.exists()) {
             filePath.mkdirs()

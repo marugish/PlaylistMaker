@@ -9,20 +9,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.db.model.Playlist
+import com.example.playlistmaker.util.getTrackCountMessage
 
 
 class AddToPlaylistViewHolder(private val parentView: View): RecyclerView.ViewHolder(parentView) {
     private val playlistName: TextView = itemView.findViewById(R.id.playlist_name_text)
     private val trackCount: TextView = itemView.findViewById(R.id.track_count)
     private val playlistPhoto: ImageView = itemView.findViewById(R.id.playlist_image)
-
-    private fun getTrackCountMessage(trackCount: Int): String {
-        return when {
-            trackCount % 10 == 1 && trackCount % 100 != 11 -> "$trackCount трек"
-            trackCount % 10 in 2..4 && (trackCount % 100 !in 12..14) -> "$trackCount трека"
-            else -> "$trackCount треков"
-        }
-    }
 
     fun bind(playlist: Playlist) {
         playlistName.text = playlist.playlistName

@@ -6,19 +6,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.db.PlaylistInteractor
 import com.example.playlistmaker.domain.db.model.Playlist
-import com.example.playlistmaker.domain.search.model.Track
-import com.example.playlistmaker.ui.mediaLibrary.state.FavoriteState
-import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistState
+import com.example.playlistmaker.ui.mediaLibrary.state.PlaylistsState
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor): ViewModel() {
 
-    private val playlistsStateLiveData = MutableLiveData<PlaylistState>()
-    fun observeState(): LiveData<PlaylistState> = playlistsStateLiveData
+    private val playlistsStateLiveData = MutableLiveData<PlaylistsState>()
+    fun observeState(): LiveData<PlaylistsState> = playlistsStateLiveData
 
     init {
         getPlaylists()
-        playlistsStateLiveData.postValue(PlaylistState.Empty)
+        playlistsStateLiveData.postValue(PlaylistsState.Empty)
     }
 
     fun getPlaylists() {
@@ -31,13 +29,13 @@ class PlaylistsViewModel(private val playlistInteractor: PlaylistInteractor): Vi
 
     private fun processResult(playlists: List<Playlist>) {
         if (playlists.isEmpty()) {
-            renderState(PlaylistState.Empty)
+            renderState(PlaylistsState.Empty)
         } else {
-            renderState(PlaylistState.Content(playlists))
+            renderState(PlaylistsState.Content(playlists))
         }
     }
 
-    private fun renderState(state: PlaylistState) {
+    private fun renderState(state: PlaylistsState) {
         playlistsStateLiveData.postValue(state)
     }
 }

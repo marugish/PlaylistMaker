@@ -94,10 +94,7 @@
             android:maxLength="40"
             android:imeOptions="actionDone"
             android:textCursorDrawable="@drawable/cursor"
-            app:hintEnabled="true"
-
-
-            />
+            app:hintEnabled="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
