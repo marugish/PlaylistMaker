@@ -9,8 +9,6 @@
 3. Подключить устройство (телефон/эмулятор)
 4. Запустите приложение ▶️
 
-???? API
-
 ## ⚙️ Возможности приложения
 
 | Возможности приложения | Статус |
@@ -41,18 +39,28 @@
 ## 📱 Скриншоты приложения
 
 ### 🔍 Поиск треков
+<img src="https://github.com/user-attachments/assets/ea83a809-215c-4900-802b-f746c77e344f" width="300" alt="Поиск треков"> <img src="https://github.com/user-attachments/assets/456ae440-d2e3-4dfb-809e-4747606d5c82" width="300" alt="Неудачный поиск"> <img src="https://github.com/user-attachments/assets/946e0537-2d98-4c07-a839-75edd17ea01c" width="300" alt="Проблемы со связью">
 
 ### 📋 Детальная информация о треке
+<img src="https://github.com/user-attachments/assets/74dbaac4-501a-4df7-a5aa-1e382f509a68" width="300">
 
 ### 🕐 История поиска
+<img src="https://github.com/user-attachments/assets/10e6abc8-f8d7-41b0-b5d1-2ed5f63fd400" width="300" alt="History">
 
 ### ♥️ Список избранных треков
+<img src="https://github.com/user-attachments/assets/8821237b-60d1-414b-a66b-6c8958058b32" width="300" alt="Избранное">
 
-### 🎶 Создание и редактирование плейлистов
-... возможность поделиться
+### 🎧 Список созданных плейлистов
+<img src="https://github.com/user-attachments/assets/1dab0810-e8fc-4c4f-b95d-f7691f787830" width="300" alt="Список плейлистов">
 
-### ⚙️ Меню и настройки приложения
+### 🎶 Создание/удаление и редактирование плейлистов
+<img src="https://github.com/user-attachments/assets/1ba5b902-e65b-4110-874e-970646b85939" width="300" alt="новый"> <img src="https://github.com/user-attachments/assets/0e7a2218-523a-48ca-81f7-8e0fe02a3d4b" width="300" alt="Новый плейлист"> <img src="https://github.com/user-attachments/assets/d877ec8c-e212-4ccd-81cb-cca39fe3f1fc" width="300" alt="Редактирование плейлиста"> 
+
+<img src="https://github.com/user-attachments/assets/d485d6c9-e621-4879-bb8c-c1d2f6cf39e3" width="300" alt="Детальная информация о плейлисте"> <img src="https://github.com/user-attachments/assets/a26dfc4c-b04f-45fa-bc11-b4efaf6ebe43" width="300" alt="Функции плейлиста"> <img src="https://github.com/user-attachments/assets/9d806d8e-2beb-4ac4-a270-7f3db5827b8f" width="300" alt="Удаление плейлиста"> 
+
+### ➕ Добавление и удаление трека из плейлистов
+<img src="https://github.com/user-attachments/assets/4729ba0b-27d8-411b-aeac-464d19977700" width="300" alt="Добавление трека в плейлист"> <img src="https://github.com/user-attachments/assets/80f05791-0208-4226-88b4-d437252928e5" width="300" alt="Удаление трека из плейлиста">
 
 ### 🎨 Тёмная и светлая темы приложения
+<img src="https://github.com/user-attachments/assets/f544f98b-bbff-45e0-9faf-6336777d2000" width="300" alt="Светлая тема"> <img src="https://github.com/user-attachments/assets/9b6ce853-74ae-49c0-9824-5fad5bcf46b3" width="300" alt="Тёмная тема">
 
-### 
